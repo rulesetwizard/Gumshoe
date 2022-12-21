@@ -52,6 +52,26 @@
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"0"}}
 ]}}</Definition>
     <LUACode>
+function onInit()
+	--Initialize abilities list if it's empty
+    local ListNode = InvestigativeAbilitiesList.getDatabaseNode();
+    if ListNode.getChildCount() == 0 then
+		-- Create sections
+        for section, abilities in pairs(Gumshoe_data.getInvestigativeAbilities()) do
+			local wSection = InvestigativeAbilitiesList.createWindow();
+            local nodeSection = wSection.getDatabaseNode();
+			DB.setValue(nodeSection, "sectionName", "string", section);
+			
+			-- Create abilities for each section
+			for _, ability in pairs(abilities) do
+				local wAbility = wSection.listAbilities.createWindow();
+				local nodeAbility = wAbility.getDatabaseNode();
+				DB.setValue(nodeAbility, "name", "string", ability);
+			end
+        end
+    end
+end
+
 function setEdit(bEdit)
 	for _,w in ipairs(InvestigativeAbilitiesList.getWindows()) do
 		w.setEdit(bEdit);
