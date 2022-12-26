@@ -1,0 +1,33 @@
+<DocumentElement xmlns="http://tempuri.org/Ruleset.xsd">
+  <Scripts>
+    <ScriptName>SidebarData</ScriptName>
+    <FolderID>4</FolderID>
+    <Script>
+function onInit()
+	aRecordOverrides = {
+		["ability"] = { 
+			bExport = true,
+			aDataMap = { "reference.abilities" }, 
+			sRecordDisplayClass = "ability", 
+			aCustomFilters = {
+				["Type"] = { sField = "type" },
+			}
+		},		
+	}
+	
+	LibraryData.overrideRecordTypes(aRecordOverrides);
+		
+	-- Set new reference nodes as public
+	if User.isHost() then
+		local abilities = DB.findNode("reference.abilities");
+		if abilities then
+			abilities.setPublic(true);
+		end
+	end
+end
+
+</Script>
+    <RegisterScript>true</RegisterScript>
+    <Encoding />
+  </Scripts>
+</DocumentElement>
