@@ -54,6 +54,7 @@
     <LUACode>
 function setEdit(bEdit)
 	name.setReadOnly(not bEdit);
+	name.setLine(bEdit);
 	rating.setReadOnly(not bEdit);
 end</LUACode>
     <GroupIndex>0</GroupIndex>
@@ -156,6 +157,7 @@ end</LUACode>
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
       {"Name":"ScriptFile"},
+      {"Name":"Source"},
       {"Name":"StackVertWith"},
       {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
       {"Name":"Tooltip"},

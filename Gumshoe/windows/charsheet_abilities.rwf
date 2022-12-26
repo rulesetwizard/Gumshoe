@@ -46,6 +46,7 @@
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
       {"Name":"ScriptFile"},
+      {"Name":"Source"},
       {"Name":"StackVertWith"},
       {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
       {"Name":"Tooltip"},
@@ -55,14 +56,21 @@
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"0"}}
 ]}}</Definition>
     <LUACode>
+function onInit()
+	setEdit();
+end
+
 function onValueChanged()
+	setEdit();
+end
+
+function setEdit()
 	if getValue() &gt; 0 then
 		window.subInvestigative.subwindow.setEdit(true);
 	else
 		window.subInvestigative.subwindow.setEdit(false);
 	end;
-end
-</LUACode>
+end</LUACode>
     <GroupIndex>0</GroupIndex>
     <Template />
   </WindowControls>

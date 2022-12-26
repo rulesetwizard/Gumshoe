@@ -93,7 +93,7 @@ end</LUACode>
       {"Name":"AllowDelete","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"CanGrowVert"},
-      {"Name":"Columns","Value":{"@xsi:type":"PropertyColumns","ColumnWidth":"225","FillDown":"true","FillWidth":{"@xsi:nil":"true"}}},
+      {"Name":"Columns","Value":{"@xsi:type":"PropertyColumns","ColumnWidth":"225","FillDown":{"@xsi:nil":"true"},"FillWidth":"true"}},
       {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"InvestigativeAbilitiesList"}},
       {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
