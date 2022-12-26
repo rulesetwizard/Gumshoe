@@ -1,7 +1,7 @@
 <DocumentElement xmlns="http://tempuri.org/Ruleset.xsd">
   <Scripts>
     <ScriptName>SidebarData</ScriptName>
-    <FolderID>4</FolderID>
+    <FolderID>5</FolderID>
     <Script>
 function onInit()
 	aRecordOverrides = {
@@ -9,9 +9,16 @@ function onInit()
 			bExport = true,
 			aDataMap = { "reference.abilities" }, 
 			sRecordDisplayClass = "ability", 
+			sSidebarCategory  = "player",
 			aCustomFilters = {
 				["Type"] = { sField = "type" },
 			}
+		},		
+		["background"] = { 
+			bExport = true,
+			sSidebarCategory  = "player",
+			aDataMap = { "reference.backgrounds" }, 
+			sRecordDisplayClass = "background", 
 		},		
 	}
 	
@@ -22,6 +29,10 @@ function onInit()
 		local abilities = DB.findNode("reference.abilities");
 		if abilities then
 			abilities.setPublic(true);
+		end
+		local backgrounds = DB.findNode("reference.backgrounds");
+		if backgrounds then
+			backgrounds.setPublic(true);
 		end
 	end
 end
