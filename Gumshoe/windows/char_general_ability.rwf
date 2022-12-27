@@ -1,6 +1,6 @@
 <DocumentElement xmlns="http://tempuri.org/Ruleset.xsd">
   <WindowControls>
-    <WindowName>char_investigative_ability</WindowName>
+    <WindowName>char_general_ability</WindowName>
     <ControlName>abilitydetails</ControlName>
     <ZIndex>6</ZIndex>
     <ControlClass>FGSubWindow</ControlClass>
@@ -54,7 +54,7 @@
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>char_investigative_ability</WindowName>
+    <WindowName>char_general_ability</WindowName>
     <ControlName>btnExpand</ControlName>
     <ZIndex>7</ZIndex>
     <ControlClass>FGButton</ControlClass>
@@ -122,8 +122,8 @@ end
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>char_investigative_ability</WindowName>
-    <ControlName>char_investigative_ability</ControlName>
+    <WindowName>char_general_ability</WindowName>
+    <ControlName>char_general_ability</ControlName>
     <ZIndex>0</ZIndex>
     <ControlClass>FGWindow</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
@@ -131,7 +131,7 @@ end
       {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"BottomMargin","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"Comments"},
-      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"char_investigative_ability"}},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"char_general_ability"}},
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
       {"Name":"DataSource"},
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"63"}},
@@ -168,22 +168,17 @@ end
       {"Name":"Tooltip"},
       {"Name":"TooltipField"},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"WindowMargins","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"WindowMargins"},
       {"Name":"WindowTitle"},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"0"}}
 ]}}</Definition>
-    <LUACode>
-function setEdit(bEdit)
-	name.setReadOnly(not bEdit);
-	name.setLine(bEdit);
-	rating.setReadOnly(not bEdit);
-end</LUACode>
+    <LUACode />
     <GroupIndex>0</GroupIndex>
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>char_investigative_ability</WindowName>
+    <WindowName>char_general_ability</WindowName>
     <ControlName>iconClue</ControlName>
     <ZIndex>4</ZIndex>
     <ControlClass>FGIconControl</ControlClass>
@@ -233,7 +228,7 @@ end</LUACode>
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>char_investigative_ability</WindowName>
+    <WindowName>char_general_ability</WindowName>
     <ControlName>idelete</ControlName>
     <ZIndex>1</ZIndex>
     <ControlClass>FGButton</ControlClass>
@@ -293,7 +288,7 @@ end</LUACode>
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>char_investigative_ability</WindowName>
+    <WindowName>char_general_ability</WindowName>
     <ControlName>name</ControlName>
     <ZIndex>5</ZIndex>
     <ControlClass>FGStringField</ControlClass>
@@ -355,7 +350,7 @@ end</LUACode>
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>char_investigative_ability</WindowName>
+    <WindowName>char_general_ability</WindowName>
     <ControlName>pool</ControlName>
     <ZIndex>3</ZIndex>
     <ControlClass>FGNumberField</ControlClass>
@@ -418,7 +413,7 @@ end</LUACode>
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>char_investigative_ability</WindowName>
+    <WindowName>char_general_ability</WindowName>
     <ControlName>rating</ControlName>
     <ZIndex>2</ZIndex>
     <ControlClass>FGNumberField</ControlClass>

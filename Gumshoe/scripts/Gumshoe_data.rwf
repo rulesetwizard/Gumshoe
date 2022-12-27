@@ -74,8 +74,41 @@
 	},
 }
 
+local GeneralAbilities = {
+	"Athletics",
+	"Burglary",
+	"Business Affairs",
+	"Conceal",
+	"Disguise",
+	"Driving",
+	"Explosives",
+	"Filch",
+	"Fleeing",
+	"Gambling",
+	"Health",
+	"Hypnosis",
+	"Infiltration",
+	"Mechanics",
+	"Medic",
+	"Piloting",
+	"Preparedness",
+	"Public Relations",
+	"Riding",
+	"Scuffling",
+	"Sense Trouble",
+	"Shrink",
+	"Shooting",
+	"Stability",
+	"Surveillance",
+	"Unobtrusiveness",
+}
+
 function getInvestigativeAbilities()
     return InvestigativeAbilities;
+end
+
+function getGeneralAbilities()
+    return GeneralAbilities;
 end</Script>
     <RegisterScript>true</RegisterScript>
     <Encoding />
