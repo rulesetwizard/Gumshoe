@@ -42,20 +42,25 @@
   <Folders>
     <ID>2</ID>
     <ParentFolderID>0</ParentFolderID>
-    <Folder>Graphics</Folder>
+    <Folder>Data</Folder>
   </Folders>
   <Folders>
     <ID>3</ID>
-    <ParentFolderID>2</ParentFolderID>
-    <Folder>Icons</Folder>
+    <ParentFolderID>0</ParentFolderID>
+    <Folder>Graphics</Folder>
   </Folders>
   <Folders>
     <ID>4</ID>
-    <ParentFolderID>2</ParentFolderID>
-    <Folder>Sidebar</Folder>
+    <ParentFolderID>3</ParentFolderID>
+    <Folder>Icons</Folder>
   </Folders>
   <Folders>
     <ID>5</ID>
+    <ParentFolderID>3</ParentFolderID>
+    <Folder>Sidebar</Folder>
+  </Folders>
+  <Folders>
+    <ID>6</ID>
     <ParentFolderID>0</ParentFolderID>
     <Folder>Sidebar</Folder>
   </Folders>
@@ -64,11 +69,11 @@
 <DocumentElement xmlns="http://tempuri.org/Ruleset.xsd">
   <Windows>
     <Name>ability</Name>
-    <FolderID>5</FolderID>
+    <FolderID>6</FolderID>
   </Windows>
   <Windows>
     <Name>background</Name>
-    <FolderID>5</FolderID>
+    <FolderID>6</FolderID>
   </Windows>
   <Windows>
     <Name>char_general_abilities</Name>
@@ -1302,7 +1307,7 @@ function onInit()
     local ListNode = listAbilities.getDatabaseNode();
     if ListNode.getChildCount() == 0 then
 		-- Create abilities for each section
-		for _, ability in pairs(Gumshoe_data.getGeneralAbilities()) do
+		for _, ability in pairs(GumshoeData.getGeneralAbilities()) do
 			local wAbility = listAbilities.createWindow();
 			local nodeAbility = wAbility.getDatabaseNode();
 			DB.setValue(nodeAbility, "name", "string", ability);
@@ -2384,7 +2389,7 @@ function onInit()
     local ListNode = InvestigativeAbilitiesList.getDatabaseNode();
     if ListNode.getChildCount() == 0 then
 		-- Create sections
-        for section, abilities in pairs(Gumshoe_data.getInvestigativeAbilities()) do
+        for section, abilities in pairs(GumshoeData.getInvestigativeAbilities()) do
 			local wSection = InvestigativeAbilitiesList.createWindow();
             local nodeSection = wSection.getDatabaseNode();
 			DB.setValue(nodeSection, "sectionName", "string", section);
@@ -2701,6 +2706,7 @@ function setEdit(bEdit)
 	name.setReadOnly(not bEdit);
 	name.setLine(bEdit);
 	rating.setReadOnly(not bEdit);
+	pool.setReadOnly(not bEdit);
 end</LUACode>
     <GroupIndex>0</GroupIndex>
     <Template />
@@ -2934,9 +2940,23 @@ end</LUACode>
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"206"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"0"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"1"}}
 ]}}</Definition>
-    <LUACode />
+    <LUACode>
+function onDoubleClick(x, y)
+	GumshoeManager.UseInvestigativeAbility(window.getDatabaseNode());
+end
+
+function onValueChanged()
+	if getValue() &gt; window.rating.getValue() then
+		setValue(window.rating.getValue());
+	end
+end
+
+function onWheel(notches)
+	return false;
+end
+</LUACode>
     <GroupIndex>0</GroupIndex>
     <Template />
   </WindowControls>
@@ -2999,7 +3019,11 @@ end</LUACode>
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"163"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"0"}}
 ]}}</Definition>
-    <LUACode />
+    <LUACode>
+function onValueChanged()
+	window.pool.setValue(getValue());
+end
+</LUACode>
     <GroupIndex>0</GroupIndex>
     <Template />
   </WindowControls>
@@ -3337,10 +3361,10 @@ end</LUACode>
 function setEdit(bEdit)
 	listAbilities_iadd.setVisible(bEdit);
 	listAbilities_iedit.setVisible(bEdit);
-	spacerHeader.setVisible(bEdit);
 	sectionName.setReadOnly(not bEdit);
 	if not bEdit then
 		listAbilities_iedit.setValue(0);
+		spacerHeader.setVisible(bEdit);
 	end
 	for _,w in ipairs(listAbilities.getWindows()) do
 		w.setEdit(bEdit);
@@ -3395,7 +3419,7 @@ end</LUACode>
       {"Name":"Tooltip"},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"187"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"167"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"27"}}
 ]}}</Definition>
     <LUACode />
@@ -3448,7 +3472,7 @@ end</LUACode>
       {"Name":"Tooltip"},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"138"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"118"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"27"}}
 ]}}</Definition>
     <LUACode />
@@ -3684,9 +3708,8 @@ end</LUACode>
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"5"}}
 ]}}</Definition>
     <LUACode>
-function onValueChanged()
+function onButtonPress()
 	window.spacerHeader.setVisible(getValue() == 1);
-	super.onValueChanged();
 end
 </LUACode>
     <GroupIndex>0</GroupIndex>
@@ -3761,7 +3784,7 @@ end
     <ControlClass>FGCustomControl</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor","AdvancedAnchor":{"EdgeAnchor":"right","AnchorTo":"right"}}},
-      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"255;255;128;0"}},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"CanGrowVert"},
       {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"spacerHeader"}},
       {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
@@ -4665,8 +4688,8 @@ end
 
 <DocumentElement xmlns="http://tempuri.org/Ruleset.xsd">
   <Scripts>
-    <ScriptName>Gumshoe_data</ScriptName>
-    <FolderID>0</FolderID>
+    <ScriptName>GumshoeData</ScriptName>
+    <FolderID>2</FolderID>
     <Script>local InvestigativeAbilities = {
 	["ACADEMIC"] = {
 		"Anthropology",
@@ -4779,8 +4802,33 @@ end</Script>
     <Encoding />
   </Scripts>
   <Scripts>
+    <ScriptName>GumshoeManager</ScriptName>
+    <FolderID>0</FolderID>
+    <Script>
+function UseInvestigativeAbility(rAbility)
+
+	local PCnode = rAbility.getChild('......');
+	
+	local abilityName = DB.getChild(rAbility, "name");
+	local abilityPool = DB.getChild(rAbility, "pool");
+	local abilityPoolValue = abilityPool.getValue();
+	
+	local message = '';
+	if  abilityPoolValue &gt; 0 then
+		message = Interface.getString("UseInvestigativeAbility") ..  abilityName.getValue();
+		abilityPool.setValue(abilityPoolValue - 1);
+	else
+		message = Interface.getString("CantUseInvestigativeAbility") ..  abilityName.getValue();
+	end
+	ChatManager.Message(message, true, PCnode);
+
+end</Script>
+    <RegisterScript>true</RegisterScript>
+    <Encoding />
+  </Scripts>
+  <Scripts>
     <ScriptName>SidebarData</ScriptName>
-    <FolderID>5</FolderID>
+    <FolderID>6</FolderID>
     <Script>
 function onInit()
 	aRecordOverrides = {
@@ -4824,8 +4872,18 @@ end
 
 <DocumentElement xmlns="http://tempuri.org/Ruleset.xsd">
   <XMLFiles>
+    <XmlName>MessageStrings</XmlName>
+    <FolderID>2</FolderID>
+    <XML>&lt;?xml version="1.0" encoding="iso-8859-1"?&gt;
+&lt;root&gt;
+  &lt;string name="UseInvestigativeAbility"&gt;Spends 1 point of &lt;/string&gt;
+  &lt;string name="CantUseInvestigativeAbility"&gt;Cannot spend more points of &lt;/string&gt;
+&lt;/root&gt;      
+    </XML>
+  </XMLFiles>
+  <XMLFiles>
     <XmlName>SidebarStrings</XmlName>
-    <FolderID>5</FolderID>
+    <FolderID>6</FolderID>
     <XML>&lt;?xml version="1.0" encoding="iso-8859-1"?&gt;
 &lt;root&gt;
 	&lt;string name="library_recordtype_label_ability"&gt;Abilities&lt;/string&gt;
@@ -4840,22 +4898,22 @@ end
 <DocumentElement xmlns="http://tempuri.org/Ruleset.xsd">
   <Icons>
     <IconName>d6</IconName>
-    <FolderID>3</FolderID>
+    <FolderID>4</FolderID>
     <IconFile>Graphics\Icons\d6.png</IconFile>
   </Icons>
   <Icons>
     <IconName>footprint</IconName>
-    <FolderID>3</FolderID>
+    <FolderID>4</FolderID>
     <IconFile>Graphics\Icons\footprint.png</IconFile>
   </Icons>
   <Icons>
     <IconName>sidebar_icon_recordtype_ability</IconName>
-    <FolderID>4</FolderID>
+    <FolderID>5</FolderID>
     <IconFile>Graphics\Sidebar\sidebar_icon_ability.png</IconFile>
   </Icons>
   <Icons>
     <IconName>sidebar_icon_recordtype_background</IconName>
-    <FolderID>4</FolderID>
+    <FolderID>5</FolderID>
     <IconFile>Graphics\Sidebar\sidebar_icon_background.png</IconFile>
   </Icons>
 </DocumentElement>

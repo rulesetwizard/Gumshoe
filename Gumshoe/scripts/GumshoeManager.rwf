@@ -1,0 +1,27 @@
+<DocumentElement xmlns="http://tempuri.org/Ruleset.xsd">
+  <Scripts>
+    <ScriptName>GumshoeManager</ScriptName>
+    <FolderID>0</FolderID>
+    <Script>
+function UseInvestigativeAbility(rAbility)
+
+	local PCnode = rAbility.getChild('......');
+	
+	local abilityName = DB.getChild(rAbility, "name");
+	local abilityPool = DB.getChild(rAbility, "pool");
+	local abilityPoolValue = abilityPool.getValue();
+	
+	local message = '';
+	if  abilityPoolValue &gt; 0 then
+		message = Interface.getString("UseInvestigativeAbility") ..  abilityName.getValue();
+		abilityPool.setValue(abilityPoolValue - 1);
+	else
+		message = Interface.getString("CantUseInvestigativeAbility") ..  abilityName.getValue();
+	end
+	ChatManager.Message(message, true, PCnode);
+
+end</Script>
+    <RegisterScript>true</RegisterScript>
+    <Encoding />
+  </Scripts>
+</DocumentElement>

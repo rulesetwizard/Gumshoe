@@ -57,7 +57,7 @@ function onInit()
     local ListNode = listAbilities.getDatabaseNode();
     if ListNode.getChildCount() == 0 then
 		-- Create abilities for each section
-		for _, ability in pairs(Gumshoe_data.getGeneralAbilities()) do
+		for _, ability in pairs(GumshoeData.getGeneralAbilities()) do
 			local wAbility = listAbilities.createWindow();
 			local nodeAbility = wAbility.getDatabaseNode();
 			DB.setValue(nodeAbility, "name", "string", ability);

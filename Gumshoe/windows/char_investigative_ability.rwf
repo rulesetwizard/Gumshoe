@@ -178,6 +178,7 @@ function setEdit(bEdit)
 	name.setReadOnly(not bEdit);
 	name.setLine(bEdit);
 	rating.setReadOnly(not bEdit);
+	pool.setReadOnly(not bEdit);
 end</LUACode>
     <GroupIndex>0</GroupIndex>
     <Template />
@@ -411,9 +412,23 @@ end</LUACode>
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"206"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"0"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"1"}}
 ]}}</Definition>
-    <LUACode />
+    <LUACode>
+function onDoubleClick(x, y)
+	GumshoeManager.UseInvestigativeAbility(window.getDatabaseNode());
+end
+
+function onValueChanged()
+	if getValue() &gt; window.rating.getValue() then
+		setValue(window.rating.getValue());
+	end
+end
+
+function onWheel(notches)
+	return false;
+end
+</LUACode>
     <GroupIndex>0</GroupIndex>
     <Template />
   </WindowControls>
@@ -476,7 +491,11 @@ end</LUACode>
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"163"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"0"}}
 ]}}</Definition>
-    <LUACode />
+    <LUACode>
+function onValueChanged()
+	window.pool.setValue(getValue());
+end
+</LUACode>
     <GroupIndex>0</GroupIndex>
     <Template />
   </WindowControls>

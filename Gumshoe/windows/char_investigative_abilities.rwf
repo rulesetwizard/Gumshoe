@@ -57,7 +57,7 @@ function onInit()
     local ListNode = InvestigativeAbilitiesList.getDatabaseNode();
     if ListNode.getChildCount() == 0 then
 		-- Create sections
-        for section, abilities in pairs(Gumshoe_data.getInvestigativeAbilities()) do
+        for section, abilities in pairs(GumshoeData.getInvestigativeAbilities()) do
 			local wSection = InvestigativeAbilitiesList.createWindow();
             local nodeSection = wSection.getDatabaseNode();
 			DB.setValue(nodeSection, "sectionName", "string", section);

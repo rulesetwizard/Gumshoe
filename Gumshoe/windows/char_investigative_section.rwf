@@ -55,10 +55,10 @@
 function setEdit(bEdit)
 	listAbilities_iadd.setVisible(bEdit);
 	listAbilities_iedit.setVisible(bEdit);
-	spacerHeader.setVisible(bEdit);
 	sectionName.setReadOnly(not bEdit);
 	if not bEdit then
 		listAbilities_iedit.setValue(0);
+		spacerHeader.setVisible(bEdit);
 	end
 	for _,w in ipairs(listAbilities.getWindows()) do
 		w.setEdit(bEdit);
@@ -113,7 +113,7 @@ end</LUACode>
       {"Name":"Tooltip"},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"187"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"167"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"27"}}
 ]}}</Definition>
     <LUACode />
@@ -166,7 +166,7 @@ end</LUACode>
       {"Name":"Tooltip"},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"138"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"118"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"27"}}
 ]}}</Definition>
     <LUACode />
@@ -402,9 +402,8 @@ end</LUACode>
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"5"}}
 ]}}</Definition>
     <LUACode>
-function onValueChanged()
+function onButtonPress()
 	window.spacerHeader.setVisible(getValue() == 1);
-	super.onValueChanged();
 end
 </LUACode>
     <GroupIndex>0</GroupIndex>
@@ -479,7 +478,7 @@ end
     <ControlClass>FGCustomControl</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor","AdvancedAnchor":{"EdgeAnchor":"right","AnchorTo":"right"}}},
-      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"255;255;128;0"}},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"CanGrowVert"},
       {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"spacerHeader"}},
       {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
