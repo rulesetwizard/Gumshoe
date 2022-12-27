@@ -67,8 +67,10 @@ end
 function setEdit()
 	if getValue() &gt; 0 then
 		window.subInvestigative.subwindow.setEdit(true);
+		window.subGeneral.subwindow.setEdit(true);
 	else
 		window.subInvestigative.subwindow.setEdit(false);
+		window.subGeneral.subwindow.setEdit(false);
 	end;
 end</LUACode>
     <GroupIndex>0</GroupIndex>
