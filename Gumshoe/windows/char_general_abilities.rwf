@@ -175,7 +175,7 @@ end</LUACode>
       {"Name":"ScriptFile"},
       {"Name":"ScrollButtonIcon","Value":{"@xsi:type":"xsd:string","#text":"scrollbutton_normal"}},
       {"Name":"ScrollButtonMinimumHeight","Value":{"@xsi:type":"xsd:int","#text":"40"}},
-      {"Name":"ScrollTarget","Value":{"@xsi:type":"xsd:string","#text":"generalAbilitiesList"}},
+      {"Name":"ScrollTarget","Value":{"@xsi:type":"xsd:string","#text":"GeneralAbilitiesList"}},
       {"Name":"StackVertWith"},
       {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
       {"Name":"Tooltip"},
