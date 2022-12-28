@@ -37,9 +37,11 @@ function UseGeneralAbility(rAbility)
 	local message = '';
 	
 	if abilityRatingValue == 0 then
-		message = Interface.getString("UntrainedGeneralAbility") ..  abilityName.getValue();
-		ChatManager.Message(message, true, PCnode);
-		return false;
+		if OptionsManager.isOption("FORGIVING", "no") then
+			message = Interface.getString("UntrainedGeneralAbility") ..  abilityName.getValue();
+			ChatManager.Message(message, true, PCnode);
+			return false;
+		end
 	end
 	
 	if testValue &gt; abilityPoolValue then

@@ -4902,6 +4902,13 @@ local GeneralAbilities = {
 	"Unobtrusiveness",
 }
 
+function onInit()
+
+	OptionsManager.registerOption2("FORGIVING", true, "GumshoeOptionsGroup", "ForgivingOptionLabel", "option_entry_cycler", 
+			{ labels = "OptionUnforgiving", values = "no", baselabel = "OptionForgiving", baseval = "yes", default = "yes" });
+	
+end
+
 function getInvestigativeAbilities()
     return InvestigativeAbilities;
 end
@@ -4950,9 +4957,11 @@ function UseGeneralAbility(rAbility)
 	local message = '';
 	
 	if abilityRatingValue == 0 then
-		message = Interface.getString("UntrainedGeneralAbility") ..  abilityName.getValue();
-		ChatManager.Message(message, true, PCnode);
-		return false;
+		if OptionsManager.isOption("FORGIVING", "no") then
+			message = Interface.getString("UntrainedGeneralAbility") ..  abilityName.getValue();
+			ChatManager.Message(message, true, PCnode);
+			return false;
+		end
 	end
 	
 	if testValue &gt; abilityPoolValue then
@@ -5017,10 +5026,20 @@ end
     <FolderID>2</FolderID>
     <XML>&lt;?xml version="1.0" encoding="iso-8859-1"?&gt;
 &lt;root&gt;
-  &lt;string name="UseInvestigativeAbility"&gt;Spends 1 point of &lt;/string&gt;
-  &lt;string name="CantUseInvestigativeAbility"&gt;Cannot spend more points of &lt;/string&gt;
-  &lt;string name="CantUseGeneralAbility"&gt;Not enough pool points to spend of &lt;/string&gt;
-  &lt;string name="UntrainedGeneralAbility"&gt;Cannot use untrained ability &lt;/string&gt;
+
+	&lt;!-- Abilities --&gt;
+	&lt;string name="UseInvestigativeAbility"&gt;Spends 1 point of &lt;/string&gt;
+	&lt;string name="CantUseInvestigativeAbility"&gt;Cannot spend more points of &lt;/string&gt;
+	&lt;string name="CantUseGeneralAbility"&gt;Not enough pool points to spend of &lt;/string&gt;
+	&lt;string name="UntrainedGeneralAbility"&gt;Cannot use untrained ability &lt;/string&gt;
+
+  	&lt;!-- Options --&gt;
+	&lt;string name="GumshoeOptionsGroup"&gt;Gumshoe System&lt;/string&gt;
+	&lt;string name="ForgivingOptionLabel"&gt;General ability tests type&lt;/string&gt;
+	&lt;string name="OptionForgiving"&gt;Forgiving&lt;/string&gt;
+	&lt;string name="OptionUnforgiving"&gt;Unforgiving&lt;/string&gt;
+  
+  
 &lt;/root&gt;      
     </XML>
   </XMLFiles>
