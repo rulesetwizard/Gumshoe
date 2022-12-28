@@ -1774,7 +1774,7 @@ end</LUACode>
   <WindowControls>
     <WindowName>char_general_ability</WindowName>
     <ControlName>abilitydetails</ControlName>
-    <ZIndex>7</ZIndex>
+    <ZIndex>6</ZIndex>
     <ControlClass>FGSubWindow</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"Activate","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
@@ -1828,7 +1828,7 @@ end</LUACode>
   <WindowControls>
     <WindowName>char_general_ability</WindowName>
     <ControlName>btnExpand</ControlName>
-    <ZIndex>8</ZIndex>
+    <ZIndex>7</ZIndex>
     <ControlClass>FGButton</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor","AdvancedAnchor":{"EdgeAnchor":"right","AnchorTo":"left","Parent":"idelete"}}},
@@ -1957,7 +1957,7 @@ end</LUACode>
   <WindowControls>
     <WindowName>char_general_ability</WindowName>
     <ControlName>iconD6</ControlName>
-    <ZIndex>9</ZIndex>
+    <ZIndex>8</ZIndex>
     <ControlClass>FGIconControl</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor","AdvancedAnchor":{"EdgeAnchor":"right","AnchorTo":"right","Parent":"test"}}},
@@ -2067,7 +2067,7 @@ end</LUACode>
   <WindowControls>
     <WindowName>char_general_ability</WindowName>
     <ControlName>name</ControlName>
-    <ZIndex>6</ZIndex>
+    <ZIndex>5</ZIndex>
     <ControlClass>FGStringField</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor","AdvancedAnchor":{"EdgeAnchor":"right","AnchorTo":"left","Parent":"rating"}}},
@@ -2166,7 +2166,7 @@ end</LUACode>
       {"Name":"Merge"},
       {"Name":"MinimumHeight"},
       {"Name":"MinimumWidth"},
-      {"Name":"MinValue"},
+      {"Name":"MinValue","Value":{"@xsi:type":"xsd:decimal","#text":"0"}},
       {"Name":"NextTabTarget"},
       {"Name":"NoDrag","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"NoDrop","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
@@ -2229,7 +2229,7 @@ end</LUACode>
       {"Name":"Merge"},
       {"Name":"MinimumHeight"},
       {"Name":"MinimumWidth"},
-      {"Name":"MinValue"},
+      {"Name":"MinValue","Value":{"@xsi:type":"xsd:decimal","#text":"0"}},
       {"Name":"NextTabTarget"},
       {"Name":"NoDrag","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"NoDrop","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
@@ -2248,14 +2248,17 @@ end</LUACode>
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"233"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"0"}}
 ]}}</Definition>
-    <LUACode />
+    <LUACode>
+function onValueChanged()
+	window.pool.setValue(getValue());
+end</LUACode>
     <GroupIndex>0</GroupIndex>
     <Template />
   </WindowControls>
   <WindowControls>
     <WindowName>char_general_ability</WindowName>
     <ControlName>test</ControlName>
-    <ZIndex>5</ZIndex>
+    <ZIndex>4</ZIndex>
     <ControlClass>FGNumberField</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor","AdvancedAnchor":{"EdgeAnchor":"right","AnchorTo":"left","Parent":"idelete"}}},
@@ -2270,7 +2273,7 @@ end</LUACode>
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"26"}},
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"40"}},
-      {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","DiceRollString":"d6 + {self}","DiceRollType":"generalability","UseModStack":"true","ResetModStack":"true","SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":"true","Targeting":"each","AdditionalInfo":null}},
+      {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","DiceRollString":"d6 + {self}","DiceRollDescription":"{name} Test","DiceRollType":"generalability","UseModStack":"true","ResetModStack":"true","SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":"true","Targeting":"each","AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
@@ -2292,7 +2295,7 @@ end</LUACode>
       {"Name":"Merge"},
       {"Name":"MinimumHeight"},
       {"Name":"MinimumWidth"},
-      {"Name":"MinValue"},
+      {"Name":"MinValue","Value":{"@xsi:type":"xsd:decimal","#text":"0"}},
       {"Name":"NextTabTarget"},
       {"Name":"NoDrag","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"NoDrop","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
@@ -2313,17 +2316,10 @@ end</LUACode>
 ]}}</Definition>
     <LUACode>
 function onBeforeDiceRoll(dragInfo)
-
+	return GumshoeManager.UseGeneralAbility(window.getDatabaseNode());
 end
 
 function onAfterDiceRoll()
-	local value = getValue();
-	if value &gt; 0 then
-		local poolValue = window.pool.getValue();
-		poolValue = poolValue - value;
-		window.pool.setValue(poolValue);
-	end
-	
 	setValue(0);
 end
 
@@ -4817,12 +4813,44 @@ function UseInvestigativeAbility(rAbility)
 	if  abilityPoolValue &gt; 0 then
 		message = Interface.getString("UseInvestigativeAbility") ..  abilityName.getValue();
 		abilityPool.setValue(abilityPoolValue - 1);
+		ChatManager.Message(message, true, PCnode);
+		return true;
 	else
 		message = Interface.getString("CantUseInvestigativeAbility") ..  abilityName.getValue();
+		ChatManager.Message(message, true, PCnode);
+		return false;
 	end
-	ChatManager.Message(message, true, PCnode);
+end
 
-end</Script>
+function UseGeneralAbility(rAbility)
+
+	local PCnode = rAbility.getChild('....');
+	
+	local abilityName = DB.getChild(rAbility, "name");
+	local abilityPool = DB.getChild(rAbility, "pool");
+	local abilityPoolValue = abilityPool.getValue();
+	local abilityRatingValue = DB.getChild(rAbility, "rating").getValue()
+	local testValue = DB.getChild(rAbility, "test").getValue();
+	
+	local message = '';
+	
+	if abilityRatingValue == 0 then
+		message = Interface.getString("UntrainedGeneralAbility") ..  abilityName.getValue();
+		ChatManager.Message(message, true, PCnode);
+		return false;
+	end
+	
+	if testValue &gt; abilityPoolValue then
+		message = Interface.getString("CantUseGeneralAbility") ..  abilityName.getValue();
+		ChatManager.Message(message, true, PCnode);
+		return false;
+	else
+		abilityPool.setValue(abilityPoolValue - testValue);
+		return true;
+	end
+end
+
+</Script>
     <RegisterScript>true</RegisterScript>
     <Encoding />
   </Scripts>
@@ -4878,6 +4906,8 @@ end
 &lt;root&gt;
   &lt;string name="UseInvestigativeAbility"&gt;Spends 1 point of &lt;/string&gt;
   &lt;string name="CantUseInvestigativeAbility"&gt;Cannot spend more points of &lt;/string&gt;
+  &lt;string name="CantUseGeneralAbility"&gt;Not enough pool points to spend of &lt;/string&gt;
+  &lt;string name="UntrainedGeneralAbility"&gt;Cannot use untrained ability &lt;/string&gt;
 &lt;/root&gt;      
     </XML>
   </XMLFiles>

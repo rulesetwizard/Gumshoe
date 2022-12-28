@@ -6,6 +6,8 @@
 &lt;root&gt;
   &lt;string name="UseInvestigativeAbility"&gt;Spends 1 point of &lt;/string&gt;
   &lt;string name="CantUseInvestigativeAbility"&gt;Cannot spend more points of &lt;/string&gt;
+  &lt;string name="CantUseGeneralAbility"&gt;Not enough pool points to spend of &lt;/string&gt;
+  &lt;string name="UntrainedGeneralAbility"&gt;Cannot use untrained ability &lt;/string&gt;
 &lt;/root&gt;      
     </XML>
   </XMLFiles>

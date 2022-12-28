@@ -15,12 +15,44 @@ function UseInvestigativeAbility(rAbility)
 	if  abilityPoolValue &gt; 0 then
 		message = Interface.getString("UseInvestigativeAbility") ..  abilityName.getValue();
 		abilityPool.setValue(abilityPoolValue - 1);
+		ChatManager.Message(message, true, PCnode);
+		return true;
 	else
 		message = Interface.getString("CantUseInvestigativeAbility") ..  abilityName.getValue();
+		ChatManager.Message(message, true, PCnode);
+		return false;
 	end
-	ChatManager.Message(message, true, PCnode);
+end
 
-end</Script>
+function UseGeneralAbility(rAbility)
+
+	local PCnode = rAbility.getChild('....');
+	
+	local abilityName = DB.getChild(rAbility, "name");
+	local abilityPool = DB.getChild(rAbility, "pool");
+	local abilityPoolValue = abilityPool.getValue();
+	local abilityRatingValue = DB.getChild(rAbility, "rating").getValue()
+	local testValue = DB.getChild(rAbility, "test").getValue();
+	
+	local message = '';
+	
+	if abilityRatingValue == 0 then
+		message = Interface.getString("UntrainedGeneralAbility") ..  abilityName.getValue();
+		ChatManager.Message(message, true, PCnode);
+		return false;
+	end
+	
+	if testValue &gt; abilityPoolValue then
+		message = Interface.getString("CantUseGeneralAbility") ..  abilityName.getValue();
+		ChatManager.Message(message, true, PCnode);
+		return false;
+	else
+		abilityPool.setValue(abilityPoolValue - testValue);
+		return true;
+	end
+end
+
+</Script>
     <RegisterScript>true</RegisterScript>
     <Encoding />
   </Scripts>
