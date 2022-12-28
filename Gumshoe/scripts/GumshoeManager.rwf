@@ -50,9 +50,7 @@ function UseGeneralAbility(rAbility)
 		abilityPool.setValue(abilityPoolValue - testValue);
 		return true;
 	end
-end
-
-</Script>
+end</Script>
     <RegisterScript>true</RegisterScript>
     <Encoding />
   </Scripts>
