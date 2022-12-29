@@ -316,6 +316,7 @@ function handleDrop(draginfo, nodeTargetList)
 				local sClass, sRecord = draginfo.getShortcutData();
 				DB.setValue(nodeEntry, "link", "windowreference", sClass, sRecord);
 				DB.setValue(nodeEntry, "name", "string", DB.getValue(nodeSource, "name"));
+				window.setEdit(window.listAbilities_iedit.isVisible());
 				return true;
 			else
 				ChatManager.SystemMessage(Interface.getString("IncorrectAbility"));

@@ -9,6 +9,7 @@ function onInit()
 			bExport = true,
 			aDataMap = { "reference.abilities" }, 
 			sRecordDisplayClass = "ability", 
+			sListDisplayClass = "abilitylist",
 			sSidebarCategory  = "player",
 			aCustomFilters = {
 				["Type"] = { sField = "type" },
