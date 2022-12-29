@@ -116,7 +116,20 @@ end
 
 function getGeneralAbilities()
     return GeneralAbilities;
-end</Script>
+end
+
+function resolveRefNode(sRecord)
+	local nodeSource = DB.findNode(sRecord);
+	if not nodeSource then
+		local sRecordSansModule = StringManager.split(sRecord, "@")[1];
+		nodeSource = DB.findNode(sRecordSansModule .. "@*");
+		if not nodeSource then
+			ChatManager.SystemMessage(Interface.getString("IncorrectAbility"));
+		end
+	end
+	return nodeSource;
+end
+</Script>
     <RegisterScript>true</RegisterScript>
     <Encoding />
   </Scripts>

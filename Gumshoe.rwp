@@ -1551,7 +1551,7 @@ end</LUACode>
       {"Name":"WindowListChildDefinition","Value":{"@xsi:type":"ArrayOfChildDefinition"}},
       {"Name":"WindowListClassName","Value":{"@xsi:type":"xsd:string","#text":"char_general_ability"}},
       {"Name":"WindowListFilterBy","Value":{"@xsi:type":"FilterByDefinition","FilterSourceType":"Control","FilterOnSourceType":"Control"}},
-      {"Name":"WindowListSortBy","Value":{"@xsi:type":"ArrayOfSortByDefinition"}},
+      {"Name":"WindowListSortBy","Value":{"@xsi:type":"ArrayOfSortByDefinition","SortByDefinition":{"Descending":{"@xsi:nil":"true"},"SourceType":"Control","SourceName":"name"}}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"1"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"23"}}
 ]}}</Definition>
@@ -1562,23 +1562,24 @@ end
 function handleDrop(draginfo, nodeTargetList)
 	if draginfo.isType("shortcut") then
 		local sClass, sRecord = draginfo.getShortcutData();
---		if sClass == "weapon" then
---			local nodeSource = ManagerOGL.resolveRefNode(sRecord);
---			if not nodeSource then
---				return;
---			end
---			local nodeList = getDatabaseNode();
---			local nodeEntry = nodeList.createChild();
---
---			local sClass, sRecord = draginfo.getShortcutData();
---			DB.setValue(nodeEntry, "linkAttack", "windowreference", sClass, sRecord);
---			DB.setValue(nodeEntry, "attackName", "string", DB.getValue(nodeSource, "name"));
---			DB.setValue(nodeEntry, "damageDice", "dice", DB.getValue(nodeSource, "weaponDamage"));
---			DB.setValue(nodeEntry, "damageItem", "number", DB.getValue(nodeSource, "weaponDamagemodifier")); -- From dieFieldModifier template
---			DB.setValue(nodeEntry, "attackProperties", "string", DB.getValue(nodeSource, "weaponProperties"));
---
---			return true;
---		end
+		if sClass == "ability" then
+			local nodeSource = GumshoeData.resolveRefNode(sRecord);
+			if not nodeSource then
+				return;
+			end
+			local nodeList = getDatabaseNode();
+			local nodeEntry = nodeList.createChild();
+	
+			if DB.getValue(nodeSource, "type") == 'general' then
+				local sClass, sRecord = draginfo.getShortcutData();
+				DB.setValue(nodeEntry, "link", "windowreference", sClass, sRecord);
+				DB.setValue(nodeEntry, "name", "string", DB.getValue(nodeSource, "name"));
+				return true;
+			else
+				ChatManager.SystemMessage(Interface.getString("IncorrectAbility"));
+				return false;
+			end
+		end
 	end
 end
 
@@ -1946,7 +1947,7 @@ end
       {"Name":"Tooltip"},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"333"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"330"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"3"}}
 ]}}</Definition>
     <LUACode>
@@ -2025,7 +2026,7 @@ end</LUACode>
   <WindowControls>
     <WindowName>char_general_ability</WindowName>
     <ControlName>iconD6</ControlName>
-    <ZIndex>10</ZIndex>
+    <ZIndex>9</ZIndex>
     <ControlClass>FGIconControl</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor","AdvancedAnchor":{"EdgeAnchor":"right","AnchorTo":"right","Parent":"test"}}},
@@ -2065,7 +2066,7 @@ end</LUACode>
       {"Name":"Tooltip"},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"291"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"288"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"11"}}
 ]}}</Definition>
     <LUACode />
@@ -2125,7 +2126,7 @@ end</LUACode>
       {"Name":"Tooltip"},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"377"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"374"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"3"}}
 ]}}</Definition>
     <LUACode />
@@ -2135,7 +2136,7 @@ end</LUACode>
   <WindowControls>
     <WindowName>char_general_ability</WindowName>
     <ControlName>link</ControlName>
-    <ZIndex>9</ZIndex>
+    <ZIndex>8</ZIndex>
     <ControlClass>FGLinkField</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor","AdvancedAnchor":{"EdgeAnchor":"right","AnchorTo":"left","Parent":"idelete"}}},
@@ -2180,7 +2181,7 @@ end</LUACode>
       {"Name":"Tooltip"},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"354"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"351"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"3"}}
 ]}}</Definition>
     <LUACode />
@@ -2205,7 +2206,7 @@ end</LUACode>
       {"Name":"DelayKeyUpdate","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
-      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"210"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"205"}},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"EmptyText"},
@@ -2305,7 +2306,7 @@ end</LUACode>
       {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"251"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"248"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"0"}}
 ]}}</Definition>
     <LUACode />
@@ -2368,7 +2369,7 @@ end</LUACode>
       {"Name":"Tooltip"},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"213"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"210"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"0"}}
 ]}}</Definition>
     <LUACode>
@@ -2434,7 +2435,7 @@ end</LUACode>
       {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"295"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"292"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"0"}}
 ]}}</Definition>
     <LUACode>
@@ -3635,7 +3636,7 @@ end</LUACode>
       {"Name":"MaximumHeight"},
       {"Name":"MaximumWidth"},
       {"Name":"Merge"},
-      {"Name":"MinimumHeight"},
+      {"Name":"MinimumHeight","Value":{"@xsi:type":"xsd:int","#text":"30"}},
       {"Name":"MinimumWidth"},
       {"Name":"NextTabTarget"},
       {"Name":"NoScroll"},
@@ -3653,7 +3654,7 @@ end</LUACode>
       {"Name":"WindowListChildDefinition","Value":{"@xsi:type":"ArrayOfChildDefinition"}},
       {"Name":"WindowListClassName","Value":{"@xsi:type":"xsd:string","#text":"char_investigative_ability"}},
       {"Name":"WindowListFilterBy","Value":{"@xsi:type":"FilterByDefinition","FilterSourceType":"Control","FilterOnSourceType":"Control"}},
-      {"Name":"WindowListSortBy","Value":{"@xsi:type":"ArrayOfSortByDefinition"}},
+      {"Name":"WindowListSortBy","Value":{"@xsi:type":"ArrayOfSortByDefinition","SortByDefinition":{"Descending":{"@xsi:nil":"true"},"SourceType":"Control","SourceName":"name"}}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"50"}}
 ]}}</Definition>
@@ -3664,23 +3665,24 @@ end
 function handleDrop(draginfo, nodeTargetList)
 	if draginfo.isType("shortcut") then
 		local sClass, sRecord = draginfo.getShortcutData();
---		if sClass == "weapon" then
---			local nodeSource = ManagerOGL.resolveRefNode(sRecord);
---			if not nodeSource then
---				return;
---			end
---			local nodeList = getDatabaseNode();
---			local nodeEntry = nodeList.createChild();
---
---			local sClass, sRecord = draginfo.getShortcutData();
---			DB.setValue(nodeEntry, "linkAttack", "windowreference", sClass, sRecord);
---			DB.setValue(nodeEntry, "attackName", "string", DB.getValue(nodeSource, "name"));
---			DB.setValue(nodeEntry, "damageDice", "dice", DB.getValue(nodeSource, "weaponDamage"));
---			DB.setValue(nodeEntry, "damageItem", "number", DB.getValue(nodeSource, "weaponDamagemodifier")); -- From dieFieldModifier template
---			DB.setValue(nodeEntry, "attackProperties", "string", DB.getValue(nodeSource, "weaponProperties"));
---
---			return true;
---		end
+		if sClass == "ability" then
+			local nodeSource = GumshoeData.resolveRefNode(sRecord);
+			if not nodeSource then
+				return;
+			end
+			local nodeList = getDatabaseNode();
+			local nodeEntry = nodeList.createChild();
+	
+			if DB.getValue(nodeSource, "type") == 'investigative' then
+				local sClass, sRecord = draginfo.getShortcutData();
+				DB.setValue(nodeEntry, "link", "windowreference", sClass, sRecord);
+				DB.setValue(nodeEntry, "name", "string", DB.getValue(nodeSource, "name"));
+				return true;
+			else
+				ChatManager.SystemMessage(Interface.getString("IncorrectAbility"));
+				return false;
+			end
+		end
 	end
 end
 
@@ -5957,7 +5959,20 @@ end
 
 function getGeneralAbilities()
     return GeneralAbilities;
-end</Script>
+end
+
+function resolveRefNode(sRecord)
+	local nodeSource = DB.findNode(sRecord);
+	if not nodeSource then
+		local sRecordSansModule = StringManager.split(sRecord, "@")[1];
+		nodeSource = DB.findNode(sRecordSansModule .. "@*");
+		if not nodeSource then
+			ChatManager.SystemMessage(Interface.getString("IncorrectAbility"));
+		end
+	end
+	return nodeSource;
+end
+</Script>
     <RegisterScript>true</RegisterScript>
     <Encoding />
   </Scripts>
@@ -6074,6 +6089,8 @@ end
 	&lt;string name="CantUseInvestigativeAbility"&gt;Cannot spend more points of &lt;/string&gt;
 	&lt;string name="CantUseGeneralAbility"&gt;Not enough pool points to spend of &lt;/string&gt;
 	&lt;string name="UntrainedGeneralAbility"&gt;Cannot use untrained ability &lt;/string&gt;
+	&lt;string name="IncorrectAbility"&gt;Ability type does not match&lt;/string&gt;
+	&lt;string name="LockedList"&gt;The list is not in edit mode&lt;/string&gt;
 
   	&lt;!-- Options --&gt;
 	&lt;string name="GumshoeOptionsGroup"&gt;Gumshoe System&lt;/string&gt;

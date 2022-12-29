@@ -10,6 +10,8 @@
 	&lt;string name="CantUseInvestigativeAbility"&gt;Cannot spend more points of &lt;/string&gt;
 	&lt;string name="CantUseGeneralAbility"&gt;Not enough pool points to spend of &lt;/string&gt;
 	&lt;string name="UntrainedGeneralAbility"&gt;Cannot use untrained ability &lt;/string&gt;
+	&lt;string name="IncorrectAbility"&gt;Ability type does not match&lt;/string&gt;
+	&lt;string name="LockedList"&gt;The list is not in edit mode&lt;/string&gt;
 
   	&lt;!-- Options --&gt;
 	&lt;string name="GumshoeOptionsGroup"&gt;Gumshoe System&lt;/string&gt;
