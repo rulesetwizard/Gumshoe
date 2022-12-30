@@ -52,7 +52,7 @@
 ]}}</Definition>
     <LUACode>
 function onValueChanged()
-	window.parentcontrol.window.windowlist.window.windowlist.window.parentcontrol.window.CalculateBuildPoints();
+	window.parentcontrol.window.windowlist.window.windowlist.window.CalculateBuildPoints();
 end
 </LUACode>
     <GroupIndex>0</GroupIndex>

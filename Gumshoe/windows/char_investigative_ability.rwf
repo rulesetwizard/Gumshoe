@@ -494,7 +494,7 @@ end
     <LUACode>
 function onValueChanged()
 	window.pool.setValue(getValue());
-	window.windowlist.window.windowlist.window.parentcontrol.window.CalculateBuildPoints();
+	window.windowlist.window.windowlist.window.CalculateBuildPoints();
 end
 </LUACode>
     <GroupIndex>0</GroupIndex>

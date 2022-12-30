@@ -52,6 +52,30 @@ function UseGeneralAbility(rAbility)
 		abilityPool.setValue(abilityPoolValue - testValue);
 		return true;
 	end
+end
+
+function getBuildPointsCost(w)
+	local nodeWin = w.getDatabaseNode();
+	local buildPointsType = nodeWin.getChild('buildPointsType').getValue();
+	
+	if buildPointsType == '' or buildPointsType == 'normal' then
+		return nodeWin.getChild('rating').getValue();
+	end
+
+	if buildPointsType == '' or buildPointsType == 'half' then
+		return math.ceil(nodeWin.getChild('rating').getValue() / 2);
+	end
+
+	if buildPointsType == '' or buildPointsType == 'exotic' then
+		local rating = nodeWin.getChild('rating').getValue();
+		if rating &lt;= 0 then
+			return 0;
+		else
+			return 5 + (rating-1);
+		end
+		
+	end
+
 end</Script>
     <RegisterScript>true</RegisterScript>
     <Encoding />
