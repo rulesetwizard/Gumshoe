@@ -3091,7 +3091,7 @@ end
       {"Name":"StackVertWith"},
       {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
       {"Name":"StringCyclerAlign","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"StringCyclerItems","Value":{"@xsi:type":"ArrayOfLabelValue","LabelValue":[{"Label":"Half","Value":"half"},{"Label":"Exotic","Value":"exotic"}]}},
+      {"Name":"StringCyclerItems","Value":{"@xsi:type":"ArrayOfLabelValue","LabelValue":[{"Label":"Half","Value":"half"},{"Label":"Exotic","Value":"exotic"},{"Label":"Free","Value":"free"}]}},
       {"Name":"Tooltip"},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
@@ -4254,7 +4254,7 @@ end
       {"Name":"StackVertWith"},
       {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
       {"Name":"StringCyclerAlign","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"StringCyclerItems","Value":{"@xsi:type":"ArrayOfLabelValue","LabelValue":[{"Label":"Half","Value":"half"},{"Label":"Exotic","Value":"exotic"}]}},
+      {"Name":"StringCyclerItems","Value":{"@xsi:type":"ArrayOfLabelValue","LabelValue":[{"Label":"Half","Value":"half"},{"Label":"Exotic","Value":"exotic"},{"Label":"Free","Value":"free"}]}},
       {"Name":"Tooltip"},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
@@ -8124,9 +8124,10 @@ function getBuildPointsCost(w)
 		else
 			return 5 + (rating-1);
 		end
-		
 	end
 
+	--Free
+	return 0;
 end</Script>
     <RegisterScript>true</RegisterScript>
     <Encoding />

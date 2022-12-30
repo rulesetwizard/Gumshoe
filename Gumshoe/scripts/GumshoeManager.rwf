@@ -73,9 +73,10 @@ function getBuildPointsCost(w)
 		else
 			return 5 + (rating-1);
 		end
-		
 	end
 
+	--Free
+	return 0;
 end</Script>
     <RegisterScript>true</RegisterScript>
     <Encoding />

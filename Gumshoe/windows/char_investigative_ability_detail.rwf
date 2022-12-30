@@ -43,7 +43,7 @@
       {"Name":"StackVertWith"},
       {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
       {"Name":"StringCyclerAlign","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"StringCyclerItems","Value":{"@xsi:type":"ArrayOfLabelValue","LabelValue":[{"Label":"Half","Value":"half"},{"Label":"Exotic","Value":"exotic"}]}},
+      {"Name":"StringCyclerItems","Value":{"@xsi:type":"ArrayOfLabelValue","LabelValue":[{"Label":"Half","Value":"half"},{"Label":"Exotic","Value":"exotic"},{"Label":"Free","Value":"free"}]}},
       {"Name":"Tooltip"},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
