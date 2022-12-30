@@ -472,7 +472,7 @@ end
       {"Name":"Merge"},
       {"Name":"MinimumHeight"},
       {"Name":"MinimumWidth"},
-      {"Name":"MinValue"},
+      {"Name":"MinValue","Value":{"@xsi:type":"xsd:decimal","#text":"0"}},
       {"Name":"NextTabTarget"},
       {"Name":"NoDrag"},
       {"Name":"NoDrop"},
@@ -494,6 +494,7 @@ end
     <LUACode>
 function onValueChanged()
 	window.pool.setValue(getValue());
+	window.windowlist.window.windowlist.window.parentcontrol.window.CalculateBuildPoints();
 end
 </LUACode>
     <GroupIndex>0</GroupIndex>
