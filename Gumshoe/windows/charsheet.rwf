@@ -160,21 +160,12 @@
       {"Name":"Tooltip"},
       {"Name":"TooltipField","Value":{"@xsi:type":"xsd:string","#text":"name"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"WindowMargins"},
+      {"Name":"WindowMargins","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"WindowTitle"},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"0"}}
 ]}}</Definition>
-    <LUACode>
-function onInit()
-	-- When any ability bonus changes we must update all the related bonuses (skills, AC, HP)
-	DB.addHandler(DB.getPath(getDatabaseNode(), ".abilities.*.bonus"), "onUpdate", onAbilityBonusChanged);
-end
-
-function onAbilityBonusChanged(nodeAbility)
-	skills.subwindow.UpdateSkills();
-	combat.subwindow.AC.onSourceUpdate();
-end</LUACode>
+    <LUACode />
     <GroupIndex>0</GroupIndex>
     <Template />
   </WindowControls>

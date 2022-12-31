@@ -62,6 +62,8 @@ function onInit()
 			local nodeAbility = wAbility.getDatabaseNode();
 			DB.setValue(nodeAbility, "name", "string", ability);
 		end
+        -- Set edit mode on
+        parentcontrol.window.btnEditLists.setValue(1);
     end
     
 	CalculateBuildPoints();
