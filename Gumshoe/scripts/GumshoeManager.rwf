@@ -75,6 +75,10 @@ function getBuildPointsCost(w)
 		end
 	end
 
+	if buildPointsType == '' or buildPointsType == 'custom' then
+		return nodeWin.getChild('customBuildPoints').getValue();
+	end
+
 	--Free
 	return 0;
 end</Script>
