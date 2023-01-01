@@ -299,7 +299,7 @@ end
       {"Name":"Tooltip"},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"1"}},
-      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"148"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"155"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"349"}}
 ]}}</Definition>
     <LUACode />
@@ -377,10 +377,10 @@ function handleDrop(draginfo, nodeTargetList)
 			if not nodeSource then
 				return;
 			end
-			local nodeList = getDatabaseNode();
-			local nodeEntry = nodeList.createChild();
 	
 			if DB.getValue(nodeSource, "type") == 'general' then
+				local nodeList = getDatabaseNode();
+				local nodeEntry = nodeList.createChild();
 				local sClass, sRecord = draginfo.getShortcutData();
 				DB.setValue(nodeEntry, "link", "windowreference", sClass, sRecord);
 				DB.setValue(nodeEntry, "name", "string", DB.getValue(nodeSource, "name"));
@@ -707,7 +707,7 @@ end
       {"Name":"Tooltip"},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"1"}},
-      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"266"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"273"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"349"}}
 ]}}</Definition>
     <LUACode />
