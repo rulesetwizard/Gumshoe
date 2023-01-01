@@ -455,20 +455,34 @@ end</LUACode>
       {"Name":"NoDrop"},
       {"Name":"NoKeyEdit"},
       {"Name":"PrevTabTarget"},
-      {"Name":"ReadOnly"},
+      {"Name":"ReadOnly","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
       {"Name":"ScriptFile"},
       {"Name":"Source"},
       {"Name":"StackVertWith"},
       {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
-      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Double click to spend 1 point from your pool. Alt+double click to recover 1 point."}},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"248"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"0"}}
 ]}}</Definition>
-    <LUACode />
+    <LUACode>function onDoubleClick(x, y)
+	local nodeWin = window.getDatabaseNode();
+	GumshoeManager.UseAbilityPool(nodeWin, nodeWin.getChild('....'), Input.isAltPressed());
+end
+
+function onValueChanged()
+	if getValue() &gt; window.rating.getValue() then
+		setValue(window.rating.getValue());
+	end
+end
+
+function onWheel(notches)
+	return false;
+end
+</LUACode>
     <GroupIndex>0</GroupIndex>
     <Template />
   </WindowControls>

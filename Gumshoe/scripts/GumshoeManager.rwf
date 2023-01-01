@@ -3,24 +3,29 @@
     <ScriptName>GumshoeManager</ScriptName>
     <FolderID>0</FolderID>
     <Script>
-function UseInvestigativeAbility(rAbility)
+function UseAbilityPool(rAbility, PCnode, bRecover)
 
-	local PCnode = rAbility.getChild('......');
-	
 	local abilityName = DB.getChild(rAbility, "name");
 	local abilityPool = DB.getChild(rAbility, "pool");
 	local abilityPoolValue = abilityPool.getValue();
 	
 	local message = '';
-	if  abilityPoolValue &gt; 0 then
-		message = Interface.getString("UseInvestigativeAbility") ..  abilityName.getValue();
-		abilityPool.setValue(abilityPoolValue - 1);
+	if bRecover then
+		message = Interface.getString("RecoverAbilityPool") ..  abilityName.getValue();
+		abilityPool.setValue(abilityPoolValue + 1);
 		ChatManager.Message(message, true, PCnode);
 		return true;
 	else
-		message = Interface.getString("CantUseInvestigativeAbility") ..  abilityName.getValue();
-		ChatManager.Message(message, true, PCnode);
-		return false;
+		if  abilityPoolValue &gt; 0 then
+			message = Interface.getString("SpendAbilityPool") ..  abilityName.getValue();
+			abilityPool.setValue(abilityPoolValue - 1);
+			ChatManager.Message(message, true, PCnode);
+			return true;
+		else
+			message = Interface.getString("CantSpendAbilityPool") ..  abilityName.getValue();
+			ChatManager.Message(message, true, PCnode);
+			return false;
+		end
 	end
 end
 
