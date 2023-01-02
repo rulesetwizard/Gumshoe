@@ -103,6 +103,12 @@ local GeneralAbilities = {
 	"Unobtrusiveness",
 }
 
+local CombatAbilities = {
+	"Scuffling",
+	"Shooting",
+}
+
+
 function onInit()
 
 	OptionsManager.registerOption2("FORGIVING", true, "GumshoeOptionsGroup", "ForgivingOptionLabel", "option_entry_cycler", 
@@ -116,6 +122,10 @@ end
 
 function getGeneralAbilities()
     return GeneralAbilities;
+end
+
+function getCombatAbilities()
+    return CombatAbilities;
 end
 
 function resolveRefNode(sRecord)

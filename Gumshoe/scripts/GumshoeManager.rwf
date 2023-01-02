@@ -86,7 +86,18 @@ function getBuildPointsCost(w)
 
 	--Free
 	return 0;
-end</Script>
+end
+
+function getGeneralAbilityNode(NodeAbilities, abilityName)
+	for _,ability in pairs(NodeAbilities.getChildren()) do
+		if ability.getChild("name").getValue() == abilityName then
+			return ability;
+		end
+	end
+	
+	return nil;
+end
+</Script>
     <RegisterScript>true</RegisterScript>
     <Encoding />
   </Scripts>

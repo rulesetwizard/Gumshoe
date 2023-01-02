@@ -1,7 +1,7 @@
 <DocumentElement xmlns="http://tempuri.org/Ruleset.xsd">
   <WindowControls>
-    <WindowName>charsheet_notes</WindowName>
-    <ControlName>charsheet_notes</ControlName>
+    <WindowName>charsheet_notes_bak</WindowName>
+    <ControlName>charsheet_notes_bak</ControlName>
     <ZIndex>0</ZIndex>
     <ControlClass>FGWindow</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
@@ -9,7 +9,7 @@
       {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"BottomMargin","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"Comments"},
-      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"charsheet_notes"}},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"charsheet_notes_bak"}},
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
       {"Name":"DataSource"},
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"494"}},
@@ -56,7 +56,7 @@
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>charsheet_notes</WindowName>
+    <WindowName>charsheet_notes_bak</WindowName>
     <ControlName>lblNotes</ControlName>
     <ZIndex>2</ZIndex>
     <ControlClass>FGLabel</ControlClass>
@@ -109,7 +109,7 @@
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>charsheet_notes</WindowName>
+    <WindowName>charsheet_notes_bak</WindowName>
     <ControlName>notes</ControlName>
     <ZIndex>3</ZIndex>
     <ControlClass>FGFormattedText</ControlClass>
@@ -159,7 +159,7 @@
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>charsheet_notes</WindowName>
+    <WindowName>charsheet_notes_bak</WindowName>
     <ControlName>notesframe</ControlName>
     <ZIndex>1</ZIndex>
     <ControlClass>FGIconControl</ControlClass>
@@ -209,7 +209,7 @@
     <Template />
   </WindowControls>
   <WindowControls>
-    <WindowName>charsheet_notes</WindowName>
+    <WindowName>charsheet_notes_bak</WindowName>
     <ControlName>scrollNotes</ControlName>
     <ZIndex>4</ZIndex>
     <ControlClass>FGScrollBar</ControlClass>
