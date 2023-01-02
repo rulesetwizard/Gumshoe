@@ -21,6 +21,12 @@ function onInit()
 			aDataMap = { "reference.backgrounds" }, 
 			sRecordDisplayClass = "background", 
 		},		
+		["weapon"] = { 
+			bExport = true,
+			sSidebarCategory  = "campaign",
+			aDataMap = { "reference.weapons" }, 
+			sRecordDisplayClass = "weapon", 
+		},		
 	}
 	
 	LibraryData.overrideRecordTypes(aRecordOverrides);
@@ -34,6 +40,10 @@ function onInit()
 		local backgrounds = DB.findNode("reference.backgrounds");
 		if backgrounds then
 			backgrounds.setPublic(true);
+		end
+		local weapons = DB.findNode("reference.weapons");
+		if weapons then
+			weapons.setPublic(true);
 		end
 	end
 end
