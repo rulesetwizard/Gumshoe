@@ -43,7 +43,7 @@
       {"Name":"StackVertWith"},
       {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
       {"Name":"StringCyclerAlign","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"StringCyclerItems","Value":{"@xsi:type":"ArrayOfLabelValue","LabelValue":[{"Label":"Half","Value":"half"},{"Label":"Exotic","Value":"exotic"},{"Label":"Custom","Value":"custom"},{"Label":"Free","Value":"free"}]}},
+      {"Name":"StringCyclerItems","Value":{"@xsi:type":"ArrayOfLabelValue","LabelValue":[{"Label":"Half","Value":"half"},{"Label":"Exotic","Value":"exotic"},{"Label":"First # free","Value":"firstfree"},{"Label":"Custom","Value":"custom"},{"Label":"Free","Value":"free"}]}},
       {"Name":"Tooltip"},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
@@ -61,7 +61,7 @@ function onValueChanged()
 end
 
 function showCustomBuildPoints()
-	if getStringValue() == 'custom' then
+	if getStringValue() == 'custom' or getStringValue() == 'firstfree' then
 		window.customBuildPoints.setVisible(true);
 	else
 		window.customBuildPoints.setVisible(false);
@@ -168,7 +168,7 @@ end
       {"Name":"Merge"},
       {"Name":"MinimumHeight"},
       {"Name":"MinimumWidth"},
-      {"Name":"MinValue"},
+      {"Name":"MinValue","Value":{"@xsi:type":"xsd:decimal","#text":"0"}},
       {"Name":"NextTabTarget"},
       {"Name":"NoDrag"},
       {"Name":"NoDrop"},

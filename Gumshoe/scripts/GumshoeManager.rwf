@@ -66,11 +66,11 @@ function getBuildPointsCost(w)
 		return nodeWin.getChild('rating').getValue();
 	end
 
-	if buildPointsType == '' or buildPointsType == 'half' then
+	if buildPointsType == 'half' then
 		return math.ceil(nodeWin.getChild('rating').getValue() / 2);
 	end
 
-	if buildPointsType == '' or buildPointsType == 'exotic' then
+	if buildPointsType == 'exotic' then
 		local rating = nodeWin.getChild('rating').getValue();
 		if rating &lt;= 0 then
 			return 0;
@@ -79,7 +79,17 @@ function getBuildPointsCost(w)
 		end
 	end
 
-	if buildPointsType == '' or buildPointsType == 'custom' then
+	if buildPointsType == 'firstfree' then
+		local freepoints = nodeWin.getChild('customBuildPoints').getValue();
+		local rating = nodeWin.getChild('rating').getValue();
+		if rating &gt; freepoints then
+			return rating - freepoints;
+		else
+			return 0;
+		end
+	end
+
+	if buildPointsType == 'custom' then
 		return nodeWin.getChild('customBuildPoints').getValue();
 	end
 
