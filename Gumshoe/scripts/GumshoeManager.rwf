@@ -29,7 +29,7 @@ function UseAbilityPool(rAbility, PCnode, bRecover)
 	end
 end
 
-function UseGeneralAbility(rAbility)
+function UseGeneralAbility(rAbility, testValue)
 
 	local PCnode = rAbility.getChild('....');
 	
@@ -37,7 +37,6 @@ function UseGeneralAbility(rAbility)
 	local abilityPool = DB.getChild(rAbility, "pool");
 	local abilityPoolValue = abilityPool.getValue();
 	local abilityRatingValue = DB.getChild(rAbility, "rating").getValue()
-	local testValue = DB.getChild(rAbility, "test").getValue();
 	
 	local message = '';
 	

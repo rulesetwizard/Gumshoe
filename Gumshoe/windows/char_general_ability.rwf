@@ -614,7 +614,7 @@ end</LUACode>
 ]}}</Definition>
     <LUACode>
 function onBeforeDiceRoll(dragInfo)
-	return GumshoeManager.UseGeneralAbility(window.getDatabaseNode());
+	return GumshoeManager.UseGeneralAbility(window.getDatabaseNode(), getValue());
 end
 
 function onAfterDiceRoll()
