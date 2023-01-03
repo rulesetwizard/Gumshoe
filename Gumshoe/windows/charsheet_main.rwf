@@ -121,19 +121,56 @@ end
 local HealthNode = nil;
 local StabilityNode = nil;
 
+function onInit()
+	linkHealthStability();
+end
+
+--	--Initialize investigative abilities list if it's empty
+--    local ListNode = DB.createChild(getDatabaseNode(), '.abilities.investigativesections');
+--    if ListNode.getChildCount() == 0 then
+--		-- Create sections
+--        for section, abilities in pairs(GumshoeData.getInvestigativeAbilities()) do
+--            local nodeSection = DB.createChild(ListNode);
+--            DB.createChild(nodeSection, "sectionName", "string");
+--			DB.setValue(nodeSection, "sectionName", "string", section);
+--			
+--            local nodeAbilities = DB.createChild(nodeSection, "abilities");
+--			-- Create abilities for each section
+--			for _, ability in pairs(abilities) do
+--				local nodeAbility = DB.createChild(nodeAbilities);
+--				DB.setValue(nodeAbility, "name", "string", ability);
+--			end
+--        end
+--        -- Set edit mode on
+--        --parentcontrol.window.abilities.subwindow.btnEditLists.setValue(1);
+--    end
+--
+--	--Initialize general abilities list if it's empty
+--    ListNode = DB.createChild(getDatabaseNode(), '.abilities.generalsections');
+--    if ListNode.getChildCount() == 0 then
+--		-- Create abilities for each section
+--		for _, ability in pairs(GumshoeData.getGeneralAbilities()) do
+--			local nodeAbility = DB.createChild(ListNode);
+--			DB.setValue(nodeAbility, "name", "string", ability);
+--		end
+--        -- Set edit mode on
+--        --parentcontrol.window.abilities.subwindow.btnEditLists.setValue(1);
+--    end
+
 function linkHealthStability()
 	-- Initialize Health and stability field links
 	local abilitiesNode = getDatabaseNode().getChild('.abilities.generalsections');
-	
-	HealthNode = GumshoeManager.getGeneralAbilityNode(abilitiesNode, GumshoeData.getHealthAbility());
-	healthName.setValue(HealthNode.getChild("name").getValue());
-	healthRating.setLink(HealthNode.getChild("rating"), true);
-	healthPool.setLink(HealthNode.getChild("pool"), true);
+	if abilitiesNode then
+		HealthNode = GumshoeManager.getGeneralAbilityNode(abilitiesNode, GumshoeData.getHealthAbility());
+		healthName.setValue(HealthNode.getChild("name").getValue());
+		healthRating.setLink(HealthNode.getChild("rating"), true);
+		healthPool.setLink(HealthNode.getChild("pool"), true);
 
-	StabilityNode = GumshoeManager.getGeneralAbilityNode(abilitiesNode, GumshoeData.getStabilityAbility());
-	stabilityName.setValue(StabilityNode.getChild("name").getValue());
-	stabilityRating.setLink(StabilityNode.getChild("rating"), true);
-	stabilityPool.setLink(StabilityNode.getChild("pool"), true);
+		StabilityNode = GumshoeManager.getGeneralAbilityNode(abilitiesNode, GumshoeData.getStabilityAbility());
+		stabilityName.setValue(StabilityNode.getChild("name").getValue());
+		stabilityRating.setLink(StabilityNode.getChild("rating"), true);
+		stabilityPool.setLink(StabilityNode.getChild("pool"), true);
+	end
 end
 
 function getHealthNode()
@@ -251,7 +288,7 @@ end
   <WindowControls>
     <WindowName>charsheet_main</WindowName>
     <ControlName>healthName</ControlName>
-    <ZIndex>27</ZIndex>
+    <ZIndex>28</ZIndex>
     <ControlClass>FGStringField</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
@@ -313,7 +350,7 @@ end
   <WindowControls>
     <WindowName>charsheet_main</WindowName>
     <ControlName>healthPool</ControlName>
-    <ZIndex>29</ZIndex>
+    <ZIndex>30</ZIndex>
     <ControlClass>FGNumberField</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
@@ -380,7 +417,7 @@ end
   <WindowControls>
     <WindowName>charsheet_main</WindowName>
     <ControlName>healthRating</ControlName>
-    <ZIndex>28</ZIndex>
+    <ZIndex>29</ZIndex>
     <ControlClass>FGNumberField</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
@@ -443,7 +480,7 @@ end
   <WindowControls>
     <WindowName>charsheet_main</WindowName>
     <ControlName>healthTest</ControlName>
-    <ZIndex>30</ZIndex>
+    <ZIndex>31</ZIndex>
     <ControlClass>FGNumberField</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
@@ -496,7 +533,7 @@ end
       {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"226"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"225"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"141"}}
 ]}}</Definition>
     <LUACode>
@@ -578,7 +615,7 @@ end
   <WindowControls>
     <WindowName>charsheet_main</WindowName>
     <ControlName>iconD6health</ControlName>
-    <ZIndex>36</ZIndex>
+    <ZIndex>37</ZIndex>
     <ControlClass>FGIconControl</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
@@ -628,7 +665,7 @@ end
   <WindowControls>
     <WindowName>charsheet_main</WindowName>
     <ControlName>iconD6stability</ControlName>
-    <ZIndex>35</ZIndex>
+    <ZIndex>36</ZIndex>
     <ControlClass>FGIconControl</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
@@ -678,7 +715,7 @@ end
   <WindowControls>
     <WindowName>charsheet_main</WindowName>
     <ControlName>lblAbility</ControlName>
-    <ZIndex>25</ZIndex>
+    <ZIndex>26</ZIndex>
     <ControlClass>FGLabel</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
@@ -784,7 +821,7 @@ end
   <WindowControls>
     <WindowName>charsheet_main</WindowName>
     <ControlName>lblDamage</ControlName>
-    <ZIndex>24</ZIndex>
+    <ZIndex>25</ZIndex>
     <ControlClass>FGLabel</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor","AdvancedAnchor":{"EdgeAnchor":"right","AnchorTo":"left","Parent":"spacerHeader"}}},
@@ -889,8 +926,61 @@ end
   </WindowControls>
   <WindowControls>
     <WindowName>charsheet_main</WindowName>
+    <ControlName>lblInit</ControlName>
+    <ZIndex>21</ZIndex>
+    <ControlClass>FGLabel</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor","AdvancedAnchor":{"EdgeAnchor":"right","AnchorTo":"left","Parent":"spacerHeader"}}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"CanGrowVert"},
+      {"Name":"Center"},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"lblInit"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"27"}},
+      {"Name":"Disabled"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"sheetlabel"}},
+      {"Name":"FrameName"},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"1"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"LabelCaption","Value":{"@xsi:type":"xsd:string","#text":"Init."}},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"MultilineSpacing"},
+      {"Name":"NextTabTarget"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"TextUnderlined"},
+      {"Name":"Tooltip"},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"229"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"348"}}
+]}}</Definition>
+    <LUACode />
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>charsheet_main</WindowName>
     <ControlName>lblPool</ControlName>
-    <ZIndex>22</ZIndex>
+    <ZIndex>23</ZIndex>
     <ControlClass>FGLabel</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor","AdvancedAnchor":{"EdgeAnchor":"right","AnchorTo":"left","Parent":"spacerHeader"}}},
@@ -943,7 +1033,7 @@ end
   <WindowControls>
     <WindowName>charsheet_main</WindowName>
     <ControlName>lblPool2</ControlName>
-    <ZIndex>38</ZIndex>
+    <ZIndex>39</ZIndex>
     <ControlClass>FGLabel</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
@@ -1049,7 +1139,7 @@ end
   <WindowControls>
     <WindowName>charsheet_main</WindowName>
     <ControlName>lblRating</ControlName>
-    <ZIndex>21</ZIndex>
+    <ZIndex>22</ZIndex>
     <ControlClass>FGLabel</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor","AdvancedAnchor":{"EdgeAnchor":"right","AnchorTo":"left","Parent":"spacerHeader"}}},
@@ -1102,7 +1192,7 @@ end
   <WindowControls>
     <WindowName>charsheet_main</WindowName>
     <ControlName>lblRating2</ControlName>
-    <ZIndex>37</ZIndex>
+    <ZIndex>38</ZIndex>
     <ControlClass>FGLabel</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
@@ -1155,7 +1245,7 @@ end
   <WindowControls>
     <WindowName>charsheet_main</WindowName>
     <ControlName>lblTest</ControlName>
-    <ZIndex>23</ZIndex>
+    <ZIndex>24</ZIndex>
     <ControlClass>FGLabel</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor","AdvancedAnchor":{"EdgeAnchor":"right","AnchorTo":"left","Parent":"spacerHeader"}}},
@@ -1208,7 +1298,7 @@ end
   <WindowControls>
     <WindowName>charsheet_main</WindowName>
     <ControlName>lblTest2</ControlName>
-    <ZIndex>39</ZIndex>
+    <ZIndex>40</ZIndex>
     <ControlClass>FGLabel</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
@@ -1261,7 +1351,7 @@ end
   <WindowControls>
     <WindowName>charsheet_main</WindowName>
     <ControlName>lblWeapons</ControlName>
-    <ZIndex>26</ZIndex>
+    <ZIndex>27</ZIndex>
     <ControlClass>FGLabel</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
@@ -1304,7 +1394,7 @@ end
       {"Name":"Tooltip"},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"154"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"147"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"346"}}
 ]}}</Definition>
     <LUACode />
@@ -1366,9 +1456,8 @@ end
 function onDrop(x, y, dragdata)
 	if dragdata.isType("shortcut") then
 		local sClass, sRecord = dragdata.getShortcutData();
-		setValue(sClass, sRecord);
-
 		if StringManager.contains({"background"}, sClass) then
+			setValue(sClass, sRecord);
 			local node = DB.findNode(sRecord);
 			if node then
 				window.background.setValue(DB.getChild(node, "name").getValue());
@@ -1722,7 +1811,7 @@ end
   <WindowControls>
     <WindowName>charsheet_main</WindowName>
     <ControlName>stabilityName</ControlName>
-    <ZIndex>31</ZIndex>
+    <ZIndex>32</ZIndex>
     <ControlClass>FGStringField</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
@@ -1784,7 +1873,7 @@ end
   <WindowControls>
     <WindowName>charsheet_main</WindowName>
     <ControlName>stabilityPool</ControlName>
-    <ZIndex>33</ZIndex>
+    <ZIndex>34</ZIndex>
     <ControlClass>FGNumberField</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
@@ -1851,7 +1940,7 @@ end
   <WindowControls>
     <WindowName>charsheet_main</WindowName>
     <ControlName>stabilityRating</ControlName>
-    <ZIndex>32</ZIndex>
+    <ZIndex>33</ZIndex>
     <ControlClass>FGNumberField</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
@@ -1914,7 +2003,7 @@ end
   <WindowControls>
     <WindowName>charsheet_main</WindowName>
     <ControlName>stabilityTest</ControlName>
-    <ZIndex>34</ZIndex>
+    <ZIndex>35</ZIndex>
     <ControlClass>FGNumberField</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
