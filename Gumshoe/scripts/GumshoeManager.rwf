@@ -63,6 +63,23 @@ function UseGeneralAbility(rAbility, testValue)
 	end
 end
 
+function UseNPCAbility(NPCNode, abilityName, poolNode, testNode)
+
+	local abilityPoolValue = poolNode.getValue();
+	local testValue = testNode.getValue();
+	
+	local message = '';
+	
+	if testValue &gt; abilityPoolValue and not bAllowNegativePool then
+		message = Interface.getString("CantUseGeneralAbility") ..  abilityName;
+		ChatManager.Message(message, true, PCnode);
+		return false;
+	else
+		abilityPool.setValue(abilityPoolValue - testValue);
+		return true;
+	end
+end
+
 function getBuildPointsCost(w)
 	local nodeWin = w.getDatabaseNode();
 	local buildPointsType = nodeWin.getChild('buildPointsType').getValue();
