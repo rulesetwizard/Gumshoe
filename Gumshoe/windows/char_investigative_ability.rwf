@@ -420,12 +420,6 @@ function onDoubleClick(x, y)
 	GumshoeManager.UseAbilityPool(nodeWin, nodeWin.getChild('......'), Input.isAltPressed());
 end
 
-function onValueChanged()
-	if getValue() &gt; window.rating.getValue() then
-		setValue(window.rating.getValue());
-	end
-end
-
 function onWheel(notches)
 	return false;
 end

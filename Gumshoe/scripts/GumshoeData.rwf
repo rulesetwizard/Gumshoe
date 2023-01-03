@@ -85,7 +85,7 @@ local GeneralAbilities = {
 	"Filch",
 	"Fleeing",
 	"Gambling",
-	--"Health", Do not include Health and stability in the list
+	"Health",
 	"Hypnosis",
 	"Infiltration",
 	"Mechanics",
@@ -98,7 +98,7 @@ local GeneralAbilities = {
 	"Sense Trouble",
 	"Shrink",
 	"Shooting",
-	--"Stability", Do not include Health and stability in the list
+	"Stability",
 	"Surveillance",
 	"Unobtrusiveness",
 }
@@ -108,12 +108,15 @@ local CombatAbilities = {
 	"Shooting",
 }
 
+local HealthAbility = "Health";
+local StabilityAbility = "Stability";
+
 
 function onInit()
 
 	OptionsManager.registerOption2("FORGIVING", true, "GumshoeOptionsGroup", "ForgivingOptionLabel", "option_entry_cycler", 
 			{ labels = "OptionUnforgiving", values = "no", baselabel = "OptionForgiving", baseval = "yes", default = "yes" });
-	
+
 end
 
 function getInvestigativeAbilities()
@@ -127,6 +130,14 @@ end
 function getCombatAbilities()
     return CombatAbilities;
 end
+
+function getHealthAbility()
+	return HealthAbility;
+end;
+
+function getStabilityAbility()
+	return StabilityAbility;
+end;
 
 function resolveRefNode(sRecord)
 	local nodeSource = DB.findNode(sRecord);

@@ -33,7 +33,7 @@ function UseGeneralAbility(rAbility, testValue)
 
 	local PCnode = rAbility.getChild('....');
 	
-	local abilityName = DB.getChild(rAbility, "name");
+	local abilityName = DB.getChild(rAbility, "name").getValue();
 	local abilityPool = DB.getChild(rAbility, "pool");
 	local abilityPoolValue = abilityPool.getValue();
 	local abilityRatingValue = DB.getChild(rAbility, "rating").getValue()
@@ -42,14 +42,19 @@ function UseGeneralAbility(rAbility, testValue)
 	
 	if abilityRatingValue == 0 then
 		if OptionsManager.isOption("FORGIVING", "no") then
-			message = Interface.getString("UntrainedGeneralAbility") ..  abilityName.getValue();
+			message = Interface.getString("UntrainedGeneralAbility") ..  abilityName;
 			ChatManager.Message(message, true, PCnode);
 			return false;
 		end
 	end
 	
-	if testValue &gt; abilityPoolValue then
-		message = Interface.getString("CantUseGeneralAbility") ..  abilityName.getValue();
+	local bAllowNegativePool = false;
+	if abilityName == GumshoeData.getHealthAbility() or abilityName == GumshoeData.getStabilityAbility() then
+		bAllowNegativePool = true;
+	end
+	
+	if testValue &gt; abilityPoolValue and not bAllowNegativePool then
+		message = Interface.getString("CantUseGeneralAbility") ..  abilityName;
 		ChatManager.Message(message, true, PCnode);
 		return false;
 	else

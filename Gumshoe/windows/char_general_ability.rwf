@@ -465,18 +465,12 @@ end</LUACode>
       {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Double click to spend 1 point from your pool. Alt+double click to recover 1 point."}},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"248"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"247"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"0"}}
 ]}}</Definition>
     <LUACode>function onDoubleClick(x, y)
 	local nodeWin = window.getDatabaseNode();
 	GumshoeManager.UseAbilityPool(nodeWin, nodeWin.getChild('....'), Input.isAltPressed());
-end
-
-function onValueChanged()
-	if getValue() &gt; window.rating.getValue() then
-		setValue(window.rating.getValue());
-	end
 end
 
 function onWheel(notches)
