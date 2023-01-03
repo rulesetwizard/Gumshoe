@@ -1337,7 +1337,7 @@ end
       {"Name":"InsertBefore"},
       {"Name":"Invisible"},
       {"Name":"LinkFieldAllowDrop","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
-      {"Name":"LinkFieldClass"},
+      {"Name":"LinkFieldClass","Value":{"@xsi:type":"xsd:string","#text":"background"}},
       {"Name":"LinkFieldDescriptionField","Value":{"@xsi:type":"xsd:string","#text":"name"}},
       {"Name":"LinkFieldRecordName"},
       {"Name":"LinkFieldSelfOnEmpty"},
@@ -1366,6 +1366,7 @@ end
 function onDrop(x, y, dragdata)
 	if dragdata.isType("shortcut") then
 		local sClass, sRecord = dragdata.getShortcutData();
+		setValue(sClass, sRecord);
 
 		if StringManager.contains({"background"}, sClass) then
 			local node = DB.findNode(sRecord);
