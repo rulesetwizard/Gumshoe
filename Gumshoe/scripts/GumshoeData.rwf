@@ -85,7 +85,7 @@ local GeneralAbilities = {
 	"Filch",
 	"Fleeing",
 	"Gambling",
-	"Health",
+	--"Health", Do not include Health and stability in the list
 	"Hypnosis",
 	"Infiltration",
 	"Mechanics",
@@ -98,7 +98,7 @@ local GeneralAbilities = {
 	"Sense Trouble",
 	"Shrink",
 	"Shooting",
-	"Stability",
+	--"Stability", Do not include Health and stability in the list
 	"Surveillance",
 	"Unobtrusiveness",
 }
