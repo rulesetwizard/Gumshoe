@@ -57,7 +57,11 @@
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"27"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"16"}}
 ]}}</Definition>
-    <LUACode />
+    <LUACode>
+function onDrop(x, y, dragdata)
+	window.linkBackground.onDrop(x, y, dragdata);
+end
+</LUACode>
     <GroupIndex>0</GroupIndex>
     <Template />
   </WindowControls>
@@ -117,8 +121,7 @@
 local HealthNode = nil;
 local StabilityNode = nil;
 
-function onInit()
-
+function linkHealthStability()
 	-- Initialize Health and stability field links
 	local abilitiesNode = getDatabaseNode().getChild('.abilities.generalsections');
 	
@@ -131,7 +134,6 @@ function onInit()
 	stabilityName.setValue(StabilityNode.getChild("name").getValue());
 	stabilityRating.setLink(StabilityNode.getChild("rating"), true);
 	stabilityPool.setLink(StabilityNode.getChild("pool"), true);
-
 end
 
 function getHealthNode()
@@ -141,6 +143,7 @@ end
 function getStabilityNode()
 	return StabilityNode;
 end
+
 </LUACode>
     <GroupIndex>0</GroupIndex>
     <Template />

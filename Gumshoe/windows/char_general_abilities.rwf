@@ -66,6 +66,9 @@ function onInit()
         parentcontrol.window.btnEditLists.setValue(1);
     end
     
+    -- Set field links of main tab Health and Stability
+    parentcontrol.window.parentcontrol.window.main.subwindow.linkHealthStability();
+   
 	CalculateBuildPoints();
 end
 
