@@ -1,7 +1,7 @@
 <DocumentElement xmlns="http://tempuri.org/Ruleset.xsd">
   <Scripts>
     <ScriptName>GumshoeData</ScriptName>
-    <FolderID>2</FolderID>
+    <FolderID>3</FolderID>
     <Script>local InvestigativeAbilities = {
 	["ACADEMIC"] = {
 		"Anthropology",
@@ -138,6 +138,25 @@ end;
 function getStabilityAbility()
 	return StabilityAbility;
 end;
+
+function ResetAbilityPools()
+	for _,nodeChar in pairs(DB.getChildren("charsheet")) do
+		-- Reset Investigative Abilities
+		for _,nodeSection in pairs(DB.getChildren(nodeChar, "abilities.investigativesections")) do
+			for _,nodeAbility in pairs(DB.getChildren(nodeSection, "abilities")) do
+				local nodePool = DB.getChild(nodeAbility, "pool");
+				local nodeRating = DB.getChild(nodeAbility, "rating");
+				nodePool.setValue(nodeRating.getValue());
+			end
+		end
+		-- Reset General Abilities
+		for _,nodeAbility in pairs(DB.getChildren(nodeChar, "abilities.generalsections")) do
+			local nodePool = DB.getChild(nodeAbility, "pool");
+			local nodeRating = DB.getChild(nodeAbility, "rating");
+			nodePool.setValue(nodeRating.getValue());
+		end
+	end
+end
 
 function resolveRefNode(sRecord)
 	local nodeSource = DB.findNode(sRecord);

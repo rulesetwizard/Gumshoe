@@ -1,7 +1,7 @@
 <DocumentElement xmlns="http://tempuri.org/Ruleset.xsd">
   <Scripts>
     <ScriptName>SidebarData</ScriptName>
-    <FolderID>8</FolderID>
+    <FolderID>9</FolderID>
     <Script>
 function onInit()
 	aRecordOverrides = {
@@ -46,6 +46,18 @@ function onInit()
 			weapons.setPublic(true);
 		end
 	end
+	
+--	if Session.IsHost then 
+--		tButton = { 
+--			sIcon = "sidebar_icon_rest", 
+--			tooltipres = "sidebar_tooltip_rest", 
+--			class = "rest",
+--			path = "rest" 
+--			};
+--	end
+--	
+--	DesktopManager.registerSidebarToolButton(tButton, 2);
+--	
 end
 
 </Script>
