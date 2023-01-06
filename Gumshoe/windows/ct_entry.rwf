@@ -538,7 +538,6 @@ end
 	
 	if self.isPC() then
 		activateattacks.setVisible(false);
-		activatedefense.setVisible(false);
 	end
 	
 	-- Acquire token reference, if any
@@ -664,6 +663,8 @@ function linkPCFields()
 	local nodeChar = link.getTargetDatabaseNode();
 	if nodeChar then
 		name.setLink(nodeChar.createChild("name", "string"), true);
+		sub_defense.subwindow.hitthreshold.setLink(nodeChar.createChild("hitthreshold", "number"), true);
+		sub_defense.subwindow.armor.setLink(nodeChar.createChild("armor", "number"), true);
 		local abilitiesNode = nodeChar.getChild('.abilities.generalsections');
 		if abilitiesNode then
 			HealthNode = GumshoeManager.getGeneralAbilityNode(abilitiesNode, GumshoeData.getHealthAbility());
@@ -1525,7 +1526,7 @@ end
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"430"}},
       {"Name":"Disabled"},
-      {"Name":"FastInit"},
+      {"Name":"FastInit","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"FrameName","Value":{"@xsi:type":"xsd:string","#text":"ct_subgroupbox"}},
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string","#text":"8,6,8,6"}},
       {"Name":"GMEditOnly"},
