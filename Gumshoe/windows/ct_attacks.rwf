@@ -167,7 +167,17 @@
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"3"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"3"}}
 ]}}</Definition>
-    <LUACode />
+    <LUACode>
+function onFilter(w)
+	local CombatAbilities = GumshoeData.getCombatAbilities();
+	for _,v in pairs(CombatAbilities) do
+		if v == w.name.getValue() then
+			w.btnInit.setVisible(true);
+			return true;
+		end
+	end
+end
+</LUACode>
     <GroupIndex>0</GroupIndex>
     <Template />
   </WindowControls>
