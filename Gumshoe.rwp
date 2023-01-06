@@ -14507,7 +14507,7 @@ end
   <WindowControls>
     <WindowName>ct_entry</WindowName>
     <ControlName>attacksicon</ControlName>
-    <ZIndex>25</ZIndex>
+    <ZIndex>26</ZIndex>
     <ControlClass>FGIconControl</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor","AdvancedAnchor":{"EdgeAnchor":"top","AnchorTo":"top","Parent":"sub_attacks"}}},
@@ -14557,7 +14557,7 @@ end
   <WindowControls>
     <WindowName>ct_entry</WindowName>
     <ControlName>bottom_spacer</ControlName>
-    <ZIndex>30</ZIndex>
+    <ZIndex>31</ZIndex>
     <ControlClass>FGCustomControl</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
@@ -14794,7 +14794,11 @@ function linkPCFields()
 	local nodeChar = link.getTargetDatabaseNode();
 	if nodeChar then
 		name.setLink(nodeChar.createChild("name", "string"), true);
-		senses.setLink(nodeChar.createChild("senses", "string"), true);
+		local abilitiesNode = nodeChar.getChild('.abilities.generalsections');
+		if abilitiesNode then
+			HealthNode = GumshoeManager.getGeneralAbilityNode(abilitiesNode, GumshoeData.getHealthAbility());
+			healthPool.setLink(HealthNode.getChild("pool"), false);
+		end
 	end
 end
 
@@ -14876,7 +14880,7 @@ end
   <WindowControls>
     <WindowName>ct_entry</WindowName>
     <ControlName>defenseicon</ControlName>
-    <ZIndex>27</ZIndex>
+    <ZIndex>28</ZIndex>
     <ControlClass>FGIconControl</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor","AdvancedAnchor":{"EdgeAnchor":"top","AnchorTo":"top","Parent":"sub_defense"}}},
@@ -14926,7 +14930,7 @@ end
   <WindowControls>
     <WindowName>ct_entry</WindowName>
     <ControlName>effect_summary</ControlName>
-    <ZIndex>29</ZIndex>
+    <ZIndex>30</ZIndex>
     <ControlClass>FGLabel</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
@@ -14979,7 +14983,7 @@ end
   <WindowControls>
     <WindowName>ct_entry</WindowName>
     <ControlName>effecticon</ControlName>
-    <ZIndex>23</ZIndex>
+    <ZIndex>24</ZIndex>
     <ControlClass>FGIconControl</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor","AdvancedAnchor":{"EdgeAnchor":"top","AnchorTo":"top","Parent":"sub_effects"}}},
@@ -15092,7 +15096,7 @@ end
   <WindowControls>
     <WindowName>ct_entry</WindowName>
     <ControlName>healthPool</ControlName>
-    <ZIndex>31</ZIndex>
+    <ZIndex>16</ZIndex>
     <ControlClass>FGNumberField</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
@@ -15346,7 +15350,7 @@ end
   <WindowControls>
     <WindowName>ct_entry</WindowName>
     <ControlName>name</ControlName>
-    <ZIndex>16</ZIndex>
+    <ZIndex>17</ZIndex>
     <ControlClass>FGStringField</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
@@ -15408,7 +15412,7 @@ end
   <WindowControls>
     <WindowName>ct_entry</WindowName>
     <ControlName>nonid_name</ControlName>
-    <ZIndex>17</ZIndex>
+    <ZIndex>18</ZIndex>
     <ControlClass>FGStringField</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
@@ -15532,7 +15536,7 @@ end
   <WindowControls>
     <WindowName>ct_entry</WindowName>
     <ControlName>spacingicon</ControlName>
-    <ZIndex>21</ZIndex>
+    <ZIndex>22</ZIndex>
     <ControlClass>FGIconControl</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor","AdvancedAnchor":{"EdgeAnchor":"top","AnchorTo":"top","Parent":"sub_spacing"}}},
@@ -15582,7 +15586,7 @@ end
   <WindowControls>
     <WindowName>ct_entry</WindowName>
     <ControlName>sub_attacks</ControlName>
-    <ZIndex>24</ZIndex>
+    <ZIndex>25</ZIndex>
     <ControlClass>FGSubWindow</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"Activate"},
@@ -15636,7 +15640,7 @@ end
   <WindowControls>
     <WindowName>ct_entry</WindowName>
     <ControlName>sub_defense</ControlName>
-    <ZIndex>26</ZIndex>
+    <ZIndex>27</ZIndex>
     <ControlClass>FGSubWindow</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"Activate"},
@@ -15690,7 +15694,7 @@ end
   <WindowControls>
     <WindowName>ct_entry</WindowName>
     <ControlName>sub_effects</ControlName>
-    <ZIndex>22</ZIndex>
+    <ZIndex>23</ZIndex>
     <ControlClass>FGSubWindow</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"Activate"},
@@ -15744,7 +15748,7 @@ end
   <WindowControls>
     <WindowName>ct_entry</WindowName>
     <ControlName>sub_spacing</ControlName>
-    <ZIndex>20</ZIndex>
+    <ZIndex>21</ZIndex>
     <ControlClass>FGSubWindow</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"Activate"},
@@ -15798,7 +15802,7 @@ end
   <WindowControls>
     <WindowName>ct_entry</WindowName>
     <ControlName>sub_targeting</ControlName>
-    <ZIndex>18</ZIndex>
+    <ZIndex>19</ZIndex>
     <ControlClass>FGSubWindow</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"Activate"},
@@ -15852,7 +15856,7 @@ end
   <WindowControls>
     <WindowName>ct_entry</WindowName>
     <ControlName>target_summary</ControlName>
-    <ZIndex>28</ZIndex>
+    <ZIndex>29</ZIndex>
     <ControlClass>FGLabel</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
@@ -15905,7 +15909,7 @@ end
   <WindowControls>
     <WindowName>ct_entry</WindowName>
     <ControlName>targetingicon</ControlName>
-    <ZIndex>19</ZIndex>
+    <ZIndex>20</ZIndex>
     <ControlClass>FGIconControl</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor","AdvancedAnchor":{"EdgeAnchor":"top","AnchorTo":"top","Parent":"sub_targeting"}}},
