@@ -13375,6 +13375,23 @@ end
 	
 	registerMenuItem(Interface.getString("list_menu_createitem"), "insert", 5);
 
+	CombatManager.setCustomSort(onSort);
+
+end
+
+function onSort(node1, node2)
+	local init1 = DB.getChild(node1, "initresult").getValue();
+	local init2 = DB.getChild(node2, "initresult").getValue();
+	if init1 == init2 then
+		local friendfoe = DB.getChild(node2, "friendfoe").getValue();
+		if friendfoe == "foe" then
+			return true;
+		else
+			return false;
+		end
+	else
+		return init1 &gt; init2;
+	end
 end
 
 function onClose()
