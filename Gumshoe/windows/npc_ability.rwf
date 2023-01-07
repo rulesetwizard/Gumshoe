@@ -57,8 +57,8 @@
 ]}}</Definition>
     <LUACode>function onButtonPress()
 	local ctnode = window.windowlist.window.getDatabaseNode();
-	local initnode = ctnode.getChild("initresult");
-	initnode.setValue(window.rating.getValue());
+	DB.setValue(ctnode, "initresult", "number", window.rating.getValue());
+	DB.setValue(ctnode, "initability", "string", window.name.getValue());	
 end
 </LUACode>
     <GroupIndex>0</GroupIndex>

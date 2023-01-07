@@ -55,7 +55,11 @@
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"200"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"1"}}
 ]}}</Definition>
-    <LUACode xml:space="preserve">
+    <LUACode>function onButtonPress()
+	local ctnode = window.windowlist.window.getDatabaseNode();
+	DB.setValue(ctnode, "initresult", "number", window.rating.getValue());
+	DB.setValue(ctnode, "initability", "string", window.generalAbility.getValue());	
+end
 </LUACode>
     <GroupIndex>0</GroupIndex>
     <Template />
