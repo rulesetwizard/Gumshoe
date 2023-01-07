@@ -21,6 +21,9 @@
 	&lt;string name="OptionForgiving"&gt;Forgiving&lt;/string&gt;
 	&lt;string name="OptionUnforgiving"&gt;Unforgiving&lt;/string&gt;
   
+  	&lt;!-- Combat --&gt;
+	&lt;string name="AttackHit"&gt;[HIT]&lt;/string&gt;
+	&lt;string name="AttackMiss"&gt;[MISS]&lt;/string&gt;
   
 &lt;/root&gt;      
     </XML>

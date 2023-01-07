@@ -6104,7 +6104,7 @@ end
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"26"}},
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"40"}},
-      {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","DiceRollString":"d6 + {self}","DiceRollDescription":"{generalAbility} Test ({name})","DiceRollType":"generalability","UseModStack":"true","ResetModStack":"true","SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":"true","Targeting":"each","AdditionalInfo":null}},
+      {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","DiceRollString":"d6 + {self}","DiceRollDescription":"{generalAbility} Test ({name})","DiceRollType":"attack","UseModStack":"true","ResetModStack":"true","SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":"true","Targeting":"each","ResultHandlerFunction":"GumshoeManager.onAttackResult","AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
@@ -20687,6 +20687,27 @@ function getGeneralAbilityNode(NodeAbilities, abilityName)
 	
 	return nil;
 end
+
+function onAttackResult(rSource, rTarget, rRoll)
+
+    local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
+    if rTarget ~= nil then
+        rMessage.text = rMessage.text .. " vs " .. rTarget.sName;
+		local hitthreshold = DB.getChild(rTarget.sCreatureNode, "hitthreshold").getValue();
+		if (rRoll.nTotal + rRoll.nMod) &gt;= hitthreshold then
+			rMessage.text = rMessage.text .. " " .. Interface.getString("AttackHit");
+			rMessage.icon = "roll_attack_hit";
+		else
+			rMessage.text = rMessage.text .. " " .. Interface.getString("AttackMiss");
+			rMessage.icon = "roll_attack_miss";
+		end
+	else
+			rMessage.icon = "roll_attack";
+    end
+	
+    Comm.deliverChatMessage(rMessage);
+	
+end
 </Script>
     <RegisterScript>true</RegisterScript>
     <Encoding />
@@ -20781,6 +20802,9 @@ end
 	&lt;string name="OptionForgiving"&gt;Forgiving&lt;/string&gt;
 	&lt;string name="OptionUnforgiving"&gt;Unforgiving&lt;/string&gt;
   
+  	&lt;!-- Combat --&gt;
+	&lt;string name="AttackHit"&gt;[HIT]&lt;/string&gt;
+	&lt;string name="AttackMiss"&gt;[MISS]&lt;/string&gt;
   
 &lt;/root&gt;      
     </XML>
@@ -20824,6 +20848,21 @@ end
     <IconName>footprint</IconName>
     <FolderID>7</FolderID>
     <IconFile>Graphics\Icons\footprint.png</IconFile>
+  </Icons>
+  <Icons>
+    <IconName>roll_attack</IconName>
+    <FolderID>7</FolderID>
+    <IconFile>Graphics\Icons\roll_attack.png</IconFile>
+  </Icons>
+  <Icons>
+    <IconName>roll_attack_hit</IconName>
+    <FolderID>7</FolderID>
+    <IconFile>Graphics\Icons\roll_attack_hit.png</IconFile>
+  </Icons>
+  <Icons>
+    <IconName>roll_attack_miss</IconName>
+    <FolderID>7</FolderID>
+    <IconFile>Graphics\Icons\roll_attack_miss.png</IconFile>
   </Icons>
   <Icons>
     <IconName>sidebar_icon_recordtype_ability</IconName>

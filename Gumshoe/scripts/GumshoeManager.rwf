@@ -128,6 +128,27 @@ function getGeneralAbilityNode(NodeAbilities, abilityName)
 	
 	return nil;
 end
+
+function onAttackResult(rSource, rTarget, rRoll)
+
+    local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
+    if rTarget ~= nil then
+        rMessage.text = rMessage.text .. " vs " .. rTarget.sName;
+		local hitthreshold = DB.getChild(rTarget.sCreatureNode, "hitthreshold").getValue();
+		if (rRoll.nTotal + rRoll.nMod) &gt;= hitthreshold then
+			rMessage.text = rMessage.text .. " " .. Interface.getString("AttackHit");
+			rMessage.icon = "roll_attack_hit";
+		else
+			rMessage.text = rMessage.text .. " " .. Interface.getString("AttackMiss");
+			rMessage.icon = "roll_attack_miss";
+		end
+	else
+			rMessage.icon = "roll_attack";
+    end
+	
+    Comm.deliverChatMessage(rMessage);
+	
+end
 </Script>
     <RegisterScript>true</RegisterScript>
     <Encoding />
