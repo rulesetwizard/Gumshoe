@@ -483,7 +483,12 @@ end</LUACode>
     <LUACode>
 function onBeforeDiceRoll(dragInfo)
 	window.pool.setValue(window.pool.getValue() - getValue());
-	return true;
+	if GumshoeData.isCombatAbility(window.name.getValue()) then
+		RulesetWizardDiceRoller.Roll(dragInfo, window.getDatabaseNode(),"attack", DiceRollDescription, DiceRollString, getValue(), DiceRollAdditionalInfo);
+		return false;
+	else
+		return true;
+	end
 end
 
 function onAfterDiceRoll()

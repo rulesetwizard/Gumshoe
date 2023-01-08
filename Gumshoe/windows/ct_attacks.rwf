@@ -169,12 +169,9 @@
 ]}}</Definition>
     <LUACode>
 function onFilter(w)
-	local CombatAbilities = GumshoeData.getCombatAbilities();
-	for _,v in pairs(CombatAbilities) do
-		if v == w.name.getValue() then
-			w.btnInit.setVisible(true);
-			return true;
-		end
+	if GumshoeData.isCombatAbility(w.name.getValue()) then
+		w.btnInit.setVisible(true);
+		return true;
 	end
 end
 </LUACode>

@@ -139,6 +139,16 @@ function getStabilityAbility()
 	return StabilityAbility;
 end;
 
+function isCombatAbility(abilityName)
+	local CombatAbilities = getCombatAbilities();
+	for _,v in pairs(CombatAbilities) do
+		if v == abilityName then
+			return true;
+		end
+	end
+	return false;
+end
+
 function ResetAbilityPools()
 	for _,nodeChar in pairs(DB.getChildren("charsheet")) do
 		-- Reset Investigative Abilities
