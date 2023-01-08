@@ -13802,7 +13802,7 @@ end
       {"Name":"Tooltip"},
       {"Name":"TooltipField"},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"WindowMargins"},
+      {"Name":"WindowMargins","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"WindowTitle"},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"0"}}
@@ -13990,7 +13990,7 @@ end
       {"Name":"StackVertWith"},
       {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
       {"Name":"Tooltip"},
-      {"Name":"UseAsTemplate"},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"59"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"35"}}
@@ -20685,9 +20685,13 @@ function UseAbilityPool(rAbility, PCnode, bRecover)
 	
 	local message = '';
 	if bRecover then
-		message = Interface.getString("RecoverAbilityPool") ..  abilityName.getValue();
-		abilityPool.setValue(abilityPoolValue + 1);
-		ChatManager.Message(message, true, PCnode);
+		local abilityRating = DB.getChild(rAbility, "rating");
+		local abilityRatingValue = abilityRating.getValue();
+		if abilityPoolValue &lt; abilityRatingValue then
+			message = Interface.getString("RecoverAbilityPool") ..  abilityName.getValue();
+			abilityPool.setValue(abilityPoolValue + 1);
+			ChatManager.Message(message, true, PCnode);
+		end
 		return true;
 	else
 		if  abilityPoolValue &gt; 0 then

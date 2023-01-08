@@ -11,9 +11,13 @@ function UseAbilityPool(rAbility, PCnode, bRecover)
 	
 	local message = '';
 	if bRecover then
-		message = Interface.getString("RecoverAbilityPool") ..  abilityName.getValue();
-		abilityPool.setValue(abilityPoolValue + 1);
-		ChatManager.Message(message, true, PCnode);
+		local abilityRating = DB.getChild(rAbility, "rating");
+		local abilityRatingValue = abilityRating.getValue();
+		if abilityPoolValue &lt; abilityRatingValue then
+			message = Interface.getString("RecoverAbilityPool") ..  abilityName.getValue();
+			abilityPool.setValue(abilityPoolValue + 1);
+			ChatManager.Message(message, true, PCnode);
+		end
 		return true;
 	else
 		if  abilityPoolValue &gt; 0 then
