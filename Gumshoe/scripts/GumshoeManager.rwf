@@ -153,7 +153,20 @@ function onAttackResult(rSource, rTarget, rRoll)
     Comm.deliverChatMessage(rMessage);
 	
 end
-</Script>
+
+function onDamageResult(rSource, rTarget, rRoll)
+    local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
+    
+    if rTarget ~= nil then
+		rMessage.text = rMessage.text .. " to " .. rTarget.sName;
+		local healthPool = DB.getChild(rTarget.sCTNode, "healthPool");
+		local healthPoolValue = healthPool.getValue();
+		healthPool.setValue(healthPoolValue - (rRoll.nTotal + rRoll.nMod));
+    end
+	
+	rMessage.icon = "roll_damage";
+    Comm.deliverChatMessage(rMessage);
+end</Script>
     <RegisterScript>true</RegisterScript>
     <Encoding />
   </Scripts>
