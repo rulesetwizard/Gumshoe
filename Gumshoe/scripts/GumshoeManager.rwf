@@ -161,7 +161,11 @@ function onDamageResult(rSource, rTarget, rRoll)
 		rMessage.text = rMessage.text .. " to " .. rTarget.sName;
 		local healthPool = DB.getChild(rTarget.sCTNode, "healthPool");
 		local healthPoolValue = healthPool.getValue();
-		healthPool.setValue(healthPoolValue - (rRoll.nTotal + rRoll.nMod));
+		local armorValue = DB.getChild(rTarget.sCTNode, "armor").getValue();
+		local damage = rRoll.nTotal + rRoll.nMod - armorValue;
+		if damage &gt; 0 then
+			healthPool.setValue(healthPoolValue - damage);
+		end
     end
 	
 	rMessage.icon = "roll_damage";
