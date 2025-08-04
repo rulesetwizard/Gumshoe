@@ -270,7 +270,7 @@ function onInit()
 		end
 	end
 	initialize(values, values, '', '');
-	synchData();	
+	--synchData();	
 	updateDisplay();	
 	setLink();
 end
