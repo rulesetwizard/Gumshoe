@@ -86,7 +86,7 @@ end
 
 function getBuildPointsCost(w)
 	local nodeWin = w.getDatabaseNode();
-	local buildPointsType = nodeWin.getChild('buildPointsType').getValue();
+	local buildPointsType = DB.getValue(nodeWin, 'buildPointsType', '');
 	
 	if buildPointsType == '' or buildPointsType == 'normal' then
 		return nodeWin.getChild('rating').getValue();
@@ -118,7 +118,7 @@ function getBuildPointsCost(w)
 	if buildPointsType == 'custom' then
 		return nodeWin.getChild('customBuildPoints').getValue();
 	end
-
+	
 	--Free
 	return 0;
 end

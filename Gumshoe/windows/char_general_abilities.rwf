@@ -70,8 +70,6 @@ function onInit()
     
     -- Set field links of main tab Health and Stability
     parentcontrol.window.parentcontrol.window.main.subwindow.linkHealthStability();
-   
-	CalculateBuildPoints();
 end
 
 function setEdit(bEdit)
@@ -95,6 +93,9 @@ function CalculateBuildPoints()
 	totalBuildPointsGeneral.setValue(total);
 end
 
+function onFirstLayout()
+	CalculateBuildPoints();
+end
 </LUACode>
     <GroupIndex>0</GroupIndex>
     <Template />

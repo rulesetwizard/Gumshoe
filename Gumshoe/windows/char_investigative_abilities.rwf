@@ -72,8 +72,6 @@ function onInit()
 			end
         end
     end
-    
-	CalculateBuildPoints();
 end
 
 function setEdit(bEdit)
@@ -93,6 +91,9 @@ function CalculateBuildPoints()
 	totalBuildPointsInvestigative.setValue(total);
 end
 
+function onFirstLayout()   
+	CalculateBuildPoints();
+end
 </LUACode>
     <GroupIndex>0</GroupIndex>
     <Template />
