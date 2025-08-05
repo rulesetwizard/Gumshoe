@@ -345,8 +345,8 @@ end</LUACode>
       {"Name":"Tooltip"},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"15"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"31"}}
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"14"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"32"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
