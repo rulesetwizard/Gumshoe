@@ -156,6 +156,20 @@ function getAbilityRole(nodeAbility)
 	return GumshoeData.getLegacyRole(DB.getValue(nodeAbility, "name", ""));
 end
 
+-- Sets the role of a general ability. Health and Stability are unique: another ability of the list that has that role
+-- loses it
+function setAbilityRole(nodeAbility, sRole)
+	if sRole == "health" or sRole == "stability" then
+		local sPath = DB.getPath(nodeAbility);
+		for _,nodeOther in pairs(DB.getChildren(DB.getParent(nodeAbility))) do
+			if DB.getPath(nodeOther) ~= sPath and getAbilityRole(nodeOther) == sRole then
+				DB.setValue(nodeOther, "role", "string", "");
+			end
+		end
+	end
+	DB.setValue(nodeAbility, "role", "string", sRole);
+end
+
 -- Stores the role of the abilities created before roles existed, when this user can write them
 function migrateAbilityRoles(nodeAbilities)
 	for _,nodeAbility in pairs(DB.getChildren(nodeAbilities)) do

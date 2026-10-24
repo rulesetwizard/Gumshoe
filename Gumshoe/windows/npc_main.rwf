@@ -1406,6 +1406,12 @@ function handleDrop(draginfo, nodeTargetList)
 			local nodeEntry = nodeList.createChild();
 			local sClass, sRecord = draginfo.getShortcutData();
 			DB.setValue(nodeEntry, "name", "string", DB.getValue(nodeSource, "name"));
+			-- NPCs only use the combat role (their Health is a field of its own). Records created before roles existed
+			-- have none: the role then comes from the name
+			local sRole = DB.getValue(nodeSource, "role");
+			if sRole then
+				DB.setValue(nodeEntry, "role", "string", (sRole == "combat") and "combat" or "");
+			end
 			return true;
 		end
 	end
