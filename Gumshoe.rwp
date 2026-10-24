@@ -7861,6 +7861,12 @@ function onInit()
 	DB.addHandler(sAbilities .. ".*.role", "onUpdate", onAbilitiesChanged);
 	DB.addHandler(sAbilities .. ".*.name", "onUpdate", onAbilitiesChanged);
 	DB.addHandler(sAbilities, "onChildDeleted", onAbilitiesChanged);
+
+	-- Show the Stability test an NPC asks for, until it is rolled
+	local sPending = DB.getPath(getDatabaseNode(), "pendingstability");
+	DB.addHandler(sPending, "onAdd", onPendingStabilityChanged);
+	DB.addHandler(sPending, "onChildUpdate", onPendingStabilityChanged);
+	DB.addHandler(sPending, "onDelete", onPendingStabilityChanged);
 end
 
 function onClose()
@@ -7869,10 +7875,19 @@ function onClose()
 	DB.removeHandler(sAbilities .. ".*.role", "onUpdate", onAbilitiesChanged);
 	DB.removeHandler(sAbilities .. ".*.name", "onUpdate", onAbilitiesChanged);
 	DB.removeHandler(sAbilities, "onChildDeleted", onAbilitiesChanged);
+
+	local sPending = DB.getPath(getDatabaseNode(), "pendingstability");
+	DB.removeHandler(sPending, "onAdd", onPendingStabilityChanged);
+	DB.removeHandler(sPending, "onChildUpdate", onPendingStabilityChanged);
+	DB.removeHandler(sPending, "onDelete", onPendingStabilityChanged);
 end
 
 function onAbilitiesChanged()
 	linkHealthStability();
+end
+
+function onPendingStabilityChanged()
+	updateStates();
 end
 
 --	--Initialize investigative abilities list if it's empty
@@ -7932,10 +7947,10 @@ function linkAbilityFields(nodeAbility, ctrlName, ctrlRating, ctrlPool)
 	end
 end
 
--- Health and Stability states under their names. The pool fields call it while the window is being built, before
--- the state labels exist
+-- Health and Stability states under their names, and the pending Stability test. The pool fields call it while the
+-- window is being built, before the state labels exist
 function updateStates()
-	if not healthState or not stabilityState then
+	if not healthState or not stabilityState or not stabilityPending then
 		return;
 	end
 	local sHealthState = "";
@@ -7948,6 +7963,7 @@ function updateStates()
 		sStabilityState = GumshoeManager.getStateText(GumshoeManager.getStabilityState(DB.getValue(StabilityNode, "pool", 0)));
 	end
 	stabilityState.setValue(sStabilityState);
+	stabilityPending.setValue(GumshoeManager.getPendingStabilityText(getDatabaseNode()));
 end
 
 -- Consciousness roll, when Health is below 0. The Health test value is the Health spent to add to the die, and the
@@ -8048,7 +8064,7 @@ end
       {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"groupStats"}},
       {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
-      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"175"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"187"}},
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"298"}},
       {"Name":"DevelopmentComments"},
@@ -8853,7 +8869,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"35"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"348"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"360"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -9081,7 +9097,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"377"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"348"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"360"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -9195,7 +9211,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"219"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"348"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"360"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -9252,7 +9268,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"295"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"348"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"360"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -9423,7 +9439,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"249"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"348"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"360"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -9537,7 +9553,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"336"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"348"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"360"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -9651,7 +9667,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"137"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"346"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"358"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -9746,7 +9762,7 @@ end
       {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
       {"Name":"DataSource","Value":{"@xsi:type":"xsd:string","#text":".weapons"}},
-      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"132"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"120"}},
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"480"}},
       {"Name":"DevelopmentComments"},
@@ -9793,7 +9809,7 @@ end
       {"Name":"WindowListFilterBy","Value":{"@xsi:type":"FilterByDefinition","CaseSensitive":{"@xsi:nil":"true"},"FilterSourceType":"Control","FilterOnSourceType":"Control"}},
       {"Name":"WindowListSortBy","Value":{"@xsi:type":"ArrayOfSortByDefinition"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"337"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"349"}}
 ]}}</Definition>
     <LUACode>function onDrop(x, y, draginfo)
 	return handleDrop(draginfo, nil);
@@ -9904,7 +9920,7 @@ end</LUACode>
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"430"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"347"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"359"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -9968,7 +9984,7 @@ end</LUACode>
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"451"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"347"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"359"}}
 ]}}</Definition>
     <LUACode>
 function onButtonPress()
@@ -9990,7 +10006,7 @@ end
       {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"scrollWeapons"}},
       {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
-      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"94"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"82"}},
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"20"}},
       {"Name":"DevelopmentComments"},
@@ -10027,7 +10043,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"2"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"453"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"367"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"379"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -10083,7 +10099,7 @@ end
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XMLCode"},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"416"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"348"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"360"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -10149,6 +10165,63 @@ end
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"27"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"301"}}
+]}}</Definition>
+    <LUACode />
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>charsheet_main</WindowName>
+    <ControlName>stabilityPending</ControlName>
+    <ZIndex>44</ZIndex>
+    <ControlClass>FGLabel</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"Center"},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"stabilityPending"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"12"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"262"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"DynamicSize"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"minifont"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName"},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"LabelCaption","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"MultilineSpacing"},
+      {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"TextUnderlined"},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Stability test asked by an NPC: roll Stability with the Test value as the points spent"}},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"27"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"330"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -10374,7 +10447,7 @@ end
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"45"}},
       {"Name":"DevelopmentComments"},
-      {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","DiceRollString":"d6 + {self}","DiceRollDescription":"Stability Test","DiceRollType":"generalability","UseModStack":"true","ResetModStack":"true","SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":"true","Targeting":"each","AdditionalInfo":null}},
+      {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","DiceRollString":"d6 + {self}","DiceRollDescription":"Stability Test","DiceRollType":"stabilitytest","UseModStack":"true","ResetModStack":"true","SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":"true","ResultHandlerFunction":"GumshoeManager.onStabilityTestResult","AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"DropTypes"},
@@ -10423,6 +10496,8 @@ function onBeforeDiceRoll(dragInfo)
 	if not nodeStability then
 		return false;
 	end
+	-- A pending Stability test keeps the state before this spend, which may change it
+	GumshoeManager.prepareStabilityTest(window.getDatabaseNode());
 	return GumshoeManager.UseGeneralAbility(nodeStability, getValue());
 end
 
@@ -18704,6 +18779,74 @@ end
   </WindowControls>
   <WindowControls>
     <WindowName>npc_main</WindowName>
+    <ControlName>btnStabilityTest</ControlName>
+    <ZIndex>38</ZIndex>
+    <ControlClass>FGButton</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"AllowDoubleClick"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"ButtonCaption","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"ButtonField"},
+      {"Name":"ButtonStateList","Value":{"@xsi:type":"ArrayOfButtonStateDefinition"}},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"btnStabilityTest"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DefaultValue"},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"20"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
+      {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"button-white"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMEditOnly"},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"1"}},
+      {"Name":"HoverCursor","Value":{"@xsi:type":"xsd:string","#text":"hand"}},
+      {"Name":"HoverIconName"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"NextTabTarget"},
+      {"Name":"NormalIconName","Value":{"@xsi:type":"xsd:string","#text":"d6"}},
+      {"Name":"PressedIconName"},
+      {"Name":"PressedOffset"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"ReadOnly"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"Source"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Ask the PCs this NPC targets in the combat tracker, or every PC in it, for a Stability test"}},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"315"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"136"}}
+]}}</Definition>
+    <LUACode>
+function onButtonPress()
+	GumshoeManager.requestStabilityTest(window.getDatabaseNode());
+end
+</LUACode>
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>npc_main</WindowName>
     <ControlName>healthName</ControlName>
     <ZIndex>15</ZIndex>
     <ControlClass>FGStringField</ControlClass>
@@ -18761,7 +18904,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"4"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"155"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"185"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -18827,7 +18970,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"142"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"150"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"180"}}
 ]}}</Definition>
     <LUACode xml:space="preserve">
 </LUACode>
@@ -18894,7 +19037,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"100"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"150"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"180"}}
 ]}}</Definition>
     <LUACode>function onValueChanged()
 	window.healthPool.setValue(getValue());
@@ -18962,7 +19105,7 @@ end</LUACode>
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"192"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"150"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"180"}}
 ]}}</Definition>
     <LUACode>
 function onBeforeDiceRoll(dragInfo)
@@ -19091,7 +19234,62 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"189"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"163"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"193"}}
+]}}</Definition>
+    <LUACode />
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>npc_main</WindowName>
+    <ControlName>isMythos</ControlName>
+    <ZIndex>35</ZIndex>
+    <ControlClass>FGCheckbox</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"isMythos"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DefaultChecked"},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"20"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName"},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMEditOnly"},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"NextTabTarget"},
+      {"Name":"OffStateIcon"},
+      {"Name":"OnStateIcon"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"ReadOnly"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"Source"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Mythos creature: +1 to the difficulty of the Stability test"}},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"96"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"136"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -19148,7 +19346,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"62"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"187"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"217"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -19270,6 +19468,63 @@ end
   </WindowControls>
   <WindowControls>
     <WindowName>npc_main</WindowName>
+    <ControlName>lblMythos</ControlName>
+    <ZIndex>36</ZIndex>
+    <ControlClass>FGLabel</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"Center"},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"lblMythos"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"50"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"DynamicSize"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName"},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"LabelCaption","Value":{"@xsi:type":"xsd:string","#text":"Mythos"}},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"MultilineSpacing"},
+      {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"TextUnderlined"},
+      {"Name":"Tooltip"},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"117"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"137"}}
+]}}</Definition>
+    <LUACode />
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>npc_main</WindowName>
     <ControlName>lblNonIDName</ControlName>
     <ZIndex>1</ZIndex>
     <ControlClass>FGLabel</ControlClass>
@@ -19376,7 +19631,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"220"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"187"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"217"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -19433,7 +19688,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"151"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"132"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"162"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -19490,7 +19745,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"177"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"187"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"217"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -19547,7 +19802,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"101"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"132"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"162"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -19726,6 +19981,63 @@ end
   </WindowControls>
   <WindowControls>
     <WindowName>npc_main</WindowName>
+    <ControlName>lblStabilityTest</ControlName>
+    <ZIndex>34</ZIndex>
+    <ControlClass>FGLabel</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"Center"},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"lblStabilityTest"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"95"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"DynamicSize"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"sheetlabel"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName"},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"LabelCaption","Value":{"@xsi:type":"xsd:string","#text":"Stability test"}},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"MultilineSpacing"},
+      {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"TextUnderlined"},
+      {"Name":"Tooltip"},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"2"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"137"}}
+]}}</Definition>
+    <LUACode />
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>npc_main</WindowName>
     <ControlName>lblTest</ControlName>
     <ZIndex>30</ZIndex>
     <ControlClass>FGLabel</ControlClass>
@@ -19775,7 +20087,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"264"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"187"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"217"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -19832,7 +20144,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"201"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"132"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"162"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -19889,7 +20201,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"1"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"2"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"311"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"341"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -19959,7 +20271,7 @@ end
       {"Name":"WindowListFilterBy","Value":{"@xsi:type":"FilterByDefinition","CaseSensitive":{"@xsi:nil":"true"},"FilterSourceType":"Control","FilterOnSourceType":"Control"}},
       {"Name":"WindowListSortBy","Value":{"@xsi:type":"ArrayOfSortByDefinition"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"4"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"183"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"213"}}
 ]}}</Definition>
     <LUACode>function onDrop(x, y, draginfo)
 	return handleDrop(draginfo, nil);
@@ -20073,7 +20385,7 @@ end</LUACode>
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"294"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"161"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"191"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -20137,7 +20449,7 @@ end</LUACode>
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"315"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"161"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"191"}}
 ]}}</Definition>
     <LUACode>
 function onButtonPress()
@@ -20225,7 +20537,7 @@ end
       {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"npc_main"}},
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
       {"Name":"DataSource"},
-      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"341"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"371"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"347"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
@@ -20387,7 +20699,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"2"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"316"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"206"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"236"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -20565,7 +20877,65 @@ end
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XMLCode"},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"311"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"187"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"217"}}
+]}}</Definition>
+    <LUACode />
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>npc_main</WindowName>
+    <ControlName>stabilityEncounter</ControlName>
+    <ZIndex>37</ZIndex>
+    <ControlClass>FGStringCycler</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"stabilityEncounter"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DefaultLabel","Value":{"@xsi:type":"xsd:string","#text":"Seen from afar (4)"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"24"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"140"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName","Value":{"@xsi:type":"xsd:string","#text":"fielddark"}},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string","#text":"0,0,0,0"}},
+      {"Name":"GMEditOnly"},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"2"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"NextTabTarget"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"ReadOnly"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"Source"},
+      {"Name":"Sourceless"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"StringCyclerAlign","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"StringCyclerItems","Value":{"@xsi:type":"ArrayOfLabelValue","LabelValue":[{"Label":"Seen up close (5)","Value":"close"},{"Label":"Attacks (6)","Value":"attack"},{"Label":"Gigantic or horde (8)","Value":"horde"}]}},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Situation of the Stability test, with its potential loss"}},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"170"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"134"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -20627,7 +20997,7 @@ end
       {"Name":"Source"},
       {"Name":"StackVertWith"},
       {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
-      {"Name":"Tooltip"},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Stability loss modifier of the creature, added to the loss of the situation"}},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"275"}},
@@ -20696,7 +21066,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"1"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"96"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"306"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"336"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -22122,6 +22492,121 @@ function onConsciousnessResult(rSource, rTarget, rRoll)
 	Comm.deliverChatMessage(rMessage);
 end
 
+--
+-- STABILITY TEST (Trail of Cthulhu)
+-- Difficulty 4, +1 against the Mythos. A failed test loses the potential loss of the situation, plus the Stability
+-- loss modifier of the creature. The PC rolls from the sheet, with the test the NPC left pending in it
+--
+
+-- Potential loss of the situations with a supernatural creature: seen from afar, up close, attacking, or gigantic or
+-- a horde attacking
+local StabilityEncounterLoss = { [""] = 4, ["close"] = 5, ["attack"] = 6, ["horde"] = 8 };
+
+-- From the NPC sheet, in the host: asks the PCs the NPC targets in the combat tracker, or every PC in it, for a
+-- Stability test
+function requestStabilityTest(nodeNPC)
+	if not Session.IsHost then
+		return;
+	end
+	local rNPC = ActorManager.resolveActor(nodeNPC);
+	local nDifficulty = 4;
+	if DB.getValue(nodeNPC, "isMythos", 0) == 1 then
+		nDifficulty = 5;
+	end
+	local nLoss = (StabilityEncounterLoss[DB.getValue(nodeNPC, "stabilityEncounter", "")] or 4) + DB.getValue(nodeNPC, "stabilityLoss", 0);
+	local sSource = ActorManager.getDisplayName(rNPC);
+
+	local aPCs = {};
+	for _,rTarget in ipairs(TargetingManager.getFullTargets(rNPC)) do
+		if ActorManager.isPC(rTarget) then
+			table.insert(aPCs, rTarget);
+		end
+	end
+	if #aPCs == 0 then
+		for _,nodeCT in pairs(CombatManager.getCombatantNodes()) do
+			local rActor = ActorManager.resolveActor(nodeCT);
+			if ActorManager.isPC(rActor) then
+				table.insert(aPCs, rActor);
+			end
+		end
+	end
+	if #aPCs == 0 then
+		ChatManager.SystemMessage(Interface.getString("StabilityTestNoPCs"));
+		return;
+	end
+
+	for _,rPC in ipairs(aPCs) do
+		local nodeChar = ActorManager.getCreatureNode(rPC);
+		if nodeChar then
+			DB.setValue(nodeChar, "pendingstability.difficulty", "number", nDifficulty);
+			DB.setValue(nodeChar, "pendingstability.loss", "number", nLoss);
+			DB.setValue(nodeChar, "pendingstability.source", "string", sSource);
+			DB.setValue(nodeChar, "pendingstability.penalty", "string", "");
+			Comm.deliverChatMessage({ font = "msgfont", text = string.format(Interface.getString("StabilityTestRequested"), ActorManager.getDisplayName(rPC), sSource, nDifficulty, nLoss) });
+		end
+	end
+end
+
+-- Text of the pending Stability test of a PC, for the sheet; "" if there is none
+function getPendingStabilityText(nodeChar)
+	local nodePending = DB.getChild(nodeChar, "pendingstability");
+	if not nodePending then
+		return "";
+	end
+	return string.format(Interface.getString("StabilityTestPending"), DB.getValue(nodePending, "difficulty", 4), DB.getValue(nodePending, "loss", 0), DB.getValue(nodePending, "source", ""));
+end
+
+-- Before the Stability roll spends its points: keeps the state that adds 1 to the difficulty, so that the spend
+-- itself does not cause it
+function prepareStabilityTest(nodeChar)
+	local nodePending = DB.getChild(nodeChar, "pendingstability");
+	if nodePending then
+		DB.setValue(nodePending, "penalty", "string", getImpairingState(ActorManager.resolveActor(nodeChar)));
+	end
+end
+
+-- Result of the Stability roll of the sheet: without a pending test it is shown as it is
+function onStabilityTestResult(rSource, rTarget, rRoll)
+	local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
+	local nodeChar = ActorManager.getCreatureNode(rSource);
+	local nodePending = nil;
+	if nodeChar then
+		nodePending = DB.getChild(nodeChar, "pendingstability");
+	end
+	if not nodePending then
+		Comm.deliverChatMessage(rMessage);
+		return;
+	end
+
+	local nDifficulty = DB.getValue(nodePending, "difficulty", 4);
+	local nLoss = DB.getValue(nodePending, "loss", 0);
+	local sPenalty = DB.getValue(nodePending, "penalty", "");
+	if sPenalty ~= "" then
+		nDifficulty = nDifficulty + 1;
+		rMessage.text = rMessage.text .. " " .. string.format(Interface.getString("StatePenalty"), sPenalty);
+	end
+	rMessage.text = rMessage.text .. " " .. string.format(Interface.getString("StabilityTestDifficulty"), nDifficulty);
+
+	local bFailed = (rRoll.nTotal &lt; nDifficulty);
+	if bFailed then
+		rMessage.text = rMessage.text .. " " .. string.format(Interface.getString("StabilityTestFailure"), nLoss);
+	else
+		rMessage.text = rMessage.text .. " " .. Interface.getString("StabilityTestSuccess");
+	end
+	Comm.deliverChatMessage(rMessage);
+
+	DB.deleteNode(nodePending);
+
+	if bFailed then
+		local nodeStability = getAbilityByRole(nodeChar, "stability");
+		if nodeStability then
+			local nOldPool = DB.getValue(nodeStability, "pool", 0);
+			DB.setValue(nodeStability, "pool", "number", nOldPool - nLoss);
+			announceStateChange(DB.getValue(nodeChar, "name", ""), "stability", nOldPool, nOldPool - nLoss, false, false);
+		end
+	end
+end
+
 -- Health pool of an actor: the Health ability of a PC's sheet, or the healthPool of an NPC's CT entry
 function getHealthPoolNode(rActor)
 	local nodeActor = ActorManager.getCreatureNode(rActor);
@@ -22482,6 +22967,14 @@ end
 	&lt;string name="ConsciousnessRollDesc"&gt;Consciousness roll (difficulty %d)&lt;/string&gt;
 	&lt;string name="ConsciousnessSuccess"&gt;[CONSCIOUS]&lt;/string&gt;
 	&lt;string name="ConsciousnessFailure"&gt;[UNCONSCIOUS]&lt;/string&gt;
+
+	&lt;!-- Stability test --&gt;
+	&lt;string name="StabilityTestRequested"&gt;%s must make a Stability test against %s (difficulty %d, loss %d)&lt;/string&gt;
+	&lt;string name="StabilityTestNoPCs"&gt;There are no PCs in the combat tracker to ask for a Stability test&lt;/string&gt;
+	&lt;string name="StabilityTestPending"&gt;Stability test: difficulty %d, loss %d (%s)&lt;/string&gt;
+	&lt;string name="StabilityTestDifficulty"&gt;(difficulty %d)&lt;/string&gt;
+	&lt;string name="StabilityTestSuccess"&gt;[SUCCESS]&lt;/string&gt;
+	&lt;string name="StabilityTestFailure"&gt;[FAILURE: -%d Stability]&lt;/string&gt;
   
 &lt;/root&gt;      
     </XML>

@@ -54,6 +54,14 @@
 	&lt;string name="ConsciousnessRollDesc"&gt;Consciousness roll (difficulty %d)&lt;/string&gt;
 	&lt;string name="ConsciousnessSuccess"&gt;[CONSCIOUS]&lt;/string&gt;
 	&lt;string name="ConsciousnessFailure"&gt;[UNCONSCIOUS]&lt;/string&gt;
+
+	&lt;!-- Stability test --&gt;
+	&lt;string name="StabilityTestRequested"&gt;%s must make a Stability test against %s (difficulty %d, loss %d)&lt;/string&gt;
+	&lt;string name="StabilityTestNoPCs"&gt;There are no PCs in the combat tracker to ask for a Stability test&lt;/string&gt;
+	&lt;string name="StabilityTestPending"&gt;Stability test: difficulty %d, loss %d (%s)&lt;/string&gt;
+	&lt;string name="StabilityTestDifficulty"&gt;(difficulty %d)&lt;/string&gt;
+	&lt;string name="StabilityTestSuccess"&gt;[SUCCESS]&lt;/string&gt;
+	&lt;string name="StabilityTestFailure"&gt;[FAILURE: -%d Stability]&lt;/string&gt;
   
 &lt;/root&gt;      
     </XML>

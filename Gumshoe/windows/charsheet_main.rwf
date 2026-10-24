@@ -268,6 +268,12 @@ function onInit()
 	DB.addHandler(sAbilities .. ".*.role", "onUpdate", onAbilitiesChanged);
 	DB.addHandler(sAbilities .. ".*.name", "onUpdate", onAbilitiesChanged);
 	DB.addHandler(sAbilities, "onChildDeleted", onAbilitiesChanged);
+
+	-- Show the Stability test an NPC asks for, until it is rolled
+	local sPending = DB.getPath(getDatabaseNode(), "pendingstability");
+	DB.addHandler(sPending, "onAdd", onPendingStabilityChanged);
+	DB.addHandler(sPending, "onChildUpdate", onPendingStabilityChanged);
+	DB.addHandler(sPending, "onDelete", onPendingStabilityChanged);
 end
 
 function onClose()
@@ -276,10 +282,19 @@ function onClose()
 	DB.removeHandler(sAbilities .. ".*.role", "onUpdate", onAbilitiesChanged);
 	DB.removeHandler(sAbilities .. ".*.name", "onUpdate", onAbilitiesChanged);
 	DB.removeHandler(sAbilities, "onChildDeleted", onAbilitiesChanged);
+
+	local sPending = DB.getPath(getDatabaseNode(), "pendingstability");
+	DB.removeHandler(sPending, "onAdd", onPendingStabilityChanged);
+	DB.removeHandler(sPending, "onChildUpdate", onPendingStabilityChanged);
+	DB.removeHandler(sPending, "onDelete", onPendingStabilityChanged);
 end
 
 function onAbilitiesChanged()
 	linkHealthStability();
+end
+
+function onPendingStabilityChanged()
+	updateStates();
 end
 
 --	--Initialize investigative abilities list if it's empty
@@ -339,10 +354,10 @@ function linkAbilityFields(nodeAbility, ctrlName, ctrlRating, ctrlPool)
 	end
 end
 
--- Health and Stability states under their names. The pool fields call it while the window is being built, before
--- the state labels exist
+-- Health and Stability states under their names, and the pending Stability test. The pool fields call it while the
+-- window is being built, before the state labels exist
 function updateStates()
-	if not healthState or not stabilityState then
+	if not healthState or not stabilityState or not stabilityPending then
 		return;
 	end
 	local sHealthState = "";
@@ -355,6 +370,7 @@ function updateStates()
 		sStabilityState = GumshoeManager.getStateText(GumshoeManager.getStabilityState(DB.getValue(StabilityNode, "pool", 0)));
 	end
 	stabilityState.setValue(sStabilityState);
+	stabilityPending.setValue(GumshoeManager.getPendingStabilityText(getDatabaseNode()));
 end
 
 -- Consciousness roll, when Health is below 0. The Health test value is the Health spent to add to the die, and the
@@ -455,7 +471,7 @@ end
       {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"groupStats"}},
       {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
-      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"175"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"187"}},
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"298"}},
       {"Name":"DevelopmentComments"},
@@ -1260,7 +1276,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"35"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"348"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"360"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -1488,7 +1504,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"377"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"348"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"360"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -1602,7 +1618,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"219"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"348"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"360"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -1659,7 +1675,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"295"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"348"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"360"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -1830,7 +1846,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"249"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"348"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"360"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -1944,7 +1960,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"336"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"348"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"360"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -2058,7 +2074,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"137"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"346"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"358"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -2153,7 +2169,7 @@ end
       {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
       {"Name":"DataSource","Value":{"@xsi:type":"xsd:string","#text":".weapons"}},
-      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"132"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"120"}},
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"480"}},
       {"Name":"DevelopmentComments"},
@@ -2200,7 +2216,7 @@ end
       {"Name":"WindowListFilterBy","Value":{"@xsi:type":"FilterByDefinition","CaseSensitive":{"@xsi:nil":"true"},"FilterSourceType":"Control","FilterOnSourceType":"Control"}},
       {"Name":"WindowListSortBy","Value":{"@xsi:type":"ArrayOfSortByDefinition"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"337"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"349"}}
 ]}}</Definition>
     <LUACode>function onDrop(x, y, draginfo)
 	return handleDrop(draginfo, nil);
@@ -2311,7 +2327,7 @@ end</LUACode>
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"430"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"347"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"359"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -2375,7 +2391,7 @@ end</LUACode>
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"451"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"347"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"359"}}
 ]}}</Definition>
     <LUACode>
 function onButtonPress()
@@ -2397,7 +2413,7 @@ end
       {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"scrollWeapons"}},
       {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
-      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"94"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"82"}},
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"20"}},
       {"Name":"DevelopmentComments"},
@@ -2434,7 +2450,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"2"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"453"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"367"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"379"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -2490,7 +2506,7 @@ end
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XMLCode"},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"416"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"348"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"360"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -2556,6 +2572,63 @@ end
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"27"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"301"}}
+]}}</Definition>
+    <LUACode />
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>charsheet_main</WindowName>
+    <ControlName>stabilityPending</ControlName>
+    <ZIndex>44</ZIndex>
+    <ControlClass>FGLabel</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"Center"},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"stabilityPending"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"12"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"262"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"DynamicSize"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"minifont"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName"},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"LabelCaption","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"MultilineSpacing"},
+      {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"TextUnderlined"},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Stability test asked by an NPC: roll Stability with the Test value as the points spent"}},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"27"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"330"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -2781,7 +2854,7 @@ end
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"45"}},
       {"Name":"DevelopmentComments"},
-      {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","DiceRollString":"d6 + {self}","DiceRollDescription":"Stability Test","DiceRollType":"generalability","UseModStack":"true","ResetModStack":"true","SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":"true","Targeting":"each","AdditionalInfo":null}},
+      {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","DiceRollString":"d6 + {self}","DiceRollDescription":"Stability Test","DiceRollType":"stabilitytest","UseModStack":"true","ResetModStack":"true","SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":"true","ResultHandlerFunction":"GumshoeManager.onStabilityTestResult","AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"DropTypes"},
@@ -2830,6 +2903,8 @@ function onBeforeDiceRoll(dragInfo)
 	if not nodeStability then
 		return false;
 	end
+	-- A pending Stability test keeps the state before this spend, which may change it
+	GumshoeManager.prepareStabilityTest(window.getDatabaseNode());
 	return GumshoeManager.UseGeneralAbility(nodeStability, getValue());
 end
 
