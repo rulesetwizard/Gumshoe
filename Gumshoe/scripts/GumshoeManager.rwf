@@ -67,21 +67,17 @@ function UseGeneralAbility(rAbility, testValue)
 	end
 end
 
-function UseNPCAbility(NPCNode, abilityName, poolNode, testNode)
+function UseNPCAbility(abilityName, poolNode, testValue, bAllowNegativePool)
 
-	local abilityPoolValue = poolNode.getValue();
-	local testValue = testNode.getValue();
-	
-	local message = '';
+	local abilityPoolValue = DB.getValue(poolNode, 0);
 	
 	if testValue &gt; abilityPoolValue and not bAllowNegativePool then
-		message = Interface.getString("CantUseGeneralAbility") ..  abilityName;
-		ChatManager.Message(message, true, PCnode);
+		ChatManager.SystemMessage(Interface.getString("CantUseGeneralAbility") .. abilityName);
 		return false;
-	else
-		abilityPool.setValue(abilityPoolValue - testValue);
-		return true;
 	end
+	
+	DB.setValue(poolNode, "number", abilityPoolValue - testValue);
+	return true;
 end
 
 function getBuildPointsCost(w)
@@ -139,7 +135,7 @@ function onAttackResult(rSource, rTarget, rRoll)
     if rTarget ~= nil then
         rMessage.text = rMessage.text .. " vs " .. rTarget.sName;
 		local hitthreshold = DB.getChild(rTarget.sCreatureNode, "hitthreshold").getValue();
-		if (rRoll.nTotal + rRoll.nMod) &gt;= hitthreshold then
+		if rRoll.nTotal &gt;= hitthreshold then
 			rMessage.text = rMessage.text .. " " .. Interface.getString("AttackHit");
 			rMessage.icon = "roll_attack_hit";
 		else
@@ -162,7 +158,7 @@ function onDamageResult(rSource, rTarget, rRoll)
 		local healthPool = DB.getChild(rTarget.sCTNode, "healthPool");
 		local healthPoolValue = healthPool.getValue();
 		local armorValue = DB.getChild(rTarget.sCTNode, "armor").getValue();
-		local damage = rRoll.nTotal + rRoll.nMod - armorValue;
+		local damage = rRoll.nTotal - armorValue;
 		if damage &gt; 0 then
 			healthPool.setValue(healthPoolValue - damage);
 		end
