@@ -20706,6 +20706,12 @@ end
     <ScriptName>GumshoeManager</ScriptName>
     <FolderID>0</FolderID>
     <Script>
+OOB_MSGTYPE_APPLYDMG = "gumshoe_applydmg";
+
+function onInit()
+	OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_APPLYDMG, handleApplyDamage);
+end
+
 function UseAbilityPool(rAbility, PCnode, bRecover)
 
 	local abilityName = DB.getChild(rAbility, "name");
@@ -20832,6 +20838,28 @@ function getGeneralAbilityNode(NodeAbilities, abilityName)
 	return nil;
 end
 
+-- Health pool of an actor: the Health ability of a PC's sheet, or the healthPool of an NPC's CT entry
+function getHealthPoolNode(rActor)
+	local nodeActor = ActorManager.getCreatureNode(rActor);
+	if not nodeActor then
+		return nil;
+	end
+
+	if ActorManager.isPC(rActor) then
+		local nodeAbilities = DB.getChild(nodeActor, "abilities.generalsections");
+		if not nodeAbilities then
+			return nil;
+		end
+		local nodeHealth = getGeneralAbilityNode(nodeAbilities, GumshoeData.getHealthAbility());
+		if not nodeHealth then
+			return nil;
+		end
+		return DB.createChild(nodeHealth, "pool", "number");
+	end
+
+	return DB.createChild(nodeActor, "healthPool", "number");
+end
+
 function onAttackResult(rSource, rTarget, rRoll)
 
     local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
@@ -20854,21 +20882,54 @@ function onAttackResult(rSource, rTarget, rRoll)
 end
 
 function onDamageResult(rSource, rTarget, rRoll)
-    local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
-    
-    if rTarget ~= nil then
-		rMessage.text = rMessage.text .. " to " .. rTarget.sName;
-		local healthPool = DB.getChild(rTarget.sCTNode, "healthPool");
-		local healthPoolValue = healthPool.getValue();
-		local armorValue = DB.getChild(rTarget.sCTNode, "armor").getValue();
-		local damage = rRoll.nTotal - armorValue;
-		if damage &gt; 0 then
-			healthPool.setValue(healthPoolValue - damage);
-		end
-    end
-	
+	local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
+	if rTarget ~= nil then
+		rMessage.text = rMessage.text .. " " .. string.format(Interface.getString("DamageTarget"), ActorManager.getDisplayName(rTarget));
+	end
 	rMessage.icon = "roll_damage";
-    Comm.deliverChatMessage(rMessage);
+	Comm.deliverChatMessage(rMessage);
+
+	if rTarget ~= nil then
+		notifyApplyDamage(rTarget, rRoll.nTotal);
+	end
+end
+
+-- The roller may not own the target's nodes, so the host applies the damage
+function notifyApplyDamage(rTarget, nTotal)
+	local msgOOB = {};
+	msgOOB.type = OOB_MSGTYPE_APPLYDMG;
+	msgOOB.sTargetNode = ActorManager.getCreatureNodeName(rTarget);
+	msgOOB.nTotal = nTotal;
+
+	Comm.deliverOOBMessage(msgOOB, "");
+end
+
+function handleApplyDamage(msgOOB)
+	if not Session.IsHost then
+		return;
+	end
+
+	local rTarget = ActorManager.resolveActor(msgOOB.sTargetNode);
+	applyDamage(rTarget, tonumber(msgOOB.nTotal) or 0);
+end
+
+function applyDamage(rTarget, nTotal)
+	local nodeTarget = ActorManager.getCreatureNode(rTarget);
+	local nodeHealthPool = getHealthPoolNode(rTarget);
+	if not nodeTarget or not nodeHealthPool then
+		ChatManager.SystemMessage(Interface.getString("DamageNoHealth") .. ActorManager.getDisplayName(rTarget));
+		return;
+	end
+
+	local nArmor = DB.getValue(nodeTarget, "armor", 0);
+	local nDamage = math.max(nTotal - nArmor, 0);
+	if nDamage &gt; 0 then
+		DB.setValue(nodeHealthPool, "number", DB.getValue(nodeHealthPool, 0) - nDamage);
+	end
+
+	local rMessage = { font = "msgfont", icon = "roll_damage" };
+	rMessage.text = string.format(Interface.getString("DamageApplied"), ActorManager.getDisplayName(rTarget), nTotal, nArmor, nDamage);
+	Comm.deliverChatMessage(rMessage);
 end</Script>
     <RegisterScript>true</RegisterScript>
     <Encoding />
@@ -21109,6 +21170,9 @@ end
   	&lt;!-- Combat --&gt;
 	&lt;string name="AttackHit"&gt;[HIT]&lt;/string&gt;
 	&lt;string name="AttackMiss"&gt;[MISS]&lt;/string&gt;
+	&lt;string name="DamageTarget"&gt;to %s&lt;/string&gt;
+	&lt;string name="DamageApplied"&gt;Damage to %s: [%d - %d armor = %d]&lt;/string&gt;
+	&lt;string name="DamageNoHealth"&gt;Cannot find the Health pool to apply damage to &lt;/string&gt;
   
 &lt;/root&gt;      
     </XML>

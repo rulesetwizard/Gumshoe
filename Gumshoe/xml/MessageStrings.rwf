@@ -24,6 +24,9 @@
   	&lt;!-- Combat --&gt;
 	&lt;string name="AttackHit"&gt;[HIT]&lt;/string&gt;
 	&lt;string name="AttackMiss"&gt;[MISS]&lt;/string&gt;
+	&lt;string name="DamageTarget"&gt;to %s&lt;/string&gt;
+	&lt;string name="DamageApplied"&gt;Damage to %s: [%d - %d armor = %d]&lt;/string&gt;
+	&lt;string name="DamageNoHealth"&gt;Cannot find the Health pool to apply damage to &lt;/string&gt;
   
 &lt;/root&gt;      
     </XML>
