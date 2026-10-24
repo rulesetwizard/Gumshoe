@@ -564,7 +564,10 @@ end
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"0"}}
 ]}}</Definition>
-    <LUACode>function onInit()
+    <LUACode>-- Path of the general abilities of the linked PC, whose changes relink its Health
+local sPCAbilitiesPath = nil;
+
+function onInit()
 	-- Set the displays to what should be shown
 	setTargetingVisible();
 	setSpacingVisible();
@@ -586,6 +589,10 @@ end
 	-- Register the deletion menu item for the host
 	registerMenuItem(Interface.getString("list_menu_deleteitem"), "delete", 6);
 	registerMenuItem(Interface.getString("list_menu_deleteconfirm"), "delete", 6, 7);
+end
+
+function onClose()
+	removePCAbilityHandlers();
 end
 
 function onMenuSelection(selection, subselection)
@@ -708,12 +715,36 @@ function linkPCFields()
 		initability.setLink(DB.createChild(nodeChar, "initability", "string"), false);
 		sub_defense.subwindow.hitthreshold.setLink(nodeChar.createChild("hitthreshold", "number"), true);
 		sub_defense.subwindow.armor.setLink(nodeChar.createChild("armor", "number"), true);
-		local nodeHealth = GumshoeManager.getAbilityByRole(nodeChar, "health");
-		if nodeHealth then
-			healthPool.setLink(DB.createChild(nodeHealth, "pool", "number"), false);
-		else
-			healthPool.setLink(nil);
-		end
+		linkPCHealth();
+
+		-- Relink the Health when the roles or list of the PC's general abilities change
+		removePCAbilityHandlers();
+		sPCAbilitiesPath = DB.getPath(nodeChar, "abilities.generalsections");
+		DB.addHandler(sPCAbilitiesPath .. ".*.role", "onAdd", linkPCHealth);
+		DB.addHandler(sPCAbilitiesPath .. ".*.role", "onUpdate", linkPCHealth);
+		DB.addHandler(sPCAbilitiesPath, "onChildDeleted", linkPCHealth);
+	end
+end
+
+function linkPCHealth()
+	local nodeChar = link.getTargetDatabaseNode();
+	local nodeHealth = nil;
+	if nodeChar then
+		nodeHealth = GumshoeManager.getAbilityByRole(nodeChar, "health");
+	end
+	if nodeHealth then
+		healthPool.setLink(DB.createChild(nodeHealth, "pool", "number"), false);
+	else
+		healthPool.setLink(nil);
+	end
+end
+
+function removePCAbilityHandlers()
+	if sPCAbilitiesPath then
+		DB.removeHandler(sPCAbilitiesPath .. ".*.role", "onAdd", linkPCHealth);
+		DB.removeHandler(sPCAbilitiesPath .. ".*.role", "onUpdate", linkPCHealth);
+		DB.removeHandler(sPCAbilitiesPath, "onChildDeleted", linkPCHealth);
+		sPCAbilitiesPath = nil;
 	end
 end
 

@@ -5924,19 +5924,52 @@ end</LUACode>
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"0"}}
 ]}}</Definition>
     <LUACode>
+-- Path of the character's general abilities, whose changes rebuild the options
+local sPCAbilitiesPath = nil;
+
 function onInit()
 	super.onInit();
-	local values = '';
-	for _, ability in pairs(GumshoeData.getCombatAbilities()) do
-		if values == '' then
-			values = ability;
-		else
-			values = values .. '|' .. ability;
+
+	local nodeChar = DB.getChild(window.getDatabaseNode(), "...");
+	if nodeChar then
+		sPCAbilitiesPath = DB.getPath(nodeChar, "abilities.generalsections");
+		DB.addHandler(sPCAbilitiesPath .. ".*.role", "onAdd", onAbilitiesChanged);
+		DB.addHandler(sPCAbilitiesPath .. ".*.role", "onUpdate", onAbilitiesChanged);
+		DB.addHandler(sPCAbilitiesPath .. ".*.name", "onUpdate", onAbilitiesChanged);
+		DB.addHandler(sPCAbilitiesPath, "onChildDeleted", onAbilitiesChanged);
+	end
+
+	updateOptions();
+end
+
+function onClose()
+	if sPCAbilitiesPath then
+		DB.removeHandler(sPCAbilitiesPath .. ".*.role", "onAdd", onAbilitiesChanged);
+		DB.removeHandler(sPCAbilitiesPath .. ".*.role", "onUpdate", onAbilitiesChanged);
+		DB.removeHandler(sPCAbilitiesPath .. ".*.name", "onUpdate", onAbilitiesChanged);
+		DB.removeHandler(sPCAbilitiesPath, "onChildDeleted", onAbilitiesChanged);
+	end
+end
+
+function onAbilitiesChanged()
+	updateOptions();
+end
+
+-- The options are the character's combat abilities. The stored ability is kept even if it is no longer one of them:
+-- the weapon is then unlinked, and linked again if the ability becomes a combat ability. No initial value is given to
+-- initialize, since it would replace the stored one
+function updateOptions()
+	local aNames = {};
+	local nodeChar = DB.getChild(window.getDatabaseNode(), "...");
+	for _,nodeAbility in ipairs(GumshoeManager.getAbilitiesByRole(nodeChar, "combat")) do
+		local sName = DB.getValue(nodeAbility, "name", "");
+		if sName ~= "" then
+			table.insert(aNames, sName);
 		end
 	end
-	initialize(values, values, '', '');
-	--synchData();	
-	updateDisplay();	
+	table.sort(aNames);
+	local sValues = table.concat(aNames, "|");
+	initialize(sValues, sValues, "", nil);
 	setLink(false);
 end
 
@@ -7820,6 +7853,25 @@ local HealthNode = nil;
 local StabilityNode = nil;
 
 function onInit()
+	linkHealthStability();
+
+	-- Relink when the roles, names or list of the general abilities change
+	local sAbilities = DB.getPath(getDatabaseNode(), "abilities.generalsections");
+	DB.addHandler(sAbilities .. ".*.role", "onAdd", onAbilitiesChanged);
+	DB.addHandler(sAbilities .. ".*.role", "onUpdate", onAbilitiesChanged);
+	DB.addHandler(sAbilities .. ".*.name", "onUpdate", onAbilitiesChanged);
+	DB.addHandler(sAbilities, "onChildDeleted", onAbilitiesChanged);
+end
+
+function onClose()
+	local sAbilities = DB.getPath(getDatabaseNode(), "abilities.generalsections");
+	DB.removeHandler(sAbilities .. ".*.role", "onAdd", onAbilitiesChanged);
+	DB.removeHandler(sAbilities .. ".*.role", "onUpdate", onAbilitiesChanged);
+	DB.removeHandler(sAbilities .. ".*.name", "onUpdate", onAbilitiesChanged);
+	DB.removeHandler(sAbilities, "onChildDeleted", onAbilitiesChanged);
+end
+
+function onAbilitiesChanged()
 	linkHealthStability();
 end
 
@@ -15077,7 +15129,10 @@ end
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"0"}}
 ]}}</Definition>
-    <LUACode>function onInit()
+    <LUACode>-- Path of the general abilities of the linked PC, whose changes relink its Health
+local sPCAbilitiesPath = nil;
+
+function onInit()
 	-- Set the displays to what should be shown
 	setTargetingVisible();
 	setSpacingVisible();
@@ -15099,6 +15154,10 @@ end
 	-- Register the deletion menu item for the host
 	registerMenuItem(Interface.getString("list_menu_deleteitem"), "delete", 6);
 	registerMenuItem(Interface.getString("list_menu_deleteconfirm"), "delete", 6, 7);
+end
+
+function onClose()
+	removePCAbilityHandlers();
 end
 
 function onMenuSelection(selection, subselection)
@@ -15221,12 +15280,36 @@ function linkPCFields()
 		initability.setLink(DB.createChild(nodeChar, "initability", "string"), false);
 		sub_defense.subwindow.hitthreshold.setLink(nodeChar.createChild("hitthreshold", "number"), true);
 		sub_defense.subwindow.armor.setLink(nodeChar.createChild("armor", "number"), true);
-		local nodeHealth = GumshoeManager.getAbilityByRole(nodeChar, "health");
-		if nodeHealth then
-			healthPool.setLink(DB.createChild(nodeHealth, "pool", "number"), false);
-		else
-			healthPool.setLink(nil);
-		end
+		linkPCHealth();
+
+		-- Relink the Health when the roles or list of the PC's general abilities change
+		removePCAbilityHandlers();
+		sPCAbilitiesPath = DB.getPath(nodeChar, "abilities.generalsections");
+		DB.addHandler(sPCAbilitiesPath .. ".*.role", "onAdd", linkPCHealth);
+		DB.addHandler(sPCAbilitiesPath .. ".*.role", "onUpdate", linkPCHealth);
+		DB.addHandler(sPCAbilitiesPath, "onChildDeleted", linkPCHealth);
+	end
+end
+
+function linkPCHealth()
+	local nodeChar = link.getTargetDatabaseNode();
+	local nodeHealth = nil;
+	if nodeChar then
+		nodeHealth = GumshoeManager.getAbilityByRole(nodeChar, "health");
+	end
+	if nodeHealth then
+		healthPool.setLink(DB.createChild(nodeHealth, "pool", "number"), false);
+	else
+		healthPool.setLink(nil);
+	end
+end
+
+function removePCAbilityHandlers()
+	if sPCAbilitiesPath then
+		DB.removeHandler(sPCAbilitiesPath .. ".*.role", "onAdd", linkPCHealth);
+		DB.removeHandler(sPCAbilitiesPath .. ".*.role", "onUpdate", linkPCHealth);
+		DB.removeHandler(sPCAbilitiesPath, "onChildDeleted", linkPCHealth);
+		sPCAbilitiesPath = nil;
 	end
 end
 
@@ -20548,9 +20631,8 @@ function onInit()
 			values = values .. '|' .. ability;
 		end
 	end
-	initialize(values, values, '', '');
-	--synchData();	
-	updateDisplay();	
+	-- No initial value: initialize would replace the stored one
+	initialize(values, values, '', nil);
 end
 </LUACode>
     <GroupIndex>0</GroupIndex>

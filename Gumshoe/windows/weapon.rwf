@@ -64,9 +64,8 @@ function onInit()
 			values = values .. '|' .. ability;
 		end
 	end
-	initialize(values, values, '', '');
-	--synchData();	
-	updateDisplay();	
+	-- No initial value: initialize would replace the stored one
+	initialize(values, values, '', nil);
 end
 </LUACode>
     <GroupIndex>0</GroupIndex>

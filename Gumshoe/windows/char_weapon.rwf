@@ -264,19 +264,52 @@ end</LUACode>
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"0"}}
 ]}}</Definition>
     <LUACode>
+-- Path of the character's general abilities, whose changes rebuild the options
+local sPCAbilitiesPath = nil;
+
 function onInit()
 	super.onInit();
-	local values = '';
-	for _, ability in pairs(GumshoeData.getCombatAbilities()) do
-		if values == '' then
-			values = ability;
-		else
-			values = values .. '|' .. ability;
+
+	local nodeChar = DB.getChild(window.getDatabaseNode(), "...");
+	if nodeChar then
+		sPCAbilitiesPath = DB.getPath(nodeChar, "abilities.generalsections");
+		DB.addHandler(sPCAbilitiesPath .. ".*.role", "onAdd", onAbilitiesChanged);
+		DB.addHandler(sPCAbilitiesPath .. ".*.role", "onUpdate", onAbilitiesChanged);
+		DB.addHandler(sPCAbilitiesPath .. ".*.name", "onUpdate", onAbilitiesChanged);
+		DB.addHandler(sPCAbilitiesPath, "onChildDeleted", onAbilitiesChanged);
+	end
+
+	updateOptions();
+end
+
+function onClose()
+	if sPCAbilitiesPath then
+		DB.removeHandler(sPCAbilitiesPath .. ".*.role", "onAdd", onAbilitiesChanged);
+		DB.removeHandler(sPCAbilitiesPath .. ".*.role", "onUpdate", onAbilitiesChanged);
+		DB.removeHandler(sPCAbilitiesPath .. ".*.name", "onUpdate", onAbilitiesChanged);
+		DB.removeHandler(sPCAbilitiesPath, "onChildDeleted", onAbilitiesChanged);
+	end
+end
+
+function onAbilitiesChanged()
+	updateOptions();
+end
+
+-- The options are the character's combat abilities. The stored ability is kept even if it is no longer one of them:
+-- the weapon is then unlinked, and linked again if the ability becomes a combat ability. No initial value is given to
+-- initialize, since it would replace the stored one
+function updateOptions()
+	local aNames = {};
+	local nodeChar = DB.getChild(window.getDatabaseNode(), "...");
+	for _,nodeAbility in ipairs(GumshoeManager.getAbilitiesByRole(nodeChar, "combat")) do
+		local sName = DB.getValue(nodeAbility, "name", "");
+		if sName ~= "" then
+			table.insert(aNames, sName);
 		end
 	end
-	initialize(values, values, '', '');
-	--synchData();	
-	updateDisplay();	
+	table.sort(aNames);
+	local sValues = table.concat(aNames, "|");
+	initialize(sValues, sValues, "", nil);
 	setLink(false);
 end
 

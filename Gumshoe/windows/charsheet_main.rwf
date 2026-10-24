@@ -261,6 +261,25 @@ local StabilityNode = nil;
 
 function onInit()
 	linkHealthStability();
+
+	-- Relink when the roles, names or list of the general abilities change
+	local sAbilities = DB.getPath(getDatabaseNode(), "abilities.generalsections");
+	DB.addHandler(sAbilities .. ".*.role", "onAdd", onAbilitiesChanged);
+	DB.addHandler(sAbilities .. ".*.role", "onUpdate", onAbilitiesChanged);
+	DB.addHandler(sAbilities .. ".*.name", "onUpdate", onAbilitiesChanged);
+	DB.addHandler(sAbilities, "onChildDeleted", onAbilitiesChanged);
+end
+
+function onClose()
+	local sAbilities = DB.getPath(getDatabaseNode(), "abilities.generalsections");
+	DB.removeHandler(sAbilities .. ".*.role", "onAdd", onAbilitiesChanged);
+	DB.removeHandler(sAbilities .. ".*.role", "onUpdate", onAbilitiesChanged);
+	DB.removeHandler(sAbilities .. ".*.name", "onUpdate", onAbilitiesChanged);
+	DB.removeHandler(sAbilities, "onChildDeleted", onAbilitiesChanged);
+end
+
+function onAbilitiesChanged()
+	linkHealthStability();
 end
 
 --	--Initialize investigative abilities list if it's empty
