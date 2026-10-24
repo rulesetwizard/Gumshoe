@@ -126,8 +126,8 @@ function getBuildPointsCost(w)
 end
 
 function getGeneralAbilityNode(NodeAbilities, abilityName)
-	for _,ability in pairs(NodeAbilities.getChildren()) do
-		if ability.getChild("name").getValue() == abilityName then
+	for _,ability in pairs(DB.getChildren(NodeAbilities)) do
+		if DB.getValue(ability, "name", "") == abilityName then
 			return ability;
 		end
 	end
