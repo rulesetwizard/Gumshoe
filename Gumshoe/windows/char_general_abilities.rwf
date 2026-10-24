@@ -67,6 +67,17 @@ function onInit()
 			DB.setValue(nodeAbility, "name", "string", ability.name);
 			DB.setValue(nodeAbility, "role", "string", ability.role or "");
 		end
+		-- Trail of Cthulhu: Sanity, whose first 4 points are free
+		if GumshoeData.isSanityEnabled() then
+			local rSanity = GumshoeData.getSanityAbility();
+			local nodeSanity = listAbilities.createWindow().getDatabaseNode();
+			DB.setValue(nodeSanity, "name", "string", rSanity.name);
+			DB.setValue(nodeSanity, "role", "string", rSanity.role);
+			DB.setValue(nodeSanity, "rating", "number", rSanity.rating);
+			DB.setValue(nodeSanity, "pool", "number", rSanity.rating);
+			DB.setValue(nodeSanity, "buildPointsType", "string", "firstfree");
+			DB.setValue(nodeSanity, "customBuildPoints", "number", rSanity.rating);
+		end
         -- Set edit mode on
         parentcontrol.window.btnEditLists.setValue(1);
     end

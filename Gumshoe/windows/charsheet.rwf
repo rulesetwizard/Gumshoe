@@ -12,7 +12,7 @@
       {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"abilities"}},
       {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
-      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"478"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"510"}},
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"490"}},
       {"Name":"DevelopmentComments"},
@@ -69,7 +69,7 @@
       {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"charsheet"}},
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
       {"Name":"DataSource"},
-      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"568"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"600"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"525"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
@@ -86,7 +86,7 @@
       {"Name":"MaximumWidth"},
       {"Name":"MergeWindow"},
       {"Name":"MinimizedIcon","Value":{"@xsi:type":"xsd:string","#text":"minimized_char"}},
-      {"Name":"MinimumHeight","Value":{"@xsi:type":"xsd:int","#text":"568"}},
+      {"Name":"MinimumHeight","Value":{"@xsi:type":"xsd:int","#text":"600"}},
       {"Name":"MinimumWidth","Value":{"@xsi:type":"xsd:int","#text":"525"}},
       {"Name":"NoClose"},
       {"Name":"NoDelete"},
@@ -129,7 +129,7 @@
       {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"inventory"}},
       {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
-      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"478"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"510"}},
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"490"}},
       {"Name":"DevelopmentComments"},
@@ -243,7 +243,7 @@
       {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"main"}},
       {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
-      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"478"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"510"}},
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"490"}},
       {"Name":"DevelopmentComments"},
@@ -421,7 +421,7 @@
       {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"notes"}},
       {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
-      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"478"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"510"}},
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"490"}},
       {"Name":"DevelopmentComments"},
@@ -623,7 +623,7 @@
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"1"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"507"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"550"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"582"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>

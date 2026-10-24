@@ -60,6 +60,7 @@ function onInit()
 	--Initialize abilities list if it's empty
     local ListNode = InvestigativeAbilitiesList.getDatabaseNode();
     if ListNode.getChildCount() == 0 then
+		local rMythos = GumshoeData.getMythosAbility();
 		-- Create sections, in order
         for _, section in ipairs(GumshoeData.getInvestigativeAbilities()) do
 			local wSection = InvestigativeAbilitiesList.createWindow();
@@ -71,6 +72,13 @@ function onInit()
 				local wAbility = wSection.listAbilities.createWindow();
 				local nodeAbility = wAbility.getDatabaseNode();
 				DB.setValue(nodeAbility, "name", "string", ability);
+			end
+
+			-- Trail of Cthulhu: Cthulhu Mythos, which limits Sanity
+			if GumshoeData.isSanityEnabled() and section.name == rMythos.section then
+				local nodeMythos = wSection.listAbilities.createWindow().getDatabaseNode();
+				DB.setValue(nodeMythos, "name", "string", rMythos.name);
+				DB.setValue(nodeMythos, "role", "string", rMythos.role);
 			end
         end
     end

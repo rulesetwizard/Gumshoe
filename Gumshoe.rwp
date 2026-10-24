@@ -819,8 +819,8 @@ end</LUACode>
       {"Name":"StackVertWith"},
       {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
       {"Name":"StringCyclerAlign","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"StringCyclerItems","Value":{"@xsi:type":"ArrayOfLabelValue","LabelValue":[{"Label":"Health","Value":"health"},{"Label":"Stability","Value":"stability"},{"Label":"Combat","Value":"combat"}]}},
-      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"What the ability is used for: Health, Stability or a combat ability"}},
+      {"Name":"StringCyclerItems","Value":{"@xsi:type":"ArrayOfLabelValue","LabelValue":[{"Label":"Health","Value":"health"},{"Label":"Stability","Value":"stability"},{"Label":"Sanity","Value":"sanity"},{"Label":"Combat","Value":"combat"}]}},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"What the ability is used for: Health, Stability, Sanity or a combat ability"}},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"143"}},
@@ -1840,6 +1840,17 @@ function onInit()
 			local nodeAbility = wAbility.getDatabaseNode();
 			DB.setValue(nodeAbility, "name", "string", ability.name);
 			DB.setValue(nodeAbility, "role", "string", ability.role or "");
+		end
+		-- Trail of Cthulhu: Sanity, whose first 4 points are free
+		if GumshoeData.isSanityEnabled() then
+			local rSanity = GumshoeData.getSanityAbility();
+			local nodeSanity = listAbilities.createWindow().getDatabaseNode();
+			DB.setValue(nodeSanity, "name", "string", rSanity.name);
+			DB.setValue(nodeSanity, "role", "string", rSanity.role);
+			DB.setValue(nodeSanity, "rating", "number", rSanity.rating);
+			DB.setValue(nodeSanity, "pool", "number", rSanity.rating);
+			DB.setValue(nodeSanity, "buildPointsType", "string", "firstfree");
+			DB.setValue(nodeSanity, "customBuildPoints", "number", rSanity.rating);
 		end
         -- Set edit mode on
         parentcontrol.window.btnEditLists.setValue(1);
@@ -3743,8 +3754,8 @@ end
       {"Name":"StackVertWith"},
       {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
       {"Name":"StringCyclerAlign","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"StringCyclerItems","Value":{"@xsi:type":"ArrayOfLabelValue","LabelValue":[{"Label":"Health","Value":"health"},{"Label":"Stability","Value":"stability"},{"Label":"Combat","Value":"combat"}]}},
-      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"What the ability is used for: Health, Stability or a combat ability"}},
+      {"Name":"StringCyclerItems","Value":{"@xsi:type":"ArrayOfLabelValue","LabelValue":[{"Label":"Health","Value":"health"},{"Label":"Stability","Value":"stability"},{"Label":"Sanity","Value":"sanity"},{"Label":"Combat","Value":"combat"}]}},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"What the ability is used for: Health, Stability, Sanity or a combat ability"}},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"50"}},
@@ -3823,6 +3834,7 @@ function onInit()
 	--Initialize abilities list if it's empty
     local ListNode = InvestigativeAbilitiesList.getDatabaseNode();
     if ListNode.getChildCount() == 0 then
+		local rMythos = GumshoeData.getMythosAbility();
 		-- Create sections, in order
         for _, section in ipairs(GumshoeData.getInvestigativeAbilities()) do
 			local wSection = InvestigativeAbilitiesList.createWindow();
@@ -3834,6 +3846,13 @@ function onInit()
 				local wAbility = wSection.listAbilities.createWindow();
 				local nodeAbility = wAbility.getDatabaseNode();
 				DB.setValue(nodeAbility, "name", "string", ability);
+			end
+
+			-- Trail of Cthulhu: Cthulhu Mythos, which limits Sanity
+			if GumshoeData.isSanityEnabled() and section.name == rMythos.section then
+				local nodeMythos = wSection.listAbilities.createWindow().getDatabaseNode();
+				DB.setValue(nodeMythos, "name", "string", rMythos.name);
+				DB.setValue(nodeMythos, "role", "string", rMythos.role);
 			end
         end
     end
@@ -4124,11 +4143,12 @@ end
       {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"abilitydetails"}},
       {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
-      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"61"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"87"}},
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"283"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FastInit","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"FrameHideReadonly"},
@@ -4190,6 +4210,7 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"button-white"}},
       {"Name":"FrameHideReadonly"},
@@ -4251,7 +4272,7 @@ end
       {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"char_investigative_ability"}},
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
       {"Name":"DataSource"},
-      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"88"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"114"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"285"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
@@ -4260,6 +4281,7 @@ end
       {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"HostControl"},
       {"Name":"HoverCursor"},
+      {"Name":"InheritedTabs","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"InheritSizePosition"},
       {"Name":"Invisible"},
       {"Name":"Locked"},
@@ -4288,6 +4310,7 @@ end
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"WindowClassCopy"},
       {"Name":"WindowMargins","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"WindowTabs","Value":{"@xsi:type":"ArrayOfWindowTabDefinition"}},
       {"Name":"WindowTitle"},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"0"}}
@@ -4320,6 +4343,7 @@ end</LUACode>
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
+      {"Name":"DropTypes"},
       {"Name":"FrameHideReadonly"},
       {"Name":"FrameName"},
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
@@ -4378,6 +4402,7 @@ end</LUACode>
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"button-white"}},
       {"Name":"FrameHideReadonly"},
@@ -4439,6 +4464,7 @@ end</LUACode>
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"EmptyText"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
@@ -4504,6 +4530,7 @@ end</LUACode>
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"FrameHideReadonly"},
@@ -4578,6 +4605,7 @@ end
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"FrameHideReadonly"},
@@ -4644,6 +4672,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"88"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"FrameHideReadonly"},
@@ -4714,7 +4743,7 @@ end
       {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"char_investigative_ability_detail"}},
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
       {"Name":"DataSource"},
-      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"61"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"87"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"225"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
@@ -4723,6 +4752,7 @@ end
       {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"HostControl"},
       {"Name":"HoverCursor"},
+      {"Name":"InheritedTabs","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"InheritSizePosition"},
       {"Name":"Invisible"},
       {"Name":"Locked"},
@@ -4751,6 +4781,7 @@ end
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"WindowClassCopy"},
       {"Name":"WindowMargins","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"WindowTabs","Value":{"@xsi:type":"ArrayOfWindowTabDefinition"}},
       {"Name":"WindowTitle"},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"0"}}
@@ -4781,6 +4812,7 @@ end
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"FrameHideReadonly"},
@@ -4846,6 +4878,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"20"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FrameHideReadonly"},
       {"Name":"FrameName"},
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
@@ -4900,6 +4933,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"94"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
@@ -4920,6 +4954,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -4955,6 +4990,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"118"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"sheetlabelinline"}},
@@ -4975,6 +5011,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -4987,6 +5024,63 @@ end
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"26"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"21"}}
+]}}</Definition>
+    <LUACode />
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>char_investigative_ability_detail</WindowName>
+    <ControlName>lblRole</ControlName>
+    <ZIndex>8</ZIndex>
+    <ControlClass>FGLabel</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"Center"},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"lblRole"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"40"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"DynamicSize"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName"},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"LabelCaption","Value":{"@xsi:type":"xsd:string","#text":"Role"}},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"MultilineSpacing"},
+      {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"TextUnderlined"},
+      {"Name":"Tooltip"},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"3"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"64"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -5009,6 +5103,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"20"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FrameHideReadonly"},
       {"Name":"FrameName"},
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
@@ -5070,6 +5165,7 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"EmptyText"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
@@ -5110,6 +5206,69 @@ end
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"3"}}
 ]}}</Definition>
     <LUACode />
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>char_investigative_ability_detail</WindowName>
+    <ControlName>role</ControlName>
+    <ZIndex>9</ZIndex>
+    <ControlClass>FGStringCycler</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"role"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DefaultLabel","Value":{"@xsi:type":"xsd:string","#text":"None"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"24"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"120"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName","Value":{"@xsi:type":"xsd:string","#text":"fielddark"}},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string","#text":"0,0,0,0"}},
+      {"Name":"GMEditOnly"},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"NextTabTarget"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"ReadOnly"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"Source"},
+      {"Name":"Sourceless"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"StringCyclerAlign","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"StringCyclerItems","Value":{"@xsi:type":"ArrayOfLabelValue","LabelValue":{"Label":"Cthulhu Mythos","Value":"mythos"}}},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Cthulhu Mythos limits Sanity to 10 minus its rating (Trail of Cthulhu)"}},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"48"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"61"}}
+]}}</Definition>
+    <LUACode>
+-- Cthulhu Mythos limits the Sanity of the character
+function onValueChanged()
+	GumshoeManager.applySanityLimit(DB.getChild(window.getDatabaseNode(), "......"));
+end
+</LUACode>
     <GroupIndex>0</GroupIndex>
     <Template />
   </WindowControls>
@@ -6554,7 +6713,7 @@ end
       {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"abilities"}},
       {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
-      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"478"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"510"}},
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"490"}},
       {"Name":"DevelopmentComments"},
@@ -6611,7 +6770,7 @@ end
       {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"charsheet"}},
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
       {"Name":"DataSource"},
-      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"568"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"600"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"525"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
@@ -6628,7 +6787,7 @@ end
       {"Name":"MaximumWidth"},
       {"Name":"MergeWindow"},
       {"Name":"MinimizedIcon","Value":{"@xsi:type":"xsd:string","#text":"minimized_char"}},
-      {"Name":"MinimumHeight","Value":{"@xsi:type":"xsd:int","#text":"568"}},
+      {"Name":"MinimumHeight","Value":{"@xsi:type":"xsd:int","#text":"600"}},
       {"Name":"MinimumWidth","Value":{"@xsi:type":"xsd:int","#text":"525"}},
       {"Name":"NoClose"},
       {"Name":"NoDelete"},
@@ -6671,7 +6830,7 @@ end
       {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"inventory"}},
       {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
-      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"478"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"510"}},
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"490"}},
       {"Name":"DevelopmentComments"},
@@ -6785,7 +6944,7 @@ end
       {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"main"}},
       {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
-      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"478"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"510"}},
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"490"}},
       {"Name":"DevelopmentComments"},
@@ -6963,7 +7122,7 @@ end
       {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"notes"}},
       {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
-      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"478"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"510"}},
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"490"}},
       {"Name":"DevelopmentComments"},
@@ -7165,7 +7324,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"1"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"507"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"550"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"582"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -7805,7 +7964,7 @@ end
       {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"charsheet_main"}},
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
       {"Name":"DataSource"},
-      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"470"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"502"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"500"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
@@ -7851,9 +8010,11 @@ end
     <LUACode>
 local HealthNode = nil;
 local StabilityNode = nil;
+local SanityNode = nil;
 
 function onInit()
 	linkHealthStability();
+	updateSanityVisibility();
 
 	-- Relink when the roles, names or list of the general abilities change
 	local sAbilities = DB.getPath(getDatabaseNode(), "abilities.generalsections");
@@ -7862,11 +8023,17 @@ function onInit()
 	DB.addHandler(sAbilities .. ".*.name", "onUpdate", onAbilitiesChanged);
 	DB.addHandler(sAbilities, "onChildDeleted", onAbilitiesChanged);
 
+	-- Sanity can never be higher than 10 minus Cthulhu Mythos
+	DB.addHandler(sAbilities .. ".*.rating", "onUpdate", onSanityLimitChanged);
+	DB.addHandler(getMythosRatingsPath(), "onUpdate", onSanityLimitChanged);
+
 	-- Show the Stability test an NPC asks for, until it is rolled
 	local sPending = DB.getPath(getDatabaseNode(), "pendingstability");
 	DB.addHandler(sPending, "onAdd", onPendingStabilityChanged);
 	DB.addHandler(sPending, "onChildUpdate", onPendingStabilityChanged);
 	DB.addHandler(sPending, "onDelete", onPendingStabilityChanged);
+
+	OptionsManager.registerCallback("SANITY", updateSanityVisibility);
 end
 
 function onClose()
@@ -7876,14 +8043,28 @@ function onClose()
 	DB.removeHandler(sAbilities .. ".*.name", "onUpdate", onAbilitiesChanged);
 	DB.removeHandler(sAbilities, "onChildDeleted", onAbilitiesChanged);
 
+	DB.removeHandler(sAbilities .. ".*.rating", "onUpdate", onSanityLimitChanged);
+	DB.removeHandler(getMythosRatingsPath(), "onUpdate", onSanityLimitChanged);
+
 	local sPending = DB.getPath(getDatabaseNode(), "pendingstability");
 	DB.removeHandler(sPending, "onAdd", onPendingStabilityChanged);
 	DB.removeHandler(sPending, "onChildUpdate", onPendingStabilityChanged);
 	DB.removeHandler(sPending, "onDelete", onPendingStabilityChanged);
+
+	OptionsManager.unregisterCallback("SANITY", updateSanityVisibility);
+end
+
+-- Ratings of the investigative abilities, among them Cthulhu Mythos
+function getMythosRatingsPath()
+	return DB.getPath(getDatabaseNode(), "abilities.investigativesections.*.abilities.*.rating");
 end
 
 function onAbilitiesChanged()
 	linkHealthStability();
+end
+
+function onSanityLimitChanged()
+	GumshoeManager.applySanityLimit(getDatabaseNode());
 end
 
 function onPendingStabilityChanged()
@@ -7923,11 +8104,13 @@ end
 --    end
 
 function linkHealthStability()
-	-- Initialize Health and stability field links
+	-- Initialize Health, Stability and Sanity field links
 	HealthNode = GumshoeManager.getAbilityByRole(getDatabaseNode(), "health");
 	StabilityNode = GumshoeManager.getAbilityByRole(getDatabaseNode(), "stability");
+	SanityNode = GumshoeManager.getAbilityByRole(getDatabaseNode(), "sanity");
 	linkAbilityFields(HealthNode, healthName, healthRating, healthPool);
 	linkAbilityFields(StabilityNode, stabilityName, stabilityRating, stabilityPool);
+	linkAbilityFields(SanityNode, sanityName, sanityRating, sanityPool);
 	updateStates();
 end
 
@@ -7947,10 +8130,19 @@ function linkAbilityFields(nodeAbility, ctrlName, ctrlRating, ctrlPool)
 	end
 end
 
--- Health and Stability states under their names, and the pending Stability test. The pool fields call it while the
--- window is being built, before the state labels exist
+-- The Sanity row is shown with the Sanity option (Trail of Cthulhu)
+function updateSanityVisibility()
+	local bSanity = GumshoeData.isSanityEnabled();
+	sanityName.setVisible(bSanity);
+	sanityRating.setVisible(bSanity);
+	sanityPool.setVisible(bSanity);
+	sanityState.setVisible(bSanity);
+end
+
+-- Health, Stability and Sanity states under their names, and the pending Stability test. The pool fields call it
+-- while the window is being built, before the state labels exist
 function updateStates()
-	if not healthState or not stabilityState or not stabilityPending then
+	if not healthState or not stabilityState or not stabilityPending or not sanityState then
 		return;
 	end
 	local sHealthState = "";
@@ -7963,6 +8155,11 @@ function updateStates()
 		sStabilityState = GumshoeManager.getStateText(GumshoeManager.getStabilityState(DB.getValue(StabilityNode, "pool", 0)));
 	end
 	stabilityState.setValue(sStabilityState);
+	local sSanityState = "";
+	if SanityNode then
+		sSanityState = GumshoeManager.getStateText(GumshoeManager.getSanityState(DB.getValue(SanityNode, "pool", 0)));
+	end
+	sanityState.setValue(sSanityState);
 	stabilityPending.setValue(GumshoeManager.getPendingStabilityText(getDatabaseNode()));
 end
 
@@ -7992,6 +8189,10 @@ end
 
 function getStabilityNode()
 	return StabilityNode;
+end
+
+function getSanityNode()
+	return SanityNode;
 end
 
 </LUACode>
@@ -8064,7 +8265,7 @@ end
       {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"groupStats"}},
       {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
-      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"187"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"219"}},
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"298"}},
       {"Name":"DevelopmentComments"},
@@ -8869,7 +9070,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"35"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"360"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"392"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -9097,7 +9298,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"377"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"360"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"392"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -9211,7 +9412,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"219"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"360"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"392"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -9268,7 +9469,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"295"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"360"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"392"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -9439,7 +9640,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"249"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"360"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"392"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -9553,7 +9754,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"336"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"360"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"392"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -9667,7 +9868,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"137"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"358"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"390"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -9809,7 +10010,7 @@ end
       {"Name":"WindowListFilterBy","Value":{"@xsi:type":"FilterByDefinition","CaseSensitive":{"@xsi:nil":"true"},"FilterSourceType":"Control","FilterOnSourceType":"Control"}},
       {"Name":"WindowListSortBy","Value":{"@xsi:type":"ArrayOfSortByDefinition"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"349"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"381"}}
 ]}}</Definition>
     <LUACode>function onDrop(x, y, draginfo)
 	return handleDrop(draginfo, nil);
@@ -9920,7 +10121,7 @@ end</LUACode>
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"430"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"359"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"391"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -9984,13 +10185,279 @@ end</LUACode>
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"451"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"359"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"391"}}
 ]}}</Definition>
     <LUACode>
 function onButtonPress()
 	window.spacerHeader.setVisible(getValue() == 1);
 end
 </LUACode>
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>charsheet_main</WindowName>
+    <ControlName>sanityName</ControlName>
+    <ZIndex>45</ZIndex>
+    <ControlClass>FGStringField</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"Center"},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"sanityName"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DefaultText","Value":{"@xsi:type":"xsd:string","#text":"Sanity"}},
+      {"Name":"DelayKeyUpdate","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"90"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
+      {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"DynamicSize"},
+      {"Name":"EmptyText"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"sheetlabel"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName"},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMEditOnly"},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"LineOffset"},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"MultilineSpacing"},
+      {"Name":"NextTabTarget"},
+      {"Name":"NoDrag","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"NoDragselect","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"NoDrop","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"PrevTabTarget"},
+      {"Name":"ReadOnly"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"Source"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"Tooltip"},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"27"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"331"}}
+]}}</Definition>
+    <LUACode />
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>charsheet_main</WindowName>
+    <ControlName>sanityPool</ControlName>
+    <ZIndex>47</ZIndex>
+    <ControlClass>FGNumberField</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"sanityPool"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DefaultValue"},
+      {"Name":"DelayKeyUpdate"},
+      {"Name":"DescriptionText"},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"28"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"45"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
+      {"Name":"Disabled"},
+      {"Name":"DisplaySign"},
+      {"Name":"DropTypes"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName","Value":{"@xsi:type":"xsd:string","#text":"fielddark"}},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMEditOnly"},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HideOnValue"},
+      {"Name":"HideRollWidget"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"MaxValue"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"MinValue"},
+      {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
+      {"Name":"NoDrop"},
+      {"Name":"NoKeyEdit"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"ReadOnly","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile","Value":{"@xsi:type":"xsd:string","#text":"common/scripts/number_crosslink.lua"}},
+      {"Name":"Source"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Sanity is never spent, only lost. Alt+double click to recover 1 point"}},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"165"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"326"}}
+]}}</Definition>
+    <LUACode>
+function onDoubleClick(x, y)
+	local nodeSanity = window.getSanityNode();
+	if nodeSanity then
+		GumshoeManager.UseAbilityPool(nodeSanity, window.getDatabaseNode(), Input.isAltPressed());
+	end
+end
+
+-- Called by number_crosslink when the linked pool changes
+function update()
+	window.updateStates();
+end
+</LUACode>
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>charsheet_main</WindowName>
+    <ControlName>sanityRating</ControlName>
+    <ZIndex>46</ZIndex>
+    <ControlClass>FGNumberField</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"sanityRating"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DefaultValue"},
+      {"Name":"DelayKeyUpdate"},
+      {"Name":"DescriptionText"},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"28"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"45"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
+      {"Name":"Disabled"},
+      {"Name":"DisplaySign"},
+      {"Name":"DropTypes"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName","Value":{"@xsi:type":"xsd:string","#text":"fielddark"}},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMEditOnly"},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HideOnValue"},
+      {"Name":"HideRollWidget"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"MaxValue"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"MinValue","Value":{"@xsi:type":"xsd:decimal","#text":"0"}},
+      {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
+      {"Name":"NoDrop"},
+      {"Name":"NoKeyEdit"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"ReadOnly","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile","Value":{"@xsi:type":"xsd:string","#text":"common/scripts/number_crosslink.lua"}},
+      {"Name":"Source"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"Tooltip"},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"122"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"326"}}
+]}}</Definition>
+    <LUACode />
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>charsheet_main</WindowName>
+    <ControlName>sanityState</ControlName>
+    <ZIndex>48</ZIndex>
+    <ControlClass>FGLabel</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"Center"},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"sanityState"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"12"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"92"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"DynamicSize"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"minifont"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName"},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"LabelCaption","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"MultilineSpacing"},
+      {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"TextUnderlined"},
+      {"Name":"Tooltip"},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"27"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"349"}}
+]}}</Definition>
+    <LUACode />
     <GroupIndex>0</GroupIndex>
     <Template />
   </WindowControls>
@@ -10043,7 +10510,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"2"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"453"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"379"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"411"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -10099,7 +10566,7 @@ end
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XMLCode"},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"416"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"360"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"392"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -10221,7 +10688,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"27"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"330"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"362"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -10521,7 +10988,7 @@ end
       {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"tokenPortrait"}},
       {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
-      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"264"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"296"}},
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"190"}},
       {"Name":"DevelopmentComments"},
@@ -21982,6 +22449,11 @@ local GeneralAbilities = {
 	{ name = "Unobtrusiveness" },
 }
 
+-- Trail of Cthulhu abilities, created with the Sanity option: Sanity (general, 4 free points) and Cthulhu Mythos
+-- (academic investigative ability)
+local SanityAbility = { name = "Sanity", role = "sanity", rating = 4 };
+local MythosAbility = { section = "ACADEMIC", name = "Cthulhu Mythos", role = "mythos" };
+
 local CombatAbilities = {
 	"Scuffling",
 	"Shooting",
@@ -21999,6 +22471,10 @@ function onInit()
 	-- Purist: NPCs lose Health as the investigators. Pulp: ordinary people die when their Health drops below 0
 	OptionsManager.registerOption2("NPCHEALTH", false, "GumshoeOptionsGroup", "NPCHealthOptionLabel", "option_entry_cycler", 
 			{ labels = "OptionPulp", values = "pulp", baselabel = "OptionPurist", baseval = "purist", default = "purist" });
+
+	-- Sanity and Cthulhu Mythos (Trail of Cthulhu): new characters get them and the main tab shows Sanity
+	OptionsManager.registerOption2("SANITY", false, "GumshoeOptionsGroup", "SanityOptionLabel", "option_entry_cycler", 
+			{ labels = "option_val_off", values = "off", baselabel = "option_val_on", baseval = "on", default = "on" });
 
 end
 
@@ -22022,6 +22498,18 @@ function getStabilityAbility()
 	return StabilityAbility;
 end;
 
+function isSanityEnabled()
+	return OptionsManager.isOption("SANITY", "on");
+end
+
+function getSanityAbility()
+	return SanityAbility;
+end
+
+function getMythosAbility()
+	return MythosAbility;
+end
+
 function isCombatAbility(abilityName)
 	local CombatAbilities = getCombatAbilities();
 	for _,v in pairs(CombatAbilities) do
@@ -22040,12 +22528,19 @@ function getLegacyRole(abilityName)
 	if abilityName == StabilityAbility then
 		return "stability";
 	end
+	if abilityName == SanityAbility.name then
+		return "sanity";
+	end
+	if abilityName == MythosAbility.name then
+		return "mythos";
+	end
 	if isCombatAbility(abilityName) then
 		return "combat";
 	end
 	return "";
 end
 
+-- Sanity does not come back with the other pools (in a purist game it never does)
 function ResetAbilityPools()
 	for _,nodeChar in pairs(DB.getChildren("charsheet")) do
 		-- Reset Investigative Abilities
@@ -22056,7 +22551,9 @@ function ResetAbilityPools()
 		end
 		-- Reset General Abilities
 		for _,nodeAbility in pairs(DB.getChildren(nodeChar, "abilities.generalsections")) do
-			DB.setValue(nodeAbility, "pool", "number", DB.getValue(nodeAbility, "rating", 0));
+			if GumshoeManager.getAbilityRole(nodeAbility) ~= "sanity" then
+				DB.setValue(nodeAbility, "pool", "number", DB.getValue(nodeAbility, "rating", 0));
+			end
 		end
 	end
 end
@@ -22113,6 +22610,11 @@ function UseAbilityPool(rAbility, PCnode, bRecover)
 		end
 		return true;
 	else
+		-- Sanity is never spent: it is only lost
+		if getAbilityRole(rAbility) == "sanity" then
+			ChatManager.Message(Interface.getString("SanityCannotBeSpent") .. abilityName.getValue(), true, PCnode);
+			return false;
+		end
 		-- Hurt, Shaken and worse characters cannot spend investigative points
 		if isInvestigativeAbility(rAbility) then
 			local sState = getImpairingState(ActorManager.resolveActor(PCnode));
@@ -22151,6 +22653,13 @@ function UseGeneralAbility(rAbility, testValue)
 	
 	local message = '';
 	
+	local abilityRole = getAbilityRole(rAbility);
+	-- Sanity is never spent or tested: it is only lost
+	if abilityRole == "sanity" then
+		ChatManager.Message(Interface.getString("SanityCannotBeSpent") .. abilityName, true, PCnode);
+		return false;
+	end
+
 	if abilityRatingValue == 0 then
 		if OptionsManager.isOption("FORGIVING", "no") then
 			message = Interface.getString("UntrainedGeneralAbility") ..  abilityName;
@@ -22159,7 +22668,6 @@ function UseGeneralAbility(rAbility, testValue)
 		end
 	end
 	
-	local abilityRole = getAbilityRole(rAbility);
 	local bAllowNegativePool = (abilityRole == "health") or (abilityRole == "stability");
 	
 	if bAllowNegativePool then
@@ -22242,8 +22750,8 @@ end
 
 --
 -- ABILITY ROLES
--- The code finds Health, Stability and the combat abilities by their role ("health", "stability", "combat" or ""),
--- so that they can have any name
+-- The code finds Health, Stability, Sanity, the combat abilities and Cthulhu Mythos by their role ("health",
+-- "stability", "sanity", "combat", "mythos" or ""), so that they can have any name
 --
 
 function getAbilityRole(nodeAbility)
@@ -22255,10 +22763,10 @@ function getAbilityRole(nodeAbility)
 	return GumshoeData.getLegacyRole(DB.getValue(nodeAbility, "name", ""));
 end
 
--- Sets the role of a general ability. Health and Stability are unique: another ability of the list that has that role
--- loses it
+-- Sets the role of a general ability. Health, Stability and Sanity are unique: another ability of the list that has
+-- that role loses it
 function setAbilityRole(nodeAbility, sRole)
-	if sRole == "health" or sRole == "stability" then
+	if sRole == "health" or sRole == "stability" or sRole == "sanity" then
 		local sPath = DB.getPath(nodeAbility);
 		for _,nodeOther in pairs(DB.getChildren(DB.getParent(nodeAbility))) do
 			if DB.getPath(nodeOther) ~= sPath and getAbilityRole(nodeOther) == sRole then
@@ -22278,7 +22786,7 @@ function migrateAbilityRoles(nodeAbilities)
 	end
 end
 
--- The character's general ability with that role (Health and Stability are unique)
+-- The character's general ability with that role (Health, Stability and Sanity are unique)
 function getAbilityByRole(nodeChar, sRole)
 	for _,nodeAbility in pairs(DB.getChildren(nodeChar, "abilities.generalsections")) do
 		if getAbilityRole(nodeAbility) == sRole then
@@ -22299,14 +22807,26 @@ function getAbilitiesByRole(nodeChar, sRole)
 	return aAbilities;
 end
 
+-- The character's investigative ability with that role, in any section (Cthulhu Mythos)
+function getInvestigativeAbilityByRole(nodeChar, sRole)
+	for _,nodeSection in pairs(DB.getChildren(nodeChar, "abilities.investigativesections")) do
+		for _,nodeAbility in pairs(DB.getChildren(nodeSection, "abilities")) do
+			if getAbilityRole(nodeAbility) == sRole then
+				return nodeAbility;
+			end
+		end
+	end
+	return nil;
+end
+
 --
--- HEALTH AND STABILITY STATES (Trail of Cthulhu)
+-- HEALTH, STABILITY AND SANITY STATES (Trail of Cthulhu)
 -- Health: Hurt from 0 to -5, Seriously Wounded from -6 to -11, Dead at -12. Stability: Shaken from 0 to -5,
--- Shattered from -6 to -11, Incurably Insane at -12
+-- Shattered from -6 to -11, Incurably Insane at -12. Sanity: lost to the Mythos at 0
 --
 
 -- States with an effect that is told in the chat
-local StatesWithEffect = { hurt = true, seriouslywounded = true, shaken = true, shattered = true };
+local StatesWithEffect = { hurt = true, seriouslywounded = true, shaken = true, shattered = true, lost = true };
 
 -- bPulpNPC: with the pulp option, NPCs die when their Health drops below 0
 function getHealthState(nPool, bPulpNPC)
@@ -22338,13 +22858,23 @@ function getStabilityState(nPool)
 	return "incurable";
 end
 
--- State of a Health or Stability pool, by the role of the ability ("" for any other role)
+function getSanityState(nPool)
+	if nPool &gt; 0 then
+		return "";
+	end
+	return "lost";
+end
+
+-- State of a Health, Stability or Sanity pool, by the role of the ability ("" for any other role)
 function getPoolState(sRole, nPool, bPulpNPC)
 	if sRole == "health" then
 		return getHealthState(nPool, bPulpNPC);
 	end
 	if sRole == "stability" then
 		return getStabilityState(nPool);
+	end
+	if sRole == "sanity" then
+		return getSanityState(nPool);
 	end
 	return "";
 end
@@ -22388,7 +22918,19 @@ function getActorStability(rActor)
 	return DB.getValue(nodeStability, "pool", 0);
 end
 
--- Text of the Health and Stability states of an actor, for the sheet and the combat tracker
+-- Sanity pool of a PC that has Sanity
+function getActorSanity(rActor)
+	if not ActorManager.isPC(rActor) then
+		return nil;
+	end
+	local nodeSanity = getAbilityByRole(ActorManager.getCreatureNode(rActor), "sanity");
+	if not nodeSanity then
+		return nil;
+	end
+	return DB.getValue(nodeSanity, "pool", 0);
+end
+
+-- Text of the Health, Stability and Sanity states of an actor, for the sheet and the combat tracker
 function getActorStatesText(rActor)
 	local aStates = {};
 	local nHealth = getActorHealth(rActor);
@@ -22401,6 +22943,13 @@ function getActorStatesText(rActor)
 	local nStability = getActorStability(rActor);
 	if nStability then
 		local sState = getStateText(getStabilityState(nStability));
+		if sState ~= "" then
+			table.insert(aStates, sState);
+		end
+	end
+	local nSanity = getActorSanity(rActor);
+	if nSanity then
+		local sState = getStateText(getSanityState(nSanity));
 		if sState ~= "" then
 			table.insert(aStates, sState);
 		end
@@ -22450,7 +22999,7 @@ function onActorGetHealthStatus(rActor)
 	return nPercentWounded, getStateText(sState);
 end
 
--- Tells the table when a Health or Stability pool enters a new state, with its effects, and asks for the
+-- Tells the table when a Health, Stability or Sanity pool enters a new state, with its effects, and asks for the
 -- consciousness roll when damage leaves Health below 0
 function announceStateChange(sName, sRole, nOldPool, nNewPool, bPulpNPC, bCheckConsciousness)
 	local sOldState = getPoolState(sRole, nOldPool, bPulpNPC);
@@ -22465,6 +23014,44 @@ function announceStateChange(sName, sRole, nOldPool, nNewPool, bPulpNPC, bCheckC
 
 	if bCheckConsciousness and sRole == "health" and nNewPool &lt; 0 and nNewPool &lt; nOldPool and sNewState ~= "dead" then
 		Comm.deliverChatMessage({ font = "msgfont", text = string.format(Interface.getString("ConsciousnessRoll"), sName, math.abs(nNewPool)) });
+	end
+end
+
+--
+-- SANITY (Trail of Cthulhu)
+-- Sanity can never be higher than 10 minus the Cthulhu Mythos rating
+--
+
+function getSanityLimit(nodeChar)
+	local nodeMythos = getInvestigativeAbilityByRole(nodeChar, "mythos");
+	local nMythos = 0;
+	if nodeMythos then
+		nMythos = DB.getValue(nodeMythos, "rating", 0);
+	end
+	return math.max(10 - nMythos, 0);
+end
+
+-- Lowers the Sanity rating and pool to the limit, when this user can write the sheet
+function applySanityLimit(nodeChar)
+	if not nodeChar or not (Session.IsHost or DB.isOwner(nodeChar)) then
+		return;
+	end
+	local nodeSanity = getAbilityByRole(nodeChar, "sanity");
+	if not nodeSanity then
+		return;
+	end
+	local nLimit = getSanityLimit(nodeChar);
+	local bLowered = false;
+	if DB.getValue(nodeSanity, "rating", 0) &gt; nLimit then
+		DB.setValue(nodeSanity, "rating", "number", nLimit);
+		bLowered = true;
+	end
+	if DB.getValue(nodeSanity, "pool", 0) &gt; nLimit then
+		DB.setValue(nodeSanity, "pool", "number", nLimit);
+		bLowered = true;
+	end
+	if bLowered then
+		Comm.deliverChatMessage({ font = "msgfont", text = string.format(Interface.getString("SanityLimited"), DB.getValue(nodeChar, "name", ""), nLimit) });
 	end
 end
 
@@ -22925,6 +23512,7 @@ end
 	&lt;string name="CantUseGeneralAbility"&gt;Not enough pool points to spend of &lt;/string&gt;
 	&lt;string name="CantSpendBelowLimit"&gt;Cannot voluntarily reduce below -11 the pool of &lt;/string&gt;
 	&lt;string name="CantSpendInvestigative"&gt;%s cannot spend investigative points while %s&lt;/string&gt;
+	&lt;string name="SanityCannotBeSpent"&gt;Sanity is never spent, only lost: &lt;/string&gt;
 	&lt;string name="UntrainedGeneralAbility"&gt;Cannot use untrained ability &lt;/string&gt;
 	&lt;string name="IncorrectAbility"&gt;Ability type does not match&lt;/string&gt;
 	&lt;string name="LockedList"&gt;The list is not in edit mode&lt;/string&gt;
@@ -22941,6 +23529,7 @@ end
 	&lt;string name="NPCHealthOptionLabel"&gt;NPC Health loss&lt;/string&gt;
 	&lt;string name="OptionPurist"&gt;Purist (as investigators)&lt;/string&gt;
 	&lt;string name="OptionPulp"&gt;Pulp (die below 0)&lt;/string&gt;
+	&lt;string name="SanityOptionLabel"&gt;Sanity (Trail of Cthulhu)&lt;/string&gt;
   
   	&lt;!-- Combat --&gt;
 	&lt;string name="AttackTarget"&gt;vs %s&lt;/string&gt;
@@ -22950,17 +23539,19 @@ end
 	&lt;string name="DamageApplied"&gt;Damage to %s: [%d - %d armor = %d]&lt;/string&gt;
 	&lt;string name="DamageNoHealth"&gt;Cannot find the Health pool to apply damage to &lt;/string&gt;
 
-	&lt;!-- Health and Stability states --&gt;
+	&lt;!-- Health, Stability and Sanity states --&gt;
 	&lt;string name="State_hurt"&gt;Hurt&lt;/string&gt;
 	&lt;string name="State_seriouslywounded"&gt;Seriously Wounded&lt;/string&gt;
 	&lt;string name="State_dead"&gt;Dead&lt;/string&gt;
 	&lt;string name="State_shaken"&gt;Shaken&lt;/string&gt;
 	&lt;string name="State_shattered"&gt;Shattered&lt;/string&gt;
 	&lt;string name="State_incurable"&gt;Incurably Insane&lt;/string&gt;
+	&lt;string name="State_lost"&gt;Lost to the Mythos&lt;/string&gt;
 	&lt;string name="StateEffect_hurt"&gt;cannot spend investigative points, +1 to the difficulty of all tests and contests&lt;/string&gt;
 	&lt;string name="StateEffect_seriouslywounded"&gt;cannot fight, and loses 1 Health every half hour until given First Aid&lt;/string&gt;
 	&lt;string name="StateEffect_shaken"&gt;cannot spend investigative points, +1 to the difficulty of general abilities&lt;/string&gt;
 	&lt;string name="StateEffect_shattered"&gt;can only flee or attack wildly, may develop a mental illness and loses 1 Stability rating point&lt;/string&gt;
+	&lt;string name="StateEffect_lost"&gt;Sanity is gone: the investigator now sees the world as the Mythos do&lt;/string&gt;
 	&lt;string name="StateChanged"&gt;%s is now %s&lt;/string&gt;
 	&lt;string name="StatePenalty"&gt;[+1 %s]&lt;/string&gt;
 	&lt;string name="ConsciousnessRoll"&gt;%s must make a consciousness roll (difficulty %d)&lt;/string&gt;
@@ -22975,6 +23566,9 @@ end
 	&lt;string name="StabilityTestDifficulty"&gt;(difficulty %d)&lt;/string&gt;
 	&lt;string name="StabilityTestSuccess"&gt;[SUCCESS]&lt;/string&gt;
 	&lt;string name="StabilityTestFailure"&gt;[FAILURE: -%d Stability]&lt;/string&gt;
+
+	&lt;!-- Sanity --&gt;
+	&lt;string name="SanityLimited"&gt;%s's Sanity cannot be higher than 10 minus Cthulhu Mythos: lowered to %d&lt;/string&gt;
   
 &lt;/root&gt;      
     </XML>

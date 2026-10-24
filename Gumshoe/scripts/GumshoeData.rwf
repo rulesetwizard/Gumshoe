@@ -114,6 +114,11 @@ local GeneralAbilities = {
 	{ name = "Unobtrusiveness" },
 }
 
+-- Trail of Cthulhu abilities, created with the Sanity option: Sanity (general, 4 free points) and Cthulhu Mythos
+-- (academic investigative ability)
+local SanityAbility = { name = "Sanity", role = "sanity", rating = 4 };
+local MythosAbility = { section = "ACADEMIC", name = "Cthulhu Mythos", role = "mythos" };
+
 local CombatAbilities = {
 	"Scuffling",
 	"Shooting",
@@ -131,6 +136,10 @@ function onInit()
 	-- Purist: NPCs lose Health as the investigators. Pulp: ordinary people die when their Health drops below 0
 	OptionsManager.registerOption2("NPCHEALTH", false, "GumshoeOptionsGroup", "NPCHealthOptionLabel", "option_entry_cycler", 
 			{ labels = "OptionPulp", values = "pulp", baselabel = "OptionPurist", baseval = "purist", default = "purist" });
+
+	-- Sanity and Cthulhu Mythos (Trail of Cthulhu): new characters get them and the main tab shows Sanity
+	OptionsManager.registerOption2("SANITY", false, "GumshoeOptionsGroup", "SanityOptionLabel", "option_entry_cycler", 
+			{ labels = "option_val_off", values = "off", baselabel = "option_val_on", baseval = "on", default = "on" });
 
 end
 
@@ -154,6 +163,18 @@ function getStabilityAbility()
 	return StabilityAbility;
 end;
 
+function isSanityEnabled()
+	return OptionsManager.isOption("SANITY", "on");
+end
+
+function getSanityAbility()
+	return SanityAbility;
+end
+
+function getMythosAbility()
+	return MythosAbility;
+end
+
 function isCombatAbility(abilityName)
 	local CombatAbilities = getCombatAbilities();
 	for _,v in pairs(CombatAbilities) do
@@ -172,12 +193,19 @@ function getLegacyRole(abilityName)
 	if abilityName == StabilityAbility then
 		return "stability";
 	end
+	if abilityName == SanityAbility.name then
+		return "sanity";
+	end
+	if abilityName == MythosAbility.name then
+		return "mythos";
+	end
 	if isCombatAbility(abilityName) then
 		return "combat";
 	end
 	return "";
 end
 
+-- Sanity does not come back with the other pools (in a purist game it never does)
 function ResetAbilityPools()
 	for _,nodeChar in pairs(DB.getChildren("charsheet")) do
 		-- Reset Investigative Abilities
@@ -188,7 +216,9 @@ function ResetAbilityPools()
 		end
 		-- Reset General Abilities
 		for _,nodeAbility in pairs(DB.getChildren(nodeChar, "abilities.generalsections")) do
-			DB.setValue(nodeAbility, "pool", "number", DB.getValue(nodeAbility, "rating", 0));
+			if GumshoeManager.getAbilityRole(nodeAbility) ~= "sanity" then
+				DB.setValue(nodeAbility, "pool", "number", DB.getValue(nodeAbility, "rating", 0));
+			end
 		end
 	end
 end
