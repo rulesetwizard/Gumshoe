@@ -154,16 +154,12 @@ function ResetAbilityPools()
 		-- Reset Investigative Abilities
 		for _,nodeSection in pairs(DB.getChildren(nodeChar, "abilities.investigativesections")) do
 			for _,nodeAbility in pairs(DB.getChildren(nodeSection, "abilities")) do
-				local nodePool = DB.getChild(nodeAbility, "pool");
-				local nodeRating = DB.getChild(nodeAbility, "rating");
-				nodePool.setValue(nodeRating.getValue());
+				DB.setValue(nodeAbility, "pool", "number", DB.getValue(nodeAbility, "rating", 0));
 			end
 		end
 		-- Reset General Abilities
 		for _,nodeAbility in pairs(DB.getChildren(nodeChar, "abilities.generalsections")) do
-			local nodePool = DB.getChild(nodeAbility, "pool");
-			local nodeRating = DB.getChild(nodeAbility, "rating");
-			nodePool.setValue(nodeRating.getValue());
+			DB.setValue(nodeAbility, "pool", "number", DB.getValue(nodeAbility, "rating", 0));
 		end
 	end
 end

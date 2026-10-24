@@ -20842,16 +20842,12 @@ function ResetAbilityPools()
 		-- Reset Investigative Abilities
 		for _,nodeSection in pairs(DB.getChildren(nodeChar, "abilities.investigativesections")) do
 			for _,nodeAbility in pairs(DB.getChildren(nodeSection, "abilities")) do
-				local nodePool = DB.getChild(nodeAbility, "pool");
-				local nodeRating = DB.getChild(nodeAbility, "rating");
-				nodePool.setValue(nodeRating.getValue());
+				DB.setValue(nodeAbility, "pool", "number", DB.getValue(nodeAbility, "rating", 0));
 			end
 		end
 		-- Reset General Abilities
 		for _,nodeAbility in pairs(DB.getChildren(nodeChar, "abilities.generalsections")) do
-			local nodePool = DB.getChild(nodeAbility, "pool");
-			local nodeRating = DB.getChild(nodeAbility, "rating");
-			nodePool.setValue(nodeRating.getValue());
+			DB.setValue(nodeAbility, "pool", "number", DB.getValue(nodeAbility, "rating", 0));
 		end
 	end
 end
@@ -20961,17 +20957,18 @@ end
 function getBuildPointsCost(w)
 	local nodeWin = w.getDatabaseNode();
 	local buildPointsType = DB.getValue(nodeWin, 'buildPointsType', '');
+	local rating = DB.getValue(nodeWin, 'rating', 0);
+	local customPoints = DB.getValue(nodeWin, 'customBuildPoints', 0);
 	
 	if buildPointsType == '' or buildPointsType == 'normal' then
-		return nodeWin.getChild('rating').getValue();
+		return rating;
 	end
 
 	if buildPointsType == 'half' then
-		return math.ceil(nodeWin.getChild('rating').getValue() / 2);
+		return math.ceil(rating / 2);
 	end
 
 	if buildPointsType == 'exotic' then
-		local rating = nodeWin.getChild('rating').getValue();
 		if rating &lt;= 0 then
 			return 0;
 		else
@@ -20980,17 +20977,15 @@ function getBuildPointsCost(w)
 	end
 
 	if buildPointsType == 'firstfree' then
-		local freepoints = nodeWin.getChild('customBuildPoints').getValue();
-		local rating = nodeWin.getChild('rating').getValue();
-		if rating &gt; freepoints then
-			return rating - freepoints;
+		if rating &gt; customPoints then
+			return rating - customPoints;
 		else
 			return 0;
 		end
 	end
 
 	if buildPointsType == 'custom' then
-		return nodeWin.getChild('customBuildPoints').getValue();
+		return customPoints;
 	end
 	
 	--Free
