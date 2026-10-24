@@ -7913,6 +7913,7 @@ function linkHealthStability()
 	StabilityNode = GumshoeManager.getAbilityByRole(getDatabaseNode(), "stability");
 	linkAbilityFields(HealthNode, healthName, healthRating, healthPool);
 	linkAbilityFields(StabilityNode, stabilityName, stabilityRating, stabilityPool);
+	updateStates();
 end
 
 -- Links the fields to the ability, or leaves them empty if the character does not have it
@@ -7929,6 +7930,24 @@ function linkAbilityFields(nodeAbility, ctrlName, ctrlRating, ctrlPool)
 		ctrlRating.setReadOnly(true);
 		ctrlPool.setReadOnly(true);
 	end
+end
+
+-- Health and Stability states under their names. The pool fields call it while the window is being built, before
+-- the state labels exist
+function updateStates()
+	if not healthState or not stabilityState then
+		return;
+	end
+	local sHealthState = "";
+	if HealthNode then
+		sHealthState = GumshoeManager.getStateText(GumshoeManager.getHealthState(DB.getValue(HealthNode, "pool", 0), false));
+	end
+	healthState.setValue(sHealthState);
+	local sStabilityState = "";
+	if StabilityNode then
+		sStabilityState = GumshoeManager.getStateText(GumshoeManager.getStabilityState(DB.getValue(StabilityNode, "pool", 0)));
+	end
+	stabilityState.setValue(sStabilityState);
 end
 
 function getHealthNode()
@@ -8185,6 +8204,11 @@ function onDoubleClick(x, y)
 		GumshoeManager.UseAbilityPool(nodeHealth, window.getDatabaseNode(), Input.isAltPressed());
 	end
 end
+
+-- Called by number_crosslink when the linked pool changes
+function update()
+	window.updateStates();
+end
 </LUACode>
     <GroupIndex>0</GroupIndex>
     <Template />
@@ -8250,6 +8274,63 @@ end
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"123"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"266"}}
+]}}</Definition>
+    <LUACode />
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>charsheet_main</WindowName>
+    <ControlName>healthState</ControlName>
+    <ZIndex>42</ZIndex>
+    <ControlClass>FGLabel</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"Center"},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"healthState"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"12"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"92"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"DynamicSize"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"minifont"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName"},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"LabelCaption","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"MultilineSpacing"},
+      {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"TextUnderlined"},
+      {"Name":"Tooltip"},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"27"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"289"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -10117,6 +10198,11 @@ function onDoubleClick(x, y)
 		GumshoeManager.UseAbilityPool(nodeStability, window.getDatabaseNode(), Input.isAltPressed());
 	end
 end
+
+-- Called by number_crosslink when the linked pool changes
+function update()
+	window.updateStates();
+end
 </LUACode>
     <GroupIndex>0</GroupIndex>
     <Template />
@@ -10182,6 +10268,63 @@ end
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"122"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"296"}}
+]}}</Definition>
+    <LUACode />
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>charsheet_main</WindowName>
+    <ControlName>stabilityState</ControlName>
+    <ZIndex>43</ZIndex>
+    <ControlClass>FGLabel</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"Center"},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"stabilityState"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"12"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"92"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"DynamicSize"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"minifont"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName"},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"LabelCaption","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"MultilineSpacing"},
+      {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"TextUnderlined"},
+      {"Name":"Tooltip"},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"27"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"319"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -15150,6 +15293,7 @@ function onInit()
 	-- Set up the PC links
 	self.onLinkChanged();
 	self.onFactionChanged();
+	self.updateHealthState();
 	
 	-- Register the deletion menu item for the host
 	registerMenuItem(Interface.getString("list_menu_deleteitem"), "delete", 6);
@@ -15282,12 +15426,14 @@ function linkPCFields()
 		sub_defense.subwindow.armor.setLink(nodeChar.createChild("armor", "number"), true);
 		linkPCHealth();
 
-		-- Relink the Health when the roles or list of the PC's general abilities change
+		-- Relink the Health when the roles or list of the PC's general abilities change, and update the states
+		-- when its pools change (the Stability pool is not shown in the combat tracker)
 		removePCAbilityHandlers();
 		sPCAbilitiesPath = DB.getPath(nodeChar, "abilities.generalsections");
 		DB.addHandler(sPCAbilitiesPath .. ".*.role", "onAdd", linkPCHealth);
 		DB.addHandler(sPCAbilitiesPath .. ".*.role", "onUpdate", linkPCHealth);
 		DB.addHandler(sPCAbilitiesPath, "onChildDeleted", linkPCHealth);
+		DB.addHandler(sPCAbilitiesPath .. ".*.pool", "onUpdate", updateHealthState);
 	end
 end
 
@@ -15302,6 +15448,7 @@ function linkPCHealth()
 	else
 		healthPool.setLink(nil);
 	end
+	updateHealthState();
 end
 
 function removePCAbilityHandlers()
@@ -15309,8 +15456,18 @@ function removePCAbilityHandlers()
 		DB.removeHandler(sPCAbilitiesPath .. ".*.role", "onAdd", linkPCHealth);
 		DB.removeHandler(sPCAbilitiesPath .. ".*.role", "onUpdate", linkPCHealth);
 		DB.removeHandler(sPCAbilitiesPath, "onChildDeleted", linkPCHealth);
+		DB.removeHandler(sPCAbilitiesPath .. ".*.pool", "onUpdate", updateHealthState);
 		sPCAbilitiesPath = nil;
 	end
+end
+
+-- Health state, and Stability state for PCs, under the name. The Health field calls it while the window is being
+-- built, before the state label exists
+function updateHealthState()
+	if not healthState then
+		return;
+	end
+	healthState.setValue(GumshoeManager.getActorStatesText(ActorManager.resolveActor(getDatabaseNode())));
 end
 
 --
@@ -15681,6 +15838,68 @@ end
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"252"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"4"}}
+]}}</Definition>
+    <LUACode>
+-- Called by number_crosslink when the pool (or the linked PC pool) changes
+function update()
+	window.updateHealthState();
+end
+</LUACode>
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>ct_entry</WindowName>
+    <ControlName>healthState</ControlName>
+    <ZIndex>33</ZIndex>
+    <ControlClass>FGLabel</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"Center"},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"healthState"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"12"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"180"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"DynamicSize"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"minifont"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName"},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"2"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"LabelCaption","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"MultilineSpacing"},
+      {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"TextUnderlined"},
+      {"Name":"Tooltip"},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"69"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"29"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -21367,6 +21586,10 @@ function onInit()
 	OptionsManager.registerOption2("FORGIVING", true, "GumshoeOptionsGroup", "ForgivingOptionLabel", "option_entry_cycler", 
 			{ labels = "OptionUnforgiving", values = "no", baselabel = "OptionForgiving", baseval = "yes", default = "yes" });
 
+	-- Purist: NPCs lose Health as the investigators. Pulp: ordinary people die when their Health drops below 0
+	OptionsManager.registerOption2("NPCHEALTH", false, "GumshoeOptionsGroup", "NPCHealthOptionLabel", "option_entry_cycler", 
+			{ labels = "OptionPulp", values = "pulp", baselabel = "OptionPurist", baseval = "purist", default = "purist" });
+
 end
 
 function getInvestigativeAbilities()
@@ -21454,6 +21677,12 @@ local MinVoluntaryPool = -11;
 
 function onInit()
 	OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_APPLYDMG, handleApplyDamage);
+
+	-- Health status of the actors for CoreRPG: token health bars and dots, their colors and the death markers
+	GameManager.setFunction("onActorGetHealthStatus", onActorGetHealthStatus);
+	ActorHealthManager.registerStatusHealthColor(Interface.getString("State_hurt"), ColorManager.getUIColor("health_simple_bloodied"));
+	ActorHealthManager.registerStatusHealthColor(Interface.getString("State_seriouslywounded"), ColorManager.getUIColor("health_unconscious"));
+	TokenManager.addDefaultHealthFeatures(nil, { "healthPool", "healthRating" });
 end
 
 function UseAbilityPool(rAbility, PCnode, bRecover)
@@ -21477,6 +21706,7 @@ function UseAbilityPool(rAbility, PCnode, bRecover)
 			message = Interface.getString("SpendAbilityPool") ..  abilityName.getValue();
 			abilityPool.setValue(abilityPoolValue - 1);
 			ChatManager.Message(message, true, PCnode);
+			announceStateChange(DB.getValue(PCnode, "name", ""), getAbilityRole(rAbility), abilityPoolValue, abilityPoolValue - 1, false, false);
 			return true;
 		else
 			message = Interface.getString("CantSpendAbilityPool") ..  abilityName.getValue();
@@ -21521,6 +21751,7 @@ function UseGeneralAbility(rAbility, testValue)
 	end
 
 	abilityPool.setValue(abilityPoolValue - testValue);
+	announceStateChange(DB.getValue(PCnode, "name", ""), abilityRole, abilityPoolValue, abilityPoolValue - testValue, false, false);
 	return true;
 end
 
@@ -21644,6 +21875,152 @@ function getAbilitiesByRole(nodeChar, sRole)
 	return aAbilities;
 end
 
+--
+-- HEALTH AND STABILITY STATES (Trail of Cthulhu)
+-- Health: Hurt from 0 to -5, Seriously Wounded from -6 to -11, Dead at -12. Stability: Shaken from 0 to -5,
+-- Shattered from -6 to -11, Incurably Insane at -12
+--
+
+-- States with an effect that is told in the chat
+local StatesWithEffect = { hurt = true, seriouslywounded = true, shaken = true, shattered = true };
+
+-- bPulpNPC: with the pulp option, NPCs die when their Health drops below 0
+function getHealthState(nPool, bPulpNPC)
+	if nPool &gt; 0 then
+		return "";
+	end
+	if bPulpNPC and nPool &lt; 0 then
+		return "dead";
+	end
+	if nPool &gt;= -5 then
+		return "hurt";
+	end
+	if nPool &gt;= -11 then
+		return "seriouslywounded";
+	end
+	return "dead";
+end
+
+function getStabilityState(nPool)
+	if nPool &gt; 0 then
+		return "";
+	end
+	if nPool &gt;= -5 then
+		return "shaken";
+	end
+	if nPool &gt;= -11 then
+		return "shattered";
+	end
+	return "incurable";
+end
+
+-- State of a Health or Stability pool, by the role of the ability ("" for any other role)
+function getPoolState(sRole, nPool, bPulpNPC)
+	if sRole == "health" then
+		return getHealthState(nPool, bPulpNPC);
+	end
+	if sRole == "stability" then
+		return getStabilityState(nPool);
+	end
+	return "";
+end
+
+function getStateText(sState)
+	if (sState or "") == "" then
+		return "";
+	end
+	return Interface.getString("State_" .. sState);
+end
+
+function isPulpNPC(rActor)
+	return not ActorManager.isPC(rActor) and OptionsManager.isOption("NPCHEALTH", "pulp");
+end
+
+-- Health pool and rating of an actor, without creating nodes: the Health ability of a PC, or the NPC's fields
+function getActorHealth(rActor)
+	local nodeActor = ActorManager.getCreatureNode(rActor);
+	if not nodeActor then
+		return nil;
+	end
+	if ActorManager.isPC(rActor) then
+		local nodeHealth = getAbilityByRole(nodeActor, "health");
+		if not nodeHealth then
+			return nil;
+		end
+		return DB.getValue(nodeHealth, "pool", 0), DB.getValue(nodeHealth, "rating", 0);
+	end
+	return DB.getValue(nodeActor, "healthPool", 0), DB.getValue(nodeActor, "healthRating", 0);
+end
+
+-- Stability pool of a PC (NPCs have no Stability)
+function getActorStability(rActor)
+	if not ActorManager.isPC(rActor) then
+		return nil;
+	end
+	local nodeStability = getAbilityByRole(ActorManager.getCreatureNode(rActor), "stability");
+	if not nodeStability then
+		return nil;
+	end
+	return DB.getValue(nodeStability, "pool", 0);
+end
+
+-- Text of the Health and Stability states of an actor, for the sheet and the combat tracker
+function getActorStatesText(rActor)
+	local aStates = {};
+	local nHealth = getActorHealth(rActor);
+	if nHealth then
+		local sState = getStateText(getHealthState(nHealth, isPulpNPC(rActor)));
+		if sState ~= "" then
+			table.insert(aStates, sState);
+		end
+	end
+	local nStability = getActorStability(rActor);
+	if nStability then
+		local sState = getStateText(getStabilityState(nStability));
+		if sState ~= "" then
+			table.insert(aStates, sState);
+		end
+	end
+	return table.concat(aStates, ", ");
+end
+
+-- For CoreRPG (GameManager onActorGetHealthStatus): wounded from the full pool (0) to -12 (1)
+function onActorGetHealthStatus(rActor)
+	local nPool, nRating = getActorHealth(rActor);
+	if not nPool then
+		return 0, ActorHealthManager.STATUS_HEALTHY;
+	end
+
+	local sState = getHealthState(nPool, isPulpNPC(rActor));
+	if sState == "dead" then
+		return 1, ActorHealthManager.STATUS_DEAD;
+	end
+
+	local nPercentWounded = math.max(0, math.min(1, (nRating - nPool) / (nRating + 12)));
+	if sState == "" then
+		return nPercentWounded, ActorHealthManager.getDefaultStatusFromWoundPercent(nPercentWounded);
+	end
+	return nPercentWounded, getStateText(sState);
+end
+
+-- Tells the table when a Health or Stability pool enters a new state, with its effects, and asks for the
+-- consciousness roll when damage leaves Health below 0
+function announceStateChange(sName, sRole, nOldPool, nNewPool, bPulpNPC, bCheckConsciousness)
+	local sOldState = getPoolState(sRole, nOldPool, bPulpNPC);
+	local sNewState = getPoolState(sRole, nNewPool, bPulpNPC);
+	if sNewState ~= sOldState and sNewState ~= "" then
+		local sText = string.format(Interface.getString("StateChanged"), sName, getStateText(sNewState));
+		if StatesWithEffect[sNewState] then
+			sText = sText .. ": " .. Interface.getString("StateEffect_" .. sNewState);
+		end
+		Comm.deliverChatMessage({ font = "msgfont", icon = "roll_damage", text = sText });
+	end
+
+	if bCheckConsciousness and sRole == "health" and nNewPool &lt; 0 and nNewPool &lt; nOldPool and sNewState ~= "dead" then
+		Comm.deliverChatMessage({ font = "msgfont", text = string.format(Interface.getString("ConsciousnessRoll"), sName, math.abs(nNewPool)) });
+	end
+end
+
 -- Health pool of an actor: the Health ability of a PC's sheet, or the healthPool of an NPC's CT entry
 function getHealthPoolNode(rActor)
 	local nodeActor = ActorManager.getCreatureNode(rActor);
@@ -21725,13 +22102,16 @@ function applyDamage(rTarget, nTotal)
 
 	local nArmor = DB.getValue(nodeTarget, "armor", 0);
 	local nDamage = math.max(nTotal - nArmor, 0);
+	local nOldPool = DB.getValue(nodeHealthPool, 0);
 	if nDamage &gt; 0 then
-		DB.setValue(nodeHealthPool, "number", DB.getValue(nodeHealthPool, 0) - nDamage);
+		DB.setValue(nodeHealthPool, "number", nOldPool - nDamage);
 	end
 
 	local rMessage = { font = "msgfont", icon = "roll_damage" };
 	rMessage.text = string.format(Interface.getString("DamageApplied"), ActorManager.getDisplayName(rTarget), nTotal, nArmor, nDamage);
 	Comm.deliverChatMessage(rMessage);
+
+	announceStateChange(ActorManager.getDisplayName(rTarget), "health", nOldPool, nOldPool - nDamage, isPulpNPC(rTarget), true);
 end</Script>
     <RegisterScript>true</RegisterScript>
     <Encoding />
@@ -21965,6 +22345,9 @@ end
 	&lt;string name="ForgivingOptionLabel"&gt;General ability tests type&lt;/string&gt;
 	&lt;string name="OptionForgiving"&gt;Forgiving&lt;/string&gt;
 	&lt;string name="OptionUnforgiving"&gt;Unforgiving&lt;/string&gt;
+	&lt;string name="NPCHealthOptionLabel"&gt;NPC Health loss&lt;/string&gt;
+	&lt;string name="OptionPurist"&gt;Purist (as investigators)&lt;/string&gt;
+	&lt;string name="OptionPulp"&gt;Pulp (die below 0)&lt;/string&gt;
   
   	&lt;!-- Combat --&gt;
 	&lt;string name="AttackTarget"&gt;vs %s&lt;/string&gt;
@@ -21973,6 +22356,20 @@ end
 	&lt;string name="DamageTarget"&gt;to %s&lt;/string&gt;
 	&lt;string name="DamageApplied"&gt;Damage to %s: [%d - %d armor = %d]&lt;/string&gt;
 	&lt;string name="DamageNoHealth"&gt;Cannot find the Health pool to apply damage to &lt;/string&gt;
+
+	&lt;!-- Health and Stability states --&gt;
+	&lt;string name="State_hurt"&gt;Hurt&lt;/string&gt;
+	&lt;string name="State_seriouslywounded"&gt;Seriously Wounded&lt;/string&gt;
+	&lt;string name="State_dead"&gt;Dead&lt;/string&gt;
+	&lt;string name="State_shaken"&gt;Shaken&lt;/string&gt;
+	&lt;string name="State_shattered"&gt;Shattered&lt;/string&gt;
+	&lt;string name="State_incurable"&gt;Incurably Insane&lt;/string&gt;
+	&lt;string name="StateEffect_hurt"&gt;cannot spend investigative points, +1 to the difficulty of all tests and contests&lt;/string&gt;
+	&lt;string name="StateEffect_seriouslywounded"&gt;cannot fight, and loses 1 Health every half hour until given First Aid&lt;/string&gt;
+	&lt;string name="StateEffect_shaken"&gt;cannot spend investigative points, +1 to the difficulty of general abilities&lt;/string&gt;
+	&lt;string name="StateEffect_shattered"&gt;can only flee or attack wildly, may develop a mental illness and loses 1 Stability rating point&lt;/string&gt;
+	&lt;string name="StateChanged"&gt;%s is now %s&lt;/string&gt;
+	&lt;string name="ConsciousnessRoll"&gt;%s must make a consciousness roll (difficulty %d)&lt;/string&gt;
   
 &lt;/root&gt;      
     </XML>

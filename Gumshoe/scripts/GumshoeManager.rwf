@@ -10,6 +10,12 @@ local MinVoluntaryPool = -11;
 
 function onInit()
 	OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_APPLYDMG, handleApplyDamage);
+
+	-- Health status of the actors for CoreRPG: token health bars and dots, their colors and the death markers
+	GameManager.setFunction("onActorGetHealthStatus", onActorGetHealthStatus);
+	ActorHealthManager.registerStatusHealthColor(Interface.getString("State_hurt"), ColorManager.getUIColor("health_simple_bloodied"));
+	ActorHealthManager.registerStatusHealthColor(Interface.getString("State_seriouslywounded"), ColorManager.getUIColor("health_unconscious"));
+	TokenManager.addDefaultHealthFeatures(nil, { "healthPool", "healthRating" });
 end
 
 function UseAbilityPool(rAbility, PCnode, bRecover)
@@ -33,6 +39,7 @@ function UseAbilityPool(rAbility, PCnode, bRecover)
 			message = Interface.getString("SpendAbilityPool") ..  abilityName.getValue();
 			abilityPool.setValue(abilityPoolValue - 1);
 			ChatManager.Message(message, true, PCnode);
+			announceStateChange(DB.getValue(PCnode, "name", ""), getAbilityRole(rAbility), abilityPoolValue, abilityPoolValue - 1, false, false);
 			return true;
 		else
 			message = Interface.getString("CantSpendAbilityPool") ..  abilityName.getValue();
@@ -77,6 +84,7 @@ function UseGeneralAbility(rAbility, testValue)
 	end
 
 	abilityPool.setValue(abilityPoolValue - testValue);
+	announceStateChange(DB.getValue(PCnode, "name", ""), abilityRole, abilityPoolValue, abilityPoolValue - testValue, false, false);
 	return true;
 end
 
@@ -200,6 +208,152 @@ function getAbilitiesByRole(nodeChar, sRole)
 	return aAbilities;
 end
 
+--
+-- HEALTH AND STABILITY STATES (Trail of Cthulhu)
+-- Health: Hurt from 0 to -5, Seriously Wounded from -6 to -11, Dead at -12. Stability: Shaken from 0 to -5,
+-- Shattered from -6 to -11, Incurably Insane at -12
+--
+
+-- States with an effect that is told in the chat
+local StatesWithEffect = { hurt = true, seriouslywounded = true, shaken = true, shattered = true };
+
+-- bPulpNPC: with the pulp option, NPCs die when their Health drops below 0
+function getHealthState(nPool, bPulpNPC)
+	if nPool &gt; 0 then
+		return "";
+	end
+	if bPulpNPC and nPool &lt; 0 then
+		return "dead";
+	end
+	if nPool &gt;= -5 then
+		return "hurt";
+	end
+	if nPool &gt;= -11 then
+		return "seriouslywounded";
+	end
+	return "dead";
+end
+
+function getStabilityState(nPool)
+	if nPool &gt; 0 then
+		return "";
+	end
+	if nPool &gt;= -5 then
+		return "shaken";
+	end
+	if nPool &gt;= -11 then
+		return "shattered";
+	end
+	return "incurable";
+end
+
+-- State of a Health or Stability pool, by the role of the ability ("" for any other role)
+function getPoolState(sRole, nPool, bPulpNPC)
+	if sRole == "health" then
+		return getHealthState(nPool, bPulpNPC);
+	end
+	if sRole == "stability" then
+		return getStabilityState(nPool);
+	end
+	return "";
+end
+
+function getStateText(sState)
+	if (sState or "") == "" then
+		return "";
+	end
+	return Interface.getString("State_" .. sState);
+end
+
+function isPulpNPC(rActor)
+	return not ActorManager.isPC(rActor) and OptionsManager.isOption("NPCHEALTH", "pulp");
+end
+
+-- Health pool and rating of an actor, without creating nodes: the Health ability of a PC, or the NPC's fields
+function getActorHealth(rActor)
+	local nodeActor = ActorManager.getCreatureNode(rActor);
+	if not nodeActor then
+		return nil;
+	end
+	if ActorManager.isPC(rActor) then
+		local nodeHealth = getAbilityByRole(nodeActor, "health");
+		if not nodeHealth then
+			return nil;
+		end
+		return DB.getValue(nodeHealth, "pool", 0), DB.getValue(nodeHealth, "rating", 0);
+	end
+	return DB.getValue(nodeActor, "healthPool", 0), DB.getValue(nodeActor, "healthRating", 0);
+end
+
+-- Stability pool of a PC (NPCs have no Stability)
+function getActorStability(rActor)
+	if not ActorManager.isPC(rActor) then
+		return nil;
+	end
+	local nodeStability = getAbilityByRole(ActorManager.getCreatureNode(rActor), "stability");
+	if not nodeStability then
+		return nil;
+	end
+	return DB.getValue(nodeStability, "pool", 0);
+end
+
+-- Text of the Health and Stability states of an actor, for the sheet and the combat tracker
+function getActorStatesText(rActor)
+	local aStates = {};
+	local nHealth = getActorHealth(rActor);
+	if nHealth then
+		local sState = getStateText(getHealthState(nHealth, isPulpNPC(rActor)));
+		if sState ~= "" then
+			table.insert(aStates, sState);
+		end
+	end
+	local nStability = getActorStability(rActor);
+	if nStability then
+		local sState = getStateText(getStabilityState(nStability));
+		if sState ~= "" then
+			table.insert(aStates, sState);
+		end
+	end
+	return table.concat(aStates, ", ");
+end
+
+-- For CoreRPG (GameManager onActorGetHealthStatus): wounded from the full pool (0) to -12 (1)
+function onActorGetHealthStatus(rActor)
+	local nPool, nRating = getActorHealth(rActor);
+	if not nPool then
+		return 0, ActorHealthManager.STATUS_HEALTHY;
+	end
+
+	local sState = getHealthState(nPool, isPulpNPC(rActor));
+	if sState == "dead" then
+		return 1, ActorHealthManager.STATUS_DEAD;
+	end
+
+	local nPercentWounded = math.max(0, math.min(1, (nRating - nPool) / (nRating + 12)));
+	if sState == "" then
+		return nPercentWounded, ActorHealthManager.getDefaultStatusFromWoundPercent(nPercentWounded);
+	end
+	return nPercentWounded, getStateText(sState);
+end
+
+-- Tells the table when a Health or Stability pool enters a new state, with its effects, and asks for the
+-- consciousness roll when damage leaves Health below 0
+function announceStateChange(sName, sRole, nOldPool, nNewPool, bPulpNPC, bCheckConsciousness)
+	local sOldState = getPoolState(sRole, nOldPool, bPulpNPC);
+	local sNewState = getPoolState(sRole, nNewPool, bPulpNPC);
+	if sNewState ~= sOldState and sNewState ~= "" then
+		local sText = string.format(Interface.getString("StateChanged"), sName, getStateText(sNewState));
+		if StatesWithEffect[sNewState] then
+			sText = sText .. ": " .. Interface.getString("StateEffect_" .. sNewState);
+		end
+		Comm.deliverChatMessage({ font = "msgfont", icon = "roll_damage", text = sText });
+	end
+
+	if bCheckConsciousness and sRole == "health" and nNewPool &lt; 0 and nNewPool &lt; nOldPool and sNewState ~= "dead" then
+		Comm.deliverChatMessage({ font = "msgfont", text = string.format(Interface.getString("ConsciousnessRoll"), sName, math.abs(nNewPool)) });
+	end
+end
+
 -- Health pool of an actor: the Health ability of a PC's sheet, or the healthPool of an NPC's CT entry
 function getHealthPoolNode(rActor)
 	local nodeActor = ActorManager.getCreatureNode(rActor);
@@ -281,13 +435,16 @@ function applyDamage(rTarget, nTotal)
 
 	local nArmor = DB.getValue(nodeTarget, "armor", 0);
 	local nDamage = math.max(nTotal - nArmor, 0);
+	local nOldPool = DB.getValue(nodeHealthPool, 0);
 	if nDamage &gt; 0 then
-		DB.setValue(nodeHealthPool, "number", DB.getValue(nodeHealthPool, 0) - nDamage);
+		DB.setValue(nodeHealthPool, "number", nOldPool - nDamage);
 	end
 
 	local rMessage = { font = "msgfont", icon = "roll_damage" };
 	rMessage.text = string.format(Interface.getString("DamageApplied"), ActorManager.getDisplayName(rTarget), nTotal, nArmor, nDamage);
 	Comm.deliverChatMessage(rMessage);
+
+	announceStateChange(ActorManager.getDisplayName(rTarget), "health", nOldPool, nOldPool - nDamage, isPulpNPC(rTarget), true);
 end</Script>
     <RegisterScript>true</RegisterScript>
     <Encoding />

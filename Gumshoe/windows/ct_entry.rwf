@@ -585,6 +585,7 @@ function onInit()
 	-- Set up the PC links
 	self.onLinkChanged();
 	self.onFactionChanged();
+	self.updateHealthState();
 	
 	-- Register the deletion menu item for the host
 	registerMenuItem(Interface.getString("list_menu_deleteitem"), "delete", 6);
@@ -717,12 +718,14 @@ function linkPCFields()
 		sub_defense.subwindow.armor.setLink(nodeChar.createChild("armor", "number"), true);
 		linkPCHealth();
 
-		-- Relink the Health when the roles or list of the PC's general abilities change
+		-- Relink the Health when the roles or list of the PC's general abilities change, and update the states
+		-- when its pools change (the Stability pool is not shown in the combat tracker)
 		removePCAbilityHandlers();
 		sPCAbilitiesPath = DB.getPath(nodeChar, "abilities.generalsections");
 		DB.addHandler(sPCAbilitiesPath .. ".*.role", "onAdd", linkPCHealth);
 		DB.addHandler(sPCAbilitiesPath .. ".*.role", "onUpdate", linkPCHealth);
 		DB.addHandler(sPCAbilitiesPath, "onChildDeleted", linkPCHealth);
+		DB.addHandler(sPCAbilitiesPath .. ".*.pool", "onUpdate", updateHealthState);
 	end
 end
 
@@ -737,6 +740,7 @@ function linkPCHealth()
 	else
 		healthPool.setLink(nil);
 	end
+	updateHealthState();
 end
 
 function removePCAbilityHandlers()
@@ -744,8 +748,18 @@ function removePCAbilityHandlers()
 		DB.removeHandler(sPCAbilitiesPath .. ".*.role", "onAdd", linkPCHealth);
 		DB.removeHandler(sPCAbilitiesPath .. ".*.role", "onUpdate", linkPCHealth);
 		DB.removeHandler(sPCAbilitiesPath, "onChildDeleted", linkPCHealth);
+		DB.removeHandler(sPCAbilitiesPath .. ".*.pool", "onUpdate", updateHealthState);
 		sPCAbilitiesPath = nil;
 	end
+end
+
+-- Health state, and Stability state for PCs, under the name. The Health field calls it while the window is being
+-- built, before the state label exists
+function updateHealthState()
+	if not healthState then
+		return;
+	end
+	healthState.setValue(GumshoeManager.getActorStatesText(ActorManager.resolveActor(getDatabaseNode())));
 end
 
 --
@@ -1116,6 +1130,68 @@ end
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"252"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"4"}}
+]}}</Definition>
+    <LUACode>
+-- Called by number_crosslink when the pool (or the linked PC pool) changes
+function update()
+	window.updateHealthState();
+end
+</LUACode>
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>ct_entry</WindowName>
+    <ControlName>healthState</ControlName>
+    <ZIndex>33</ZIndex>
+    <ControlClass>FGLabel</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"Center"},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"healthState"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"12"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"180"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"DynamicSize"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"minifont"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName"},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"2"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"LabelCaption","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"MultilineSpacing"},
+      {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"TextUnderlined"},
+      {"Name":"Tooltip"},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"69"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"29"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>

@@ -128,6 +128,10 @@ function onInit()
 	OptionsManager.registerOption2("FORGIVING", true, "GumshoeOptionsGroup", "ForgivingOptionLabel", "option_entry_cycler", 
 			{ labels = "OptionUnforgiving", values = "no", baselabel = "OptionForgiving", baseval = "yes", default = "yes" });
 
+	-- Purist: NPCs lose Health as the investigators. Pulp: ordinary people die when their Health drops below 0
+	OptionsManager.registerOption2("NPCHEALTH", false, "GumshoeOptionsGroup", "NPCHealthOptionLabel", "option_entry_cycler", 
+			{ labels = "OptionPulp", values = "pulp", baselabel = "OptionPurist", baseval = "purist", default = "purist" });
+
 end
 
 function getInvestigativeAbilities()

@@ -24,6 +24,9 @@
 	&lt;string name="ForgivingOptionLabel"&gt;General ability tests type&lt;/string&gt;
 	&lt;string name="OptionForgiving"&gt;Forgiving&lt;/string&gt;
 	&lt;string name="OptionUnforgiving"&gt;Unforgiving&lt;/string&gt;
+	&lt;string name="NPCHealthOptionLabel"&gt;NPC Health loss&lt;/string&gt;
+	&lt;string name="OptionPurist"&gt;Purist (as investigators)&lt;/string&gt;
+	&lt;string name="OptionPulp"&gt;Pulp (die below 0)&lt;/string&gt;
   
   	&lt;!-- Combat --&gt;
 	&lt;string name="AttackTarget"&gt;vs %s&lt;/string&gt;
@@ -32,6 +35,20 @@
 	&lt;string name="DamageTarget"&gt;to %s&lt;/string&gt;
 	&lt;string name="DamageApplied"&gt;Damage to %s: [%d - %d armor = %d]&lt;/string&gt;
 	&lt;string name="DamageNoHealth"&gt;Cannot find the Health pool to apply damage to &lt;/string&gt;
+
+	&lt;!-- Health and Stability states --&gt;
+	&lt;string name="State_hurt"&gt;Hurt&lt;/string&gt;
+	&lt;string name="State_seriouslywounded"&gt;Seriously Wounded&lt;/string&gt;
+	&lt;string name="State_dead"&gt;Dead&lt;/string&gt;
+	&lt;string name="State_shaken"&gt;Shaken&lt;/string&gt;
+	&lt;string name="State_shattered"&gt;Shattered&lt;/string&gt;
+	&lt;string name="State_incurable"&gt;Incurably Insane&lt;/string&gt;
+	&lt;string name="StateEffect_hurt"&gt;cannot spend investigative points, +1 to the difficulty of all tests and contests&lt;/string&gt;
+	&lt;string name="StateEffect_seriouslywounded"&gt;cannot fight, and loses 1 Health every half hour until given First Aid&lt;/string&gt;
+	&lt;string name="StateEffect_shaken"&gt;cannot spend investigative points, +1 to the difficulty of general abilities&lt;/string&gt;
+	&lt;string name="StateEffect_shattered"&gt;can only flee or attack wildly, may develop a mental illness and loses 1 Stability rating point&lt;/string&gt;
+	&lt;string name="StateChanged"&gt;%s is now %s&lt;/string&gt;
+	&lt;string name="ConsciousnessRoll"&gt;%s must make a consciousness roll (difficulty %d)&lt;/string&gt;
   
 &lt;/root&gt;      
     </XML>
