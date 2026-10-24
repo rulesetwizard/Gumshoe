@@ -10,11 +10,14 @@
 	&lt;string name="RecoverAbilityPool"&gt;Recovers 1 point of &lt;/string&gt;
 	&lt;string name="CantSpendAbilityPool"&gt;Cannot spend more points of &lt;/string&gt;
 	&lt;string name="CantUseGeneralAbility"&gt;Not enough pool points to spend of &lt;/string&gt;
+	&lt;string name="CantSpendBelowLimit"&gt;Cannot voluntarily reduce below -11 the pool of &lt;/string&gt;
 	&lt;string name="UntrainedGeneralAbility"&gt;Cannot use untrained ability &lt;/string&gt;
 	&lt;string name="IncorrectAbility"&gt;Ability type does not match&lt;/string&gt;
 	&lt;string name="LockedList"&gt;The list is not in edit mode&lt;/string&gt;
 	&lt;string name="AbilitiesNotInitialized"&gt;Abilities have not been initialized&lt;/string&gt;
 	&lt;string name="AbilityNotFound"&gt;The character has no ability: &lt;/string&gt;
+	&lt;string name="ResetPoolsTitle"&gt;Reset Ability Pools&lt;/string&gt;
+	&lt;string name="ResetPoolsConfirm"&gt;Are you sure you want to reset all Characters' Ability Pools to their rating value?&lt;/string&gt;
 
   	&lt;!-- Options --&gt;
 	&lt;string name="GumshoeOptionsGroup"&gt;Gumshoe System&lt;/string&gt;
@@ -23,6 +26,7 @@
 	&lt;string name="OptionUnforgiving"&gt;Unforgiving&lt;/string&gt;
   
   	&lt;!-- Combat --&gt;
+	&lt;string name="AttackTarget"&gt;vs %s&lt;/string&gt;
 	&lt;string name="AttackHit"&gt;[HIT]&lt;/string&gt;
 	&lt;string name="AttackMiss"&gt;[MISS]&lt;/string&gt;
 	&lt;string name="DamageTarget"&gt;to %s&lt;/string&gt;

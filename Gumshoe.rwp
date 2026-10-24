@@ -1651,6 +1651,7 @@ end</LUACode>
       {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"HostControl"},
       {"Name":"HoverCursor"},
+      {"Name":"InheritedTabs","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"InheritSizePosition"},
       {"Name":"Invisible"},
       {"Name":"Locked"},
@@ -1679,6 +1680,7 @@ end</LUACode>
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"WindowClassCopy"},
       {"Name":"WindowMargins","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"WindowTabs","Value":{"@xsi:type":"ArrayOfWindowTabDefinition"}},
       {"Name":"WindowTitle"},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"0"}}
@@ -1689,7 +1691,7 @@ function onInit()
     local ListNode = listAbilities.getDatabaseNode();
     if ListNode.getChildCount() == 0 then
 		-- Create abilities for each section
-		for _, ability in pairs(GumshoeData.getGeneralAbilities()) do
+		for _, ability in ipairs(GumshoeData.getGeneralAbilities()) do
 			local wAbility = listAbilities.createWindow();
 			local nodeAbility = wAbility.getDatabaseNode();
 			DB.setValue(nodeAbility, "name", "string", ability);
@@ -1748,6 +1750,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"31"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"sheetlabel"}},
@@ -1768,6 +1771,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -1803,6 +1807,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"41"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"sheetlabel"}},
@@ -1823,6 +1828,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -1858,6 +1864,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"31"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"sheetlabel"}},
@@ -1878,6 +1885,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -1913,6 +1921,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"119"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"sheetlabel"}},
@@ -1933,6 +1942,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -1972,10 +1982,14 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"342"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
+      {"Name":"EmptyListFontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"EmptyListFontName"},
       {"Name":"EmptyListText"},
+      {"Name":"EmptyListTextGM"},
       {"Name":"Fields"},
+      {"Name":"FooterIcon"},
       {"Name":"FrameHideReadonly"},
       {"Name":"FrameName"},
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
@@ -2002,12 +2016,13 @@ end
       {"Name":"StackVertWith"},
       {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
       {"Name":"Tooltip"},
+      {"Name":"UseAllModules"},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"2"}},
       {"Name":"WindowListChildDefinition","Value":{"@xsi:type":"ArrayOfChildDefinition"}},
       {"Name":"WindowListClassName","Value":{"@xsi:type":"xsd:string","#text":"char_general_ability"}},
-      {"Name":"WindowListFilterBy","Value":{"@xsi:type":"FilterByDefinition","FilterSourceType":"Control","FilterOnSourceType":"Control"}},
-      {"Name":"WindowListSortBy","Value":{"@xsi:type":"ArrayOfSortByDefinition","SortByDefinition":{"Descending":{"@xsi:nil":"true"},"SourceType":"Control","SourceName":"name"}}},
+      {"Name":"WindowListFilterBy","Value":{"@xsi:type":"FilterByDefinition","CaseSensitive":{"@xsi:nil":"true"},"FilterSourceType":"Control","FilterOnSourceType":"Control"}},
+      {"Name":"WindowListSortBy","Value":{"@xsi:type":"ArrayOfSortByDefinition","SortByDefinition":{"Descending":{"@xsi:nil":"true"},"CaseSensitive":{"@xsi:nil":"true"},"SourceType":"Control","SourceName":"name"}}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"1"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"23"}}
 ]}}</Definition>
@@ -2092,6 +2107,7 @@ end</LUACode>
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"button-white"}},
       {"Name":"FrameHideReadonly"},
@@ -2155,6 +2171,7 @@ end</LUACode>
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"button-white"}},
       {"Name":"FrameHideReadonly"},
@@ -2216,6 +2233,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"20"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FrameHideReadonly"},
       {"Name":"FrameName","Value":{"@xsi:type":"xsd:string","#text":"scrollbar_base"}},
@@ -2270,6 +2288,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"20"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
@@ -2330,6 +2349,7 @@ end
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"sheetlabel"}},
       {"Name":"FrameHideReadonly"},
@@ -3467,6 +3487,7 @@ end
       {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"HostControl"},
       {"Name":"HoverCursor"},
+      {"Name":"InheritedTabs","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"InheritSizePosition"},
       {"Name":"Invisible"},
       {"Name":"Locked"},
@@ -3495,6 +3516,7 @@ end
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"WindowClassCopy"},
       {"Name":"WindowMargins","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"WindowTabs","Value":{"@xsi:type":"ArrayOfWindowTabDefinition"}},
       {"Name":"WindowTitle"},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"0"}}
@@ -3504,14 +3526,14 @@ function onInit()
 	--Initialize abilities list if it's empty
     local ListNode = InvestigativeAbilitiesList.getDatabaseNode();
     if ListNode.getChildCount() == 0 then
-		-- Create sections
-        for section, abilities in pairs(GumshoeData.getInvestigativeAbilities()) do
+		-- Create sections, in order
+        for _, section in ipairs(GumshoeData.getInvestigativeAbilities()) do
 			local wSection = InvestigativeAbilitiesList.createWindow();
             local nodeSection = wSection.getDatabaseNode();
-			DB.setValue(nodeSection, "sectionName", "string", section);
+			DB.setValue(nodeSection, "sectionName", "string", section.name);
 			
 			-- Create abilities for each section
-			for _, ability in pairs(abilities) do
+			for _, ability in ipairs(section.abilities) do
 				local wAbility = wSection.listAbilities.createWindow();
 				local nodeAbility = wAbility.getDatabaseNode();
 				DB.setValue(nodeAbility, "name", "string", ability);
@@ -3566,10 +3588,14 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"342"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
+      {"Name":"EmptyListFontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"EmptyListFontName"},
       {"Name":"EmptyListText"},
+      {"Name":"EmptyListTextGM"},
       {"Name":"Fields"},
+      {"Name":"FooterIcon"},
       {"Name":"FrameHideReadonly"},
       {"Name":"FrameName"},
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
@@ -3596,11 +3622,12 @@ end
       {"Name":"StackVertWith"},
       {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
       {"Name":"Tooltip"},
+      {"Name":"UseAllModules"},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"2"}},
       {"Name":"WindowListChildDefinition","Value":{"@xsi:type":"ArrayOfChildDefinition"}},
       {"Name":"WindowListClassName","Value":{"@xsi:type":"xsd:string","#text":"char_investigative_section"}},
-      {"Name":"WindowListFilterBy","Value":{"@xsi:type":"FilterByDefinition","FilterSourceType":"Control","FilterOnSourceType":"Control"}},
+      {"Name":"WindowListFilterBy","Value":{"@xsi:type":"FilterByDefinition","CaseSensitive":{"@xsi:nil":"true"},"FilterSourceType":"Control","FilterOnSourceType":"Control"}},
       {"Name":"WindowListSortBy","Value":{"@xsi:type":"ArrayOfSortByDefinition"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"1"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"0"}}
@@ -3627,6 +3654,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"119"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"sheetlabel"}},
@@ -3647,6 +3675,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -3681,6 +3710,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"20"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FrameHideReadonly"},
       {"Name":"FrameName","Value":{"@xsi:type":"xsd:string","#text":"scrollbar_base"}},
@@ -3740,6 +3770,7 @@ end
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"sheetlabel"}},
       {"Name":"FrameHideReadonly"},
@@ -6198,6 +6229,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"490"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FastInit"},
       {"Name":"FrameHideReadonly"},
@@ -6258,13 +6290,14 @@ end
       {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"HostControl"},
       {"Name":"HoverCursor"},
+      {"Name":"InheritedTabs","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"InheritSizePosition"},
       {"Name":"Invisible"},
       {"Name":"Locked"},
       {"Name":"MaximumHeight"},
       {"Name":"MaximumWidth"},
       {"Name":"MergeWindow"},
-      {"Name":"MinimizedIcon","Value":{"@xsi:type":"xsd:string","#text":"minimized_npc"}},
+      {"Name":"MinimizedIcon","Value":{"@xsi:type":"xsd:string","#text":"minimized_char"}},
       {"Name":"MinimumHeight","Value":{"@xsi:type":"xsd:int","#text":"568"}},
       {"Name":"MinimumWidth","Value":{"@xsi:type":"xsd:int","#text":"525"}},
       {"Name":"NoClose"},
@@ -6286,6 +6319,7 @@ end
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"WindowClassCopy"},
       {"Name":"WindowMargins","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"WindowTabs","Value":{"@xsi:type":"ArrayOfWindowTabDefinition"}},
       {"Name":"WindowTitle"},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"0"}}
@@ -6312,6 +6346,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"490"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FastInit"},
       {"Name":"FrameHideReadonly"},
@@ -6353,7 +6388,7 @@ end
   <WindowControls>
     <WindowName>charsheet</WindowName>
     <ControlName>label_name</ControlName>
-    <ZIndex>9</ZIndex>
+    <ZIndex>8</ZIndex>
     <ControlClass>FGLabel</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor","AdvancedAnchor":{"EdgeAnchor":"left","AnchorTo":"left","Parent":"overviewframe"}}},
@@ -6368,6 +6403,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"39"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"sheetlabelinline"}},
@@ -6388,6 +6424,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -6423,6 +6460,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"490"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FastInit"},
       {"Name":"FrameHideReadonly"},
@@ -6464,7 +6502,7 @@ end
   <WindowControls>
     <WindowName>charsheet</WindowName>
     <ControlName>menubar</ControlName>
-    <ZIndex>13</ZIndex>
+    <ZIndex>11</ZIndex>
     <ControlClass>FGCustomControl</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
@@ -6478,6 +6516,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"498"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
@@ -6519,7 +6558,7 @@ end
   <WindowControls>
     <WindowName>charsheet</WindowName>
     <ControlName>name</ControlName>
-    <ZIndex>8</ZIndex>
+    <ZIndex>7</ZIndex>
     <ControlClass>FGStringField</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor","AdvancedAnchor":{"EdgeAnchor":"left","AnchorTo":"left","Parent":"overviewframe"}}},
@@ -6537,6 +6576,7 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"EmptyText"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
@@ -6598,6 +6638,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"490"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FastInit"},
       {"Name":"FrameHideReadonly"},
@@ -6639,7 +6680,7 @@ end
   <WindowControls>
     <WindowName>charsheet</WindowName>
     <ControlName>overviewframe</ControlName>
-    <ZIndex>7</ZIndex>
+    <ZIndex>6</ZIndex>
     <ControlClass>FGIconControl</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor","AdvancedAnchor":{"EdgeAnchor":"left","AnchorTo":"right","Parent":"portrait"}}},
@@ -6654,6 +6695,7 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FrameHideReadonly"},
       {"Name":"FrameName","Value":{"@xsi:type":"xsd:string","#text":"groupbox"}},
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
@@ -6692,7 +6734,7 @@ end
   <WindowControls>
     <WindowName>charsheet</WindowName>
     <ControlName>portrait</ControlName>
-    <ZIndex>6</ZIndex>
+    <ZIndex>5</ZIndex>
     <ControlClass>FGCustomControl</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
@@ -6706,6 +6748,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"45"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
@@ -6747,7 +6790,7 @@ end
   <WindowControls>
     <WindowName>charsheet</WindowName>
     <ControlName>resize</ControlName>
-    <ZIndex>11</ZIndex>
+    <ZIndex>9</ZIndex>
     <ControlClass>FGIconControl</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
@@ -6762,6 +6805,7 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
+      {"Name":"DropTypes"},
       {"Name":"FrameHideReadonly"},
       {"Name":"FrameName"},
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
@@ -6800,7 +6844,7 @@ end
   <WindowControls>
     <WindowName>charsheet</WindowName>
     <ControlName>tabs</ControlName>
-    <ZIndex>12</ZIndex>
+    <ZIndex>10</ZIndex>
     <ControlClass>FGVerticalTab</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
@@ -6814,6 +6858,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"18"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"FrameHideReadonly"},
@@ -15216,7 +15261,7 @@ end
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"GMEditOnly"},
       {"Name":"GMVisibleOnly"},
-      {"Name":"HideOnValue","Value":{"@xsi:type":"xsd:decimal","#text":"0"}},
+      {"Name":"HideOnValue"},
       {"Name":"HideRollWidget"},
       {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"1"}},
       {"Name":"HoverCursor"},
@@ -15248,10 +15293,7 @@ end
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"252"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"4"}}
 ]}}</Definition>
-    <LUACode>function update()
-    window.windowlist.applySort();
-end
-</LUACode>
+    <LUACode />
     <GroupIndex>0</GroupIndex>
     <Template />
   </WindowControls>
@@ -17004,10 +17046,13 @@ end
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"50"}},
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"65"}},
+      {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"button-white"}},
+      {"Name":"FrameHideReadonly"},
       {"Name":"FrameName","Value":{"@xsi:type":"xsd:string","#text":"buttonup"}},
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"GMEditOnly"},
@@ -17026,6 +17071,7 @@ end
       {"Name":"NextTabTarget"},
       {"Name":"NormalIconName","Value":{"@xsi:type":"xsd:string","#text":"button_rest"}},
       {"Name":"PressedIconName"},
+      {"Name":"PressedOffset"},
       {"Name":"PrevTabTarget"},
       {"Name":"ReadOnly"},
       {"Name":"RelativeMargin"},
@@ -17042,7 +17088,7 @@ end
 ]}}</Definition>
     <LUACode>
 function onButtonPress()
-	Interface.dialogMessage(onDialogEnd, "Are you sure you want to reset all Characters' Ability Pools to their rating value?", "Reset Ability Pools", "yesno");
+	Interface.dialogMessage(onDialogEnd, Interface.getString("ResetPoolsConfirm"), Interface.getString("ResetPoolsTitle"), "yesno");
 end
 
 function onDialogEnd(result)
@@ -17069,12 +17115,14 @@ end
       {"Name":"DataSource"},
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"50"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"65"}},
+      {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
       {"Name":"Dynamic","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
       {"Name":"FrameName"},
       {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"HostControl"},
       {"Name":"HoverCursor"},
+      {"Name":"InheritedTabs","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"InheritSizePosition"},
       {"Name":"Invisible"},
       {"Name":"Locked"},
@@ -17101,7 +17149,9 @@ end
       {"Name":"Tooltip"},
       {"Name":"TooltipField"},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"1"}},
+      {"Name":"WindowClassCopy"},
       {"Name":"WindowMargins","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"WindowTabs","Value":{"@xsi:type":"ArrayOfWindowTabDefinition"}},
       {"Name":"WindowTitle"},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"600"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"0"}}
@@ -17171,7 +17221,7 @@ end
   <WindowControls>
     <WindowName>npc_ability</WindowName>
     <ControlName>btnInit</ControlName>
-    <ZIndex>8</ZIndex>
+    <ZIndex>6</ZIndex>
     <ControlClass>FGButton</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor","AdvancedAnchor":{"EdgeAnchor":"right","AnchorTo":"left","Parent":"idelete"}}},
@@ -17212,7 +17262,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"NextTabTarget"},
       {"Name":"NormalIconName","Value":{"@xsi:type":"xsd:string","#text":"button_init"}},
-      {"Name":"PressedIconName","Value":{"@xsi:type":"xsd:string","#text":"button_int_down"}},
+      {"Name":"PressedIconName","Value":{"@xsi:type":"xsd:string","#text":"button_init_down"}},
       {"Name":"PressedOffset"},
       {"Name":"PrevTabTarget"},
       {"Name":"ReadOnly"},
@@ -17240,7 +17290,7 @@ end
   <WindowControls>
     <WindowName>npc_ability</WindowName>
     <ControlName>iconD6</ControlName>
-    <ZIndex>7</ZIndex>
+    <ZIndex>8</ZIndex>
     <ControlClass>FGIconControl</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
       {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor","AdvancedAnchor":{"EdgeAnchor":"right","AnchorTo":"right","Parent":"test"}}},
@@ -17358,10 +17408,10 @@ end
   <WindowControls>
     <WindowName>npc_ability</WindowName>
     <ControlName>name</ControlName>
-    <ZIndex>6</ZIndex>
+    <ZIndex>7</ZIndex>
     <ControlClass>FGStringField</ControlClass>
     <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
-      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor","AdvancedAnchor":{"EdgeAnchor":"right","AnchorTo":"left","Parent":"rating"}}},
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor","AdvancedAnchor":{"EdgeAnchor":"right","AnchorTo":"left","Parent":"btnInit"}}},
       {"Name":"AdvancedTemplate"},
       {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"Center"},
@@ -17372,7 +17422,7 @@ end
       {"Name":"DelayKeyUpdate","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
-      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"205"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"180"}},
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
@@ -17432,6 +17482,7 @@ function setAttackVisibility()
 		window.test.setVisible(true);
 		window.testattack.setVisible(false);
 	end
+	window.btnInit.setVisible(GumshoeData.isCombatAbility(getValue()));
 end
 </LUACode>
     <GroupIndex>0</GroupIndex>
@@ -20047,6 +20098,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"94"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"FrameHideReadonly"},
@@ -20118,6 +20170,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"380"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
@@ -20178,6 +20231,7 @@ end
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign"},
+      {"Name":"DropTypes"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"FrameHideReadonly"},
@@ -20238,6 +20292,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"341"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"EmptyText"},
       {"Name":"FrameHideReadonly"},
@@ -20292,6 +20347,7 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"FrameHideReadonly"},
       {"Name":"FrameName","Value":{"@xsi:type":"xsd:string","#text":"groupbox"}},
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
@@ -20345,6 +20401,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"100"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"sheetlabel"}},
@@ -20365,6 +20422,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -20400,6 +20458,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"100"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"sheetlabel"}},
@@ -20420,6 +20479,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -20455,6 +20515,7 @@ end
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"100"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"sheetlabel"}},
@@ -20475,6 +20536,7 @@ end
       {"Name":"MinimumWidth"},
       {"Name":"MultilineSpacing"},
       {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
       {"Name":"PrevTabTarget"},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
@@ -20513,8 +20575,9 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled"},
+      {"Name":"DropTypes"},
       {"Name":"DynamicSize"},
-      {"Name":"EmptyText","Value":{"@xsi:type":"xsd:string","#text":"New Ability"}},
+      {"Name":"EmptyText","Value":{"@xsi:type":"xsd:string","#text":"New Weapon"}},
       {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
       {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"reference-h"}},
       {"Name":"FrameHideReadonly"},
@@ -20574,6 +20637,7 @@ end
       {"Name":"DevelopmentComments"},
       {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
       {"Name":"Disabled","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
+      {"Name":"DropTypes"},
       {"Name":"FrameHideReadonly"},
       {"Name":"FrameName"},
       {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
@@ -20631,6 +20695,7 @@ end
       {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"HostControl"},
       {"Name":"HoverCursor"},
+      {"Name":"InheritedTabs","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"InheritSizePosition"},
       {"Name":"Invisible"},
       {"Name":"Locked"},
@@ -20659,6 +20724,7 @@ end
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"WindowClassCopy"},
       {"Name":"WindowMargins","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"WindowTabs","Value":{"@xsi:type":"ArrayOfWindowTabDefinition"}},
       {"Name":"WindowTitle"},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"0"}}
@@ -20690,75 +20756,85 @@ end</LUACode>
   <Scripts>
     <ScriptName>GumshoeData</ScriptName>
     <FolderID>3</FolderID>
-    <Script>local InvestigativeAbilities = {
-	["ACADEMIC"] = {
-		"Anthropology",
-		"Archaeology",
-		"Architecture",
-		"Art History",
-		"Botany",
-		"Comparative Religion",
-		"Forensic Accounting",
-		"Forensic Psychology",
-		"Geology",
-		"History",
-		"Languages",
-		"Law",
-		"Linguistics",
-		"Military Tactics",
-		"Natural History",
-		"Occult Studies",
-		"Pathology",
-		"Research",
-		"Textual Analysis",
-		"Trivia",
+    <Script>-- Sections in the order they are created on a new character sheet
+local InvestigativeAbilities = {
+	{
+		name = "ACADEMIC",
+		abilities = {
+			"Anthropology",
+			"Archaeology",
+			"Architecture",
+			"Art History",
+			"Botany",
+			"Comparative Religion",
+			"Forensic Accounting",
+			"Forensic Psychology",
+			"Geology",
+			"History",
+			"Languages",
+			"Law",
+			"Linguistics",
+			"Military Tactics",
+			"Natural History",
+			"Occult Studies",
+			"Pathology",
+			"Research",
+			"Textual Analysis",
+			"Trivia",
+		},
 	},
-	["TECHNICAL"] = {
-		"Astronomy",
-		"Ballistics",
-		"Camping",
-		"Chemistry",
-		"Craft",
-		"Cryptography",
-		"Data Retrieval",
-		"Document Analysis",
-		"Electronic Surveillance",
-		"Evidence Collection",
-		"Explosive Devices",
-		"Fingerprinting",
-		"Flattery",
-		"Flirting",
-		"Forensic Anthropology",
-		"Forensic Entomology",
-		"Forgery",
-		"Hacking",
-		"Locksmith",
-		"Medical Expertise",
-		"Notice",
-		"Outdoor Survival",
-		"Photography",
-		"Science",
-		"Spying",
-		"Traffic Analysis",
+	{
+		name = "INTERPERSONAL",
+		abilities = {
+			"Authority",
+			"Bullshit Detector",
+			"Bureaucracy",
+			"Charm",
+			"Cop Talk",
+			"Flattery",
+			"Flirting",
+			"High Society",
+			"Impersonate",
+			"Inspiration",
+			"Interrogation",
+			"Intimidation",
+			"Negotiation",
+			"Oral History",
+			"Reassurance",
+			"Respect",
+			"Streetwise",
+			"Taunt",
+			"Tradecraft",
+		},
 	},
-	["INTERPERSONAL"] = {
-		"Authority",
-		"Bullshit Detector",
-		"Bureaucracy",
-		"Charm",
-		"Cop Talk",
-		"High Society",
-		"Impersonate",
-		"Inspiration",
-		"Interrogation",
-		"Intimidation",
-		"Negotiation",
-		"Oral History",
-		"Reassurance",
-		"Respect",
-		"Streetwise",
-		"Taunt",
-		"Tradecraft",
+	{
+		name = "TECHNICAL",
+		abilities = {
+			"Astronomy",
+			"Ballistics",
+			"Camping",
+			"Chemistry",
+			"Craft",
+			"Cryptography",
+			"Data Retrieval",
+			"Document Analysis",
+			"Electronic Surveillance",
+			"Evidence Collection",
+			"Explosive Devices",
+			"Fingerprinting",
+			"Forensic Anthropology",
+			"Forensic Entomology",
+			"Forgery",
+			"Hacking",
+			"Locksmith",
+			"Medical Expertise",
+			"Notice",
+			"Outdoor Survival",
+			"Photography",
+			"Science",
+			"Spying",
+			"Traffic Analysis",
+		},
 	},
 }
 
@@ -20873,6 +20949,9 @@ end
     <Script>
 OOB_MSGTYPE_APPLYDMG = "gumshoe_applydmg";
 
+-- Health and Stability can be spent below 0, but not voluntarily below this value
+local MinVoluntaryPool = -11;
+
 function onInit()
 	OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_APPLYDMG, handleApplyDamage);
 end
@@ -20931,14 +21010,20 @@ function UseGeneralAbility(rAbility, testValue)
 		bAllowNegativePool = true;
 	end
 	
-	if testValue &gt; abilityPoolValue and not bAllowNegativePool then
+	if bAllowNegativePool then
+		if abilityPoolValue - testValue &lt; MinVoluntaryPool then
+			message = Interface.getString("CantSpendBelowLimit") ..  abilityName;
+			ChatManager.Message(message, true, PCnode);
+			return false;
+		end
+	elseif testValue &gt; abilityPoolValue then
 		message = Interface.getString("CantUseGeneralAbility") ..  abilityName;
 		ChatManager.Message(message, true, PCnode);
 		return false;
-	else
-		abilityPool.setValue(abilityPoolValue - testValue);
-		return true;
 	end
+
+	abilityPool.setValue(abilityPoolValue - testValue);
+	return true;
 end
 
 function UseNPCAbility(abilityName, poolNode, testValue, bAllowNegativePool)
@@ -21028,7 +21113,7 @@ function onAttackResult(rSource, rTarget, rRoll)
 
     local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
     if rTarget ~= nil then
-        rMessage.text = rMessage.text .. " vs " .. rTarget.sName;
+        rMessage.text = rMessage.text .. " " .. string.format(Interface.getString("AttackTarget"), ActorManager.getDisplayName(rTarget));
 		local hitthreshold = DB.getChild(rTarget.sCreatureNode, "hitthreshold").getValue();
 		if rRoll.nTotal &gt;= hitthreshold then
 			rMessage.text = rMessage.text .. " " .. Interface.getString("AttackHit");
@@ -21125,7 +21210,7 @@ function parseComponents()
 			local aDice, nMod = DiceManager.convertStringToDice(sMod);
 			
 			-- Insert the possible skill into the skill list
-			table.insert(aComponents, {nStart = aClauseStats[i].startpos, nLabelEnd = aClauseStats[i].startpos + nEnds, nEnd = aClauseStats[i].endpos, sLabel = sLabel, aDice = aDice, nMod = nMod });
+			table.insert(aComponents, {nStart = aClauseStats[i].startpos, nLabelEnd = aClauseStats[i].startpos + nEnds, nEnd = aClauseStats[i].endpos, sLabel = sLabel, sDice = sMod, aDice = aDice, nMod = nMod });
 		end
 	end
 	
@@ -21173,27 +21258,20 @@ function onHoverUpdate(x, y)
 	setHoverCursor("arrow");
 end
 
+-- Rolls the damage from the NPC, so that it has targets: the dice written, or d6 plus the modifier (Gumshoe damage)
 function action(draginfo)
 	if nDragIndex then
-		if draginfo then
-			if #(aComponents[nDragIndex].aDice) &gt; 0 then
-				local rRoll = { sType = "damage", sDesc = aComponents[nDragIndex].sLabel, aDice = aComponents[nDragIndex].aDice, nMod = aComponents[nDragIndex].nMod };
-				ActionsManager.performAction(draginfo, nil, rRoll);
+		local rComponent = aComponents[nDragIndex];
+		local sDice = rComponent.sDice;
+		if #(rComponent.aDice) == 0 then
+			if rComponent.nMod &lt; 0 then
+				sDice = "d6" .. rComponent.nMod;
 			else
-				draginfo.setType("number");
-				draginfo.setDescription(aComponents[nDragIndex].sLabel);
-				draginfo.setStringData(aComponents[nDragIndex].sLabel);
-				draginfo.setNumberData(aComponents[nDragIndex].nMod);
-			end
-		else
-			if #(aComponents[nDragIndex].aDice) &gt; 0 then
-				local rRoll = { sType = "damage", sDesc = aComponents[nDragIndex].sLabel, aDice = aComponents[nDragIndex].aDice, nMod = aComponents[nDragIndex].nMod };
-				ActionsManager.performAction(nil, nil, rRoll);
-			else
-				RulesetWizardDiceRoller.Roll(dragInfo, window.getDatabaseNode(),"damage", aComponents[nDragIndex].sLabel .. " Damage", "d6+{self}", aComponents[nDragIndex].nMod, nil);
-				ModifierStack.reset();
+				sDice = "d6+" .. rComponent.nMod;
 			end
 		end
+		RulesetWizardDiceRoller.Roll(draginfo, window.getDatabaseNode(), "damage", rComponent.sLabel .. " Damage", sDice, 0, nil);
+		ModifierStack.reset();
 	end
 end
 
@@ -21238,7 +21316,7 @@ function onClickRelease(button, x, y)
 	return true;
 end
 </Script>
-    <RegisterScript>true</RegisterScript>
+    <RegisterScript>false</RegisterScript>
     <Encoding />
   </Scripts>
   <Scripts>
@@ -21320,11 +21398,14 @@ end
 	&lt;string name="RecoverAbilityPool"&gt;Recovers 1 point of &lt;/string&gt;
 	&lt;string name="CantSpendAbilityPool"&gt;Cannot spend more points of &lt;/string&gt;
 	&lt;string name="CantUseGeneralAbility"&gt;Not enough pool points to spend of &lt;/string&gt;
+	&lt;string name="CantSpendBelowLimit"&gt;Cannot voluntarily reduce below -11 the pool of &lt;/string&gt;
 	&lt;string name="UntrainedGeneralAbility"&gt;Cannot use untrained ability &lt;/string&gt;
 	&lt;string name="IncorrectAbility"&gt;Ability type does not match&lt;/string&gt;
 	&lt;string name="LockedList"&gt;The list is not in edit mode&lt;/string&gt;
 	&lt;string name="AbilitiesNotInitialized"&gt;Abilities have not been initialized&lt;/string&gt;
 	&lt;string name="AbilityNotFound"&gt;The character has no ability: &lt;/string&gt;
+	&lt;string name="ResetPoolsTitle"&gt;Reset Ability Pools&lt;/string&gt;
+	&lt;string name="ResetPoolsConfirm"&gt;Are you sure you want to reset all Characters' Ability Pools to their rating value?&lt;/string&gt;
 
   	&lt;!-- Options --&gt;
 	&lt;string name="GumshoeOptionsGroup"&gt;Gumshoe System&lt;/string&gt;
@@ -21333,6 +21414,7 @@ end
 	&lt;string name="OptionUnforgiving"&gt;Unforgiving&lt;/string&gt;
   
   	&lt;!-- Combat --&gt;
+	&lt;string name="AttackTarget"&gt;vs %s&lt;/string&gt;
 	&lt;string name="AttackHit"&gt;[HIT]&lt;/string&gt;
 	&lt;string name="AttackMiss"&gt;[MISS]&lt;/string&gt;
 	&lt;string name="DamageTarget"&gt;to %s&lt;/string&gt;

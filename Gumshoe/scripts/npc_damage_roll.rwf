@@ -26,7 +26,7 @@ function parseComponents()
 			local aDice, nMod = DiceManager.convertStringToDice(sMod);
 			
 			-- Insert the possible skill into the skill list
-			table.insert(aComponents, {nStart = aClauseStats[i].startpos, nLabelEnd = aClauseStats[i].startpos + nEnds, nEnd = aClauseStats[i].endpos, sLabel = sLabel, aDice = aDice, nMod = nMod });
+			table.insert(aComponents, {nStart = aClauseStats[i].startpos, nLabelEnd = aClauseStats[i].startpos + nEnds, nEnd = aClauseStats[i].endpos, sLabel = sLabel, sDice = sMod, aDice = aDice, nMod = nMod });
 		end
 	end
 	
@@ -74,27 +74,20 @@ function onHoverUpdate(x, y)
 	setHoverCursor("arrow");
 end
 
+-- Rolls the damage from the NPC, so that it has targets: the dice written, or d6 plus the modifier (Gumshoe damage)
 function action(draginfo)
 	if nDragIndex then
-		if draginfo then
-			if #(aComponents[nDragIndex].aDice) &gt; 0 then
-				local rRoll = { sType = "damage", sDesc = aComponents[nDragIndex].sLabel, aDice = aComponents[nDragIndex].aDice, nMod = aComponents[nDragIndex].nMod };
-				ActionsManager.performAction(draginfo, nil, rRoll);
+		local rComponent = aComponents[nDragIndex];
+		local sDice = rComponent.sDice;
+		if #(rComponent.aDice) == 0 then
+			if rComponent.nMod &lt; 0 then
+				sDice = "d6" .. rComponent.nMod;
 			else
-				draginfo.setType("number");
-				draginfo.setDescription(aComponents[nDragIndex].sLabel);
-				draginfo.setStringData(aComponents[nDragIndex].sLabel);
-				draginfo.setNumberData(aComponents[nDragIndex].nMod);
-			end
-		else
-			if #(aComponents[nDragIndex].aDice) &gt; 0 then
-				local rRoll = { sType = "damage", sDesc = aComponents[nDragIndex].sLabel, aDice = aComponents[nDragIndex].aDice, nMod = aComponents[nDragIndex].nMod };
-				ActionsManager.performAction(nil, nil, rRoll);
-			else
-				RulesetWizardDiceRoller.Roll(dragInfo, window.getDatabaseNode(),"damage", aComponents[nDragIndex].sLabel .. " Damage", "d6+{self}", aComponents[nDragIndex].nMod, nil);
-				ModifierStack.reset();
+				sDice = "d6+" .. rComponent.nMod;
 			end
 		end
+		RulesetWizardDiceRoller.Roll(draginfo, window.getDatabaseNode(), "damage", rComponent.sLabel .. " Damage", sDice, 0, nil);
+		ModifierStack.reset();
 	end
 end
 
@@ -139,7 +132,7 @@ function onClickRelease(button, x, y)
 	return true;
 end
 </Script>
-    <RegisterScript>true</RegisterScript>
+    <RegisterScript>false</RegisterScript>
     <Encoding />
   </Scripts>
 </DocumentElement>

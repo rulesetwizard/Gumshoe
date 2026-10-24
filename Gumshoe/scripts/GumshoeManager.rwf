@@ -5,6 +5,9 @@
     <Script>
 OOB_MSGTYPE_APPLYDMG = "gumshoe_applydmg";
 
+-- Health and Stability can be spent below 0, but not voluntarily below this value
+local MinVoluntaryPool = -11;
+
 function onInit()
 	OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_APPLYDMG, handleApplyDamage);
 end
@@ -63,14 +66,20 @@ function UseGeneralAbility(rAbility, testValue)
 		bAllowNegativePool = true;
 	end
 	
-	if testValue &gt; abilityPoolValue and not bAllowNegativePool then
+	if bAllowNegativePool then
+		if abilityPoolValue - testValue &lt; MinVoluntaryPool then
+			message = Interface.getString("CantSpendBelowLimit") ..  abilityName;
+			ChatManager.Message(message, true, PCnode);
+			return false;
+		end
+	elseif testValue &gt; abilityPoolValue then
 		message = Interface.getString("CantUseGeneralAbility") ..  abilityName;
 		ChatManager.Message(message, true, PCnode);
 		return false;
-	else
-		abilityPool.setValue(abilityPoolValue - testValue);
-		return true;
 	end
+
+	abilityPool.setValue(abilityPoolValue - testValue);
+	return true;
 end
 
 function UseNPCAbility(abilityName, poolNode, testValue, bAllowNegativePool)
@@ -160,7 +169,7 @@ function onAttackResult(rSource, rTarget, rRoll)
 
     local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
     if rTarget ~= nil then
-        rMessage.text = rMessage.text .. " vs " .. rTarget.sName;
+        rMessage.text = rMessage.text .. " " .. string.format(Interface.getString("AttackTarget"), ActorManager.getDisplayName(rTarget));
 		local hitthreshold = DB.getChild(rTarget.sCreatureNode, "hitthreshold").getValue();
 		if rRoll.nTotal &gt;= hitthreshold then
 			rMessage.text = rMessage.text .. " " .. Interface.getString("AttackHit");
