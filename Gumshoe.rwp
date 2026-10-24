@@ -10316,13 +10316,38 @@ end
       {"Name":"Source"},
       {"Name":"StackVertWith"},
       {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
-      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Sanity is never spent, only lost. Alt+double click to recover 1 point"}},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Sanity is never spent, only lost. Right click for a Mythos revelation. Alt+double click to recover 1 point"}},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"165"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"326"}}
 ]}}</Definition>
     <LUACode>
+-- Radial menu with the Mythos revelations (Trail of Cthulhu), each with its Stability and Sanity loss
+local MenuRevelations = 3;
+local RevelationPositions = { 1, 2, 4, 5, 6 };
+
+function onInit()
+	if super and super.onInit then
+		super.onInit();
+	end
+	registerMenuItem(Interface.getString("MythosRevelationMenu"), "radial_magicwand", MenuRevelations);
+	for nLevel = 1, GumshoeManager.getMythosRevelationCount() do
+		registerMenuItem(Interface.getString("MythosRevelation" .. nLevel), "radial_magicwand", MenuRevelations, RevelationPositions[nLevel]);
+	end
+end
+
+function onMenuSelection(selection, subselection)
+	if selection ~= MenuRevelations then
+		return;
+	end
+	for nLevel, nPosition in ipairs(RevelationPositions) do
+		if subselection == nPosition then
+			GumshoeManager.applyMythosRevelation(window.getDatabaseNode(), nLevel);
+		end
+	end
+end
+
 function onDoubleClick(x, y)
 	local nodeSanity = window.getSanityNode();
 	if nodeSanity then
@@ -22540,7 +22565,8 @@ function getLegacyRole(abilityName)
 	return "";
 end
 
--- Sanity does not come back with the other pools (in a purist game it never does)
+-- End of an investigation. Sanity does not come back with the other pools (in a purist game it never does), and the
+-- Mythos shock suffered in the investigation is cleared
 function ResetAbilityPools()
 	for _,nodeChar in pairs(DB.getChildren("charsheet")) do
 		-- Reset Investigative Abilities
@@ -22555,6 +22581,7 @@ function ResetAbilityPools()
 				DB.setValue(nodeAbility, "pool", "number", DB.getValue(nodeAbility, "rating", 0));
 			end
 		end
+		DB.setValue(nodeChar, "sanityshock", "number", 0);
 	end
 end
 
@@ -23019,7 +23046,8 @@ end
 
 --
 -- SANITY (Trail of Cthulhu)
--- Sanity can never be higher than 10 minus the Cthulhu Mythos rating
+-- Sanity can never be higher than 10 minus the Cthulhu Mythos rating. It is lost by Mythos shocks and Mythos
+-- revelations, never by a roll
 --
 
 function getSanityLimit(nodeChar)
@@ -23053,6 +23081,63 @@ function applySanityLimit(nodeChar)
 	if bLowered then
 		Comm.deliverChatMessage({ font = "msgfont", text = string.format(Interface.getString("SanityLimited"), DB.getValue(nodeChar, "name", ""), nLimit) });
 	end
+end
+
+-- Lowers a pool of the character by role and tells the state it enters
+local function losePool(nodeChar, sRole, nLoss)
+	local nodeAbility = getAbilityByRole(nodeChar, sRole);
+	if not nodeAbility or nLoss &lt;= 0 then
+		return;
+	end
+	local nOldPool = DB.getValue(nodeAbility, "pool", 0);
+	DB.setValue(nodeAbility, "pool", "number", nOldPool - nLoss);
+	announceStateChange(DB.getValue(nodeChar, "name", ""), sRole, nOldPool, nOldPool - nLoss, false, false);
+end
+
+-- Mythos shock: becoming Shaken after a Mythos creature costs 1 Sanity, Shattered (or worse) 2. Only the most severe
+-- of them is suffered in an investigation, so only the difference with the one already suffered is lost. The pool
+-- reset at the end of the investigation clears it
+function applyMythosShock(nodeChar, sStabilityState)
+	if not getAbilityByRole(nodeChar, "sanity") then
+		return;
+	end
+	local nShock = 0;
+	if sStabilityState == "shaken" then
+		nShock = 1;
+	elseif sStabilityState == "shattered" or sStabilityState == "incurable" then
+		nShock = 2;
+	end
+	local nSuffered = DB.getValue(nodeChar, "sanityshock", 0);
+	if nShock &lt;= nSuffered then
+		return;
+	end
+	DB.setValue(nodeChar, "sanityshock", "number", nShock);
+	Comm.deliverChatMessage({ font = "msgfont", icon = "roll_damage", text = string.format(Interface.getString("MythosShock"), DB.getValue(nodeChar, "name", ""), nShock - nSuffered) });
+	losePool(nodeChar, "sanity", nShock - nSuffered);
+end
+
+-- Losses of Stability and Sanity of the Mythos revelations, from the least to the most serious
+local MythosRevelationLoss = {
+	{ nStability = 2, nSanity = 0 },
+	{ nStability = 3, nSanity = 1 },
+	{ nStability = 4, nSanity = 1 },
+	{ nStability = 6, nSanity = 2 },
+	{ nStability = 8, nSanity = 3 },
+};
+
+function getMythosRevelationCount()
+	return #MythosRevelationLoss;
+end
+
+-- Using Cthulhu Mythos to piece together a revelation: the loss depends on the revelation, not on the points spent
+function applyMythosRevelation(nodeChar, nLevel)
+	local rLoss = MythosRevelationLoss[nLevel];
+	if not rLoss or not nodeChar or not (Session.IsHost or DB.isOwner(nodeChar)) then
+		return;
+	end
+	Comm.deliverChatMessage({ font = "msgfont", icon = "roll_damage", text = string.format(Interface.getString("MythosRevelationApplied"), DB.getValue(nodeChar, "name", ""), Interface.getString("MythosRevelation" .. nLevel), rLoss.nStability, rLoss.nSanity) });
+	losePool(nodeChar, "stability", rLoss.nStability);
+	losePool(nodeChar, "sanity", rLoss.nSanity);
 end
 
 --
@@ -23096,8 +23181,9 @@ function requestStabilityTest(nodeNPC)
 		return;
 	end
 	local rNPC = ActorManager.resolveActor(nodeNPC);
+	local nMythos = DB.getValue(nodeNPC, "isMythos", 0);
 	local nDifficulty = 4;
-	if DB.getValue(nodeNPC, "isMythos", 0) == 1 then
+	if nMythos == 1 then
 		nDifficulty = 5;
 	end
 	local nLoss = (StabilityEncounterLoss[DB.getValue(nodeNPC, "stabilityEncounter", "")] or 4) + DB.getValue(nodeNPC, "stabilityLoss", 0);
@@ -23128,6 +23214,7 @@ function requestStabilityTest(nodeNPC)
 			DB.setValue(nodeChar, "pendingstability.difficulty", "number", nDifficulty);
 			DB.setValue(nodeChar, "pendingstability.loss", "number", nLoss);
 			DB.setValue(nodeChar, "pendingstability.source", "string", sSource);
+			DB.setValue(nodeChar, "pendingstability.mythos", "number", nMythos);
 			DB.setValue(nodeChar, "pendingstability.penalty", "string", "");
 			Comm.deliverChatMessage({ font = "msgfont", text = string.format(Interface.getString("StabilityTestRequested"), ActorManager.getDisplayName(rPC), sSource, nDifficulty, nLoss) });
 		end
@@ -23167,10 +23254,17 @@ function onStabilityTestResult(rSource, rTarget, rRoll)
 
 	local nDifficulty = DB.getValue(nodePending, "difficulty", 4);
 	local nLoss = DB.getValue(nodePending, "loss", 0);
+	local bMythos = (DB.getValue(nodePending, "mythos", 0) == 1);
 	local sPenalty = DB.getValue(nodePending, "penalty", "");
 	if sPenalty ~= "" then
 		nDifficulty = nDifficulty + 1;
 		rMessage.text = rMessage.text .. " " .. string.format(Interface.getString("StatePenalty"), sPenalty);
+	end
+	-- Sanity 2 or less also adds 1 to the difficulty of Stability tests
+	local nSanity = getActorSanity(rSource);
+	if nSanity and nSanity &lt;= 2 then
+		nDifficulty = nDifficulty + 1;
+		rMessage.text = rMessage.text .. " " .. string.format(Interface.getString("LowSanityPenalty"), nSanity);
 	end
 	rMessage.text = rMessage.text .. " " .. string.format(Interface.getString("StabilityTestDifficulty"), nDifficulty);
 
@@ -23190,6 +23284,9 @@ function onStabilityTestResult(rSource, rTarget, rRoll)
 			local nOldPool = DB.getValue(nodeStability, "pool", 0);
 			DB.setValue(nodeStability, "pool", "number", nOldPool - nLoss);
 			announceStateChange(DB.getValue(nodeChar, "name", ""), "stability", nOldPool, nOldPool - nLoss, false, false);
+			if bMythos then
+				applyMythosShock(nodeChar, getStabilityState(nOldPool - nLoss));
+			end
 		end
 	end
 end
@@ -23566,9 +23663,18 @@ end
 	&lt;string name="StabilityTestDifficulty"&gt;(difficulty %d)&lt;/string&gt;
 	&lt;string name="StabilityTestSuccess"&gt;[SUCCESS]&lt;/string&gt;
 	&lt;string name="StabilityTestFailure"&gt;[FAILURE: -%d Stability]&lt;/string&gt;
+	&lt;string name="LowSanityPenalty"&gt;[+1 Sanity %d]&lt;/string&gt;
 
 	&lt;!-- Sanity --&gt;
 	&lt;string name="SanityLimited"&gt;%s's Sanity cannot be higher than 10 minus Cthulhu Mythos: lowered to %d&lt;/string&gt;
+	&lt;string name="MythosShock"&gt;%s suffers a Mythos shock: -%d Sanity&lt;/string&gt;
+	&lt;string name="MythosRevelationMenu"&gt;Mythos revelation&lt;/string&gt;
+	&lt;string name="MythosRevelation1"&gt;Distant or not relevant (-2/-0)&lt;/string&gt;
+	&lt;string name="MythosRevelation2"&gt;Danger to innocents (-3/-1)&lt;/string&gt;
+	&lt;string name="MythosRevelation3"&gt;Danger to you, global (-4/-1)&lt;/string&gt;
+	&lt;string name="MythosRevelation4"&gt;Destroys a Pillar (-6/-2)&lt;/string&gt;
+	&lt;string name="MythosRevelation5"&gt;Could destroy the world (-8/-3)&lt;/string&gt;
+	&lt;string name="MythosRevelationApplied"&gt;%s has a Mythos revelation (%s): -%d Stability, -%d Sanity&lt;/string&gt;
   
 &lt;/root&gt;      
     </XML>

@@ -205,7 +205,8 @@ function getLegacyRole(abilityName)
 	return "";
 end
 
--- Sanity does not come back with the other pools (in a purist game it never does)
+-- End of an investigation. Sanity does not come back with the other pools (in a purist game it never does), and the
+-- Mythos shock suffered in the investigation is cleared
 function ResetAbilityPools()
 	for _,nodeChar in pairs(DB.getChildren("charsheet")) do
 		-- Reset Investigative Abilities
@@ -220,6 +221,7 @@ function ResetAbilityPools()
 				DB.setValue(nodeAbility, "pool", "number", DB.getValue(nodeAbility, "rating", 0));
 			end
 		end
+		DB.setValue(nodeChar, "sanityshock", "number", 0);
 	end
 end
 

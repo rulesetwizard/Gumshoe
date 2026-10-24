@@ -2564,13 +2564,38 @@ end
       {"Name":"Source"},
       {"Name":"StackVertWith"},
       {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
-      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Sanity is never spent, only lost. Alt+double click to recover 1 point"}},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Sanity is never spent, only lost. Right click for a Mythos revelation. Alt+double click to recover 1 point"}},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"165"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"326"}}
 ]}}</Definition>
     <LUACode>
+-- Radial menu with the Mythos revelations (Trail of Cthulhu), each with its Stability and Sanity loss
+local MenuRevelations = 3;
+local RevelationPositions = { 1, 2, 4, 5, 6 };
+
+function onInit()
+	if super and super.onInit then
+		super.onInit();
+	end
+	registerMenuItem(Interface.getString("MythosRevelationMenu"), "radial_magicwand", MenuRevelations);
+	for nLevel = 1, GumshoeManager.getMythosRevelationCount() do
+		registerMenuItem(Interface.getString("MythosRevelation" .. nLevel), "radial_magicwand", MenuRevelations, RevelationPositions[nLevel]);
+	end
+end
+
+function onMenuSelection(selection, subselection)
+	if selection ~= MenuRevelations then
+		return;
+	end
+	for nLevel, nPosition in ipairs(RevelationPositions) do
+		if subselection == nPosition then
+			GumshoeManager.applyMythosRevelation(window.getDatabaseNode(), nLevel);
+		end
+	end
+end
+
 function onDoubleClick(x, y)
 	local nodeSanity = window.getSanityNode();
 	if nodeSanity then

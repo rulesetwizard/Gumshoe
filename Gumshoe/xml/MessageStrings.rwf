@@ -66,9 +66,18 @@
 	&lt;string name="StabilityTestDifficulty"&gt;(difficulty %d)&lt;/string&gt;
 	&lt;string name="StabilityTestSuccess"&gt;[SUCCESS]&lt;/string&gt;
 	&lt;string name="StabilityTestFailure"&gt;[FAILURE: -%d Stability]&lt;/string&gt;
+	&lt;string name="LowSanityPenalty"&gt;[+1 Sanity %d]&lt;/string&gt;
 
 	&lt;!-- Sanity --&gt;
 	&lt;string name="SanityLimited"&gt;%s's Sanity cannot be higher than 10 minus Cthulhu Mythos: lowered to %d&lt;/string&gt;
+	&lt;string name="MythosShock"&gt;%s suffers a Mythos shock: -%d Sanity&lt;/string&gt;
+	&lt;string name="MythosRevelationMenu"&gt;Mythos revelation&lt;/string&gt;
+	&lt;string name="MythosRevelation1"&gt;Distant or not relevant (-2/-0)&lt;/string&gt;
+	&lt;string name="MythosRevelation2"&gt;Danger to innocents (-3/-1)&lt;/string&gt;
+	&lt;string name="MythosRevelation3"&gt;Danger to you, global (-4/-1)&lt;/string&gt;
+	&lt;string name="MythosRevelation4"&gt;Destroys a Pillar (-6/-2)&lt;/string&gt;
+	&lt;string name="MythosRevelation5"&gt;Could destroy the world (-8/-3)&lt;/string&gt;
+	&lt;string name="MythosRevelationApplied"&gt;%s has a Mythos revelation (%s): -%d Stability, -%d Sanity&lt;/string&gt;
   
 &lt;/root&gt;      
     </XML>

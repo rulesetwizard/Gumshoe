@@ -445,7 +445,8 @@ end
 
 --
 -- SANITY (Trail of Cthulhu)
--- Sanity can never be higher than 10 minus the Cthulhu Mythos rating
+-- Sanity can never be higher than 10 minus the Cthulhu Mythos rating. It is lost by Mythos shocks and Mythos
+-- revelations, never by a roll
 --
 
 function getSanityLimit(nodeChar)
@@ -479,6 +480,63 @@ function applySanityLimit(nodeChar)
 	if bLowered then
 		Comm.deliverChatMessage({ font = "msgfont", text = string.format(Interface.getString("SanityLimited"), DB.getValue(nodeChar, "name", ""), nLimit) });
 	end
+end
+
+-- Lowers a pool of the character by role and tells the state it enters
+local function losePool(nodeChar, sRole, nLoss)
+	local nodeAbility = getAbilityByRole(nodeChar, sRole);
+	if not nodeAbility or nLoss &lt;= 0 then
+		return;
+	end
+	local nOldPool = DB.getValue(nodeAbility, "pool", 0);
+	DB.setValue(nodeAbility, "pool", "number", nOldPool - nLoss);
+	announceStateChange(DB.getValue(nodeChar, "name", ""), sRole, nOldPool, nOldPool - nLoss, false, false);
+end
+
+-- Mythos shock: becoming Shaken after a Mythos creature costs 1 Sanity, Shattered (or worse) 2. Only the most severe
+-- of them is suffered in an investigation, so only the difference with the one already suffered is lost. The pool
+-- reset at the end of the investigation clears it
+function applyMythosShock(nodeChar, sStabilityState)
+	if not getAbilityByRole(nodeChar, "sanity") then
+		return;
+	end
+	local nShock = 0;
+	if sStabilityState == "shaken" then
+		nShock = 1;
+	elseif sStabilityState == "shattered" or sStabilityState == "incurable" then
+		nShock = 2;
+	end
+	local nSuffered = DB.getValue(nodeChar, "sanityshock", 0);
+	if nShock &lt;= nSuffered then
+		return;
+	end
+	DB.setValue(nodeChar, "sanityshock", "number", nShock);
+	Comm.deliverChatMessage({ font = "msgfont", icon = "roll_damage", text = string.format(Interface.getString("MythosShock"), DB.getValue(nodeChar, "name", ""), nShock - nSuffered) });
+	losePool(nodeChar, "sanity", nShock - nSuffered);
+end
+
+-- Losses of Stability and Sanity of the Mythos revelations, from the least to the most serious
+local MythosRevelationLoss = {
+	{ nStability = 2, nSanity = 0 },
+	{ nStability = 3, nSanity = 1 },
+	{ nStability = 4, nSanity = 1 },
+	{ nStability = 6, nSanity = 2 },
+	{ nStability = 8, nSanity = 3 },
+};
+
+function getMythosRevelationCount()
+	return #MythosRevelationLoss;
+end
+
+-- Using Cthulhu Mythos to piece together a revelation: the loss depends on the revelation, not on the points spent
+function applyMythosRevelation(nodeChar, nLevel)
+	local rLoss = MythosRevelationLoss[nLevel];
+	if not rLoss or not nodeChar or not (Session.IsHost or DB.isOwner(nodeChar)) then
+		return;
+	end
+	Comm.deliverChatMessage({ font = "msgfont", icon = "roll_damage", text = string.format(Interface.getString("MythosRevelationApplied"), DB.getValue(nodeChar, "name", ""), Interface.getString("MythosRevelation" .. nLevel), rLoss.nStability, rLoss.nSanity) });
+	losePool(nodeChar, "stability", rLoss.nStability);
+	losePool(nodeChar, "sanity", rLoss.nSanity);
 end
 
 --
@@ -522,8 +580,9 @@ function requestStabilityTest(nodeNPC)
 		return;
 	end
 	local rNPC = ActorManager.resolveActor(nodeNPC);
+	local nMythos = DB.getValue(nodeNPC, "isMythos", 0);
 	local nDifficulty = 4;
-	if DB.getValue(nodeNPC, "isMythos", 0) == 1 then
+	if nMythos == 1 then
 		nDifficulty = 5;
 	end
 	local nLoss = (StabilityEncounterLoss[DB.getValue(nodeNPC, "stabilityEncounter", "")] or 4) + DB.getValue(nodeNPC, "stabilityLoss", 0);
@@ -554,6 +613,7 @@ function requestStabilityTest(nodeNPC)
 			DB.setValue(nodeChar, "pendingstability.difficulty", "number", nDifficulty);
 			DB.setValue(nodeChar, "pendingstability.loss", "number", nLoss);
 			DB.setValue(nodeChar, "pendingstability.source", "string", sSource);
+			DB.setValue(nodeChar, "pendingstability.mythos", "number", nMythos);
 			DB.setValue(nodeChar, "pendingstability.penalty", "string", "");
 			Comm.deliverChatMessage({ font = "msgfont", text = string.format(Interface.getString("StabilityTestRequested"), ActorManager.getDisplayName(rPC), sSource, nDifficulty, nLoss) });
 		end
@@ -593,10 +653,17 @@ function onStabilityTestResult(rSource, rTarget, rRoll)
 
 	local nDifficulty = DB.getValue(nodePending, "difficulty", 4);
 	local nLoss = DB.getValue(nodePending, "loss", 0);
+	local bMythos = (DB.getValue(nodePending, "mythos", 0) == 1);
 	local sPenalty = DB.getValue(nodePending, "penalty", "");
 	if sPenalty ~= "" then
 		nDifficulty = nDifficulty + 1;
 		rMessage.text = rMessage.text .. " " .. string.format(Interface.getString("StatePenalty"), sPenalty);
+	end
+	-- Sanity 2 or less also adds 1 to the difficulty of Stability tests
+	local nSanity = getActorSanity(rSource);
+	if nSanity and nSanity &lt;= 2 then
+		nDifficulty = nDifficulty + 1;
+		rMessage.text = rMessage.text .. " " .. string.format(Interface.getString("LowSanityPenalty"), nSanity);
 	end
 	rMessage.text = rMessage.text .. " " .. string.format(Interface.getString("StabilityTestDifficulty"), nDifficulty);
 
@@ -616,6 +683,9 @@ function onStabilityTestResult(rSource, rTarget, rRoll)
 			local nOldPool = DB.getValue(nodeStability, "pool", 0);
 			DB.setValue(nodeStability, "pool", "number", nOldPool - nLoss);
 			announceStateChange(DB.getValue(nodeChar, "name", ""), "stability", nOldPool, nOldPool - nLoss, false, false);
+			if bMythos then
+				applyMythosShock(nodeChar, getStabilityState(nOldPool - nLoss));
+			end
 		end
 	end
 end
