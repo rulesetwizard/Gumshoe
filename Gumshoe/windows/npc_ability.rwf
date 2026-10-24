@@ -256,14 +256,10 @@ function onValueChanged()
 end
 
 function setAttackVisibility()
-	if GumshoeData.isCombatAbility(getValue()) then
-		window.test.setVisible(false);
-		window.testattack.setVisible(true);
-	else
-		window.test.setVisible(true);
-		window.testattack.setVisible(false);
-	end
-	window.btnInit.setVisible(GumshoeData.isCombatAbility(getValue()));
+	local bCombat = (GumshoeManager.getAbilityRole(window.getDatabaseNode()) == "combat");
+	window.test.setVisible(not bCombat);
+	window.testattack.setVisible(bCombat);
+	window.btnInit.setVisible(bCombat);
 end
 </LUACode>
     <GroupIndex>0</GroupIndex>

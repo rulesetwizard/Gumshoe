@@ -708,11 +708,7 @@ function linkPCFields()
 		initability.setLink(DB.createChild(nodeChar, "initability", "string"), false);
 		sub_defense.subwindow.hitthreshold.setLink(nodeChar.createChild("hitthreshold", "number"), true);
 		sub_defense.subwindow.armor.setLink(nodeChar.createChild("armor", "number"), true);
-		local nodeHealth = nil;
-		local abilitiesNode = DB.getChild(nodeChar, 'abilities.generalsections');
-		if abilitiesNode then
-			nodeHealth = GumshoeManager.getGeneralAbilityNode(abilitiesNode, GumshoeData.getHealthAbility());
-		end
+		local nodeHealth = GumshoeManager.getAbilityByRole(nodeChar, "health");
 		if nodeHealth then
 			healthPool.setLink(DB.createChild(nodeHealth, "pool", "number"), false);
 		else

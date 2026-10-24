@@ -61,10 +61,8 @@ function UseGeneralAbility(rAbility, testValue)
 		end
 	end
 	
-	local bAllowNegativePool = false;
-	if abilityName == GumshoeData.getHealthAbility() or abilityName == GumshoeData.getStabilityAbility() then
-		bAllowNegativePool = true;
-	end
+	local abilityRole = getAbilityRole(rAbility);
+	local bAllowNegativePool = (abilityRole == "health") or (abilityRole == "stability");
 	
 	if bAllowNegativePool then
 		if abilityPoolValue - testValue &lt; MinVoluntaryPool then
@@ -143,6 +141,51 @@ function getGeneralAbilityNode(NodeAbilities, abilityName)
 	return nil;
 end
 
+--
+-- ABILITY ROLES
+-- The code finds Health, Stability and the combat abilities by their role ("health", "stability", "combat" or ""),
+-- so that they can have any name
+--
+
+function getAbilityRole(nodeAbility)
+	local sRole = DB.getValue(nodeAbility, "role");
+	if sRole then
+		return sRole;
+	end
+	-- Abilities created before roles existed have no role node: the role comes from the default name
+	return GumshoeData.getLegacyRole(DB.getValue(nodeAbility, "name", ""));
+end
+
+-- Stores the role of the abilities created before roles existed, when this user can write them
+function migrateAbilityRoles(nodeAbilities)
+	for _,nodeAbility in pairs(DB.getChildren(nodeAbilities)) do
+		if not DB.getChild(nodeAbility, "role") and (Session.IsHost or DB.isOwner(nodeAbility)) then
+			DB.setValue(nodeAbility, "role", "string", getAbilityRole(nodeAbility));
+		end
+	end
+end
+
+-- The character's general ability with that role (Health and Stability are unique)
+function getAbilityByRole(nodeChar, sRole)
+	for _,nodeAbility in pairs(DB.getChildren(nodeChar, "abilities.generalsections")) do
+		if getAbilityRole(nodeAbility) == sRole then
+			return nodeAbility;
+		end
+	end
+	return nil;
+end
+
+-- All the character's general abilities with that role (there can be several combat abilities)
+function getAbilitiesByRole(nodeChar, sRole)
+	local aAbilities = {};
+	for _,nodeAbility in pairs(DB.getChildren(nodeChar, "abilities.generalsections")) do
+		if getAbilityRole(nodeAbility) == sRole then
+			table.insert(aAbilities, nodeAbility);
+		end
+	end
+	return aAbilities;
+end
+
 -- Health pool of an actor: the Health ability of a PC's sheet, or the healthPool of an NPC's CT entry
 function getHealthPoolNode(rActor)
 	local nodeActor = ActorManager.getCreatureNode(rActor);
@@ -151,11 +194,7 @@ function getHealthPoolNode(rActor)
 	end
 
 	if ActorManager.isPC(rActor) then
-		local nodeAbilities = DB.getChild(nodeActor, "abilities.generalsections");
-		if not nodeAbilities then
-			return nil;
-		end
-		local nodeHealth = getGeneralAbilityNode(nodeAbilities, GumshoeData.getHealthAbility());
+		local nodeHealth = getAbilityByRole(nodeActor, "health");
 		if not nodeHealth then
 			return nil;
 		end

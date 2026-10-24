@@ -64,12 +64,16 @@ function onInit()
 		for _, ability in ipairs(GumshoeData.getGeneralAbilities()) do
 			local wAbility = listAbilities.createWindow();
 			local nodeAbility = wAbility.getDatabaseNode();
-			DB.setValue(nodeAbility, "name", "string", ability);
+			DB.setValue(nodeAbility, "name", "string", ability.name);
+			DB.setValue(nodeAbility, "role", "string", ability.role or "");
 		end
         -- Set edit mode on
         parentcontrol.window.btnEditLists.setValue(1);
     end
     
+    -- Characters created before ability roles existed get them from the ability names
+    GumshoeManager.migrateAbilityRoles(ListNode);
+
     -- Set field links of main tab Health and Stability
     parentcontrol.window.parentcontrol.window.main.subwindow.linkHealthStability();
 end

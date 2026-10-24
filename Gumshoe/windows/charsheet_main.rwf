@@ -297,13 +297,8 @@ end
 
 function linkHealthStability()
 	-- Initialize Health and stability field links
-	HealthNode = nil;
-	StabilityNode = nil;
-	local abilitiesNode = DB.getChild(getDatabaseNode(), 'abilities.generalsections');
-	if abilitiesNode then
-		HealthNode = GumshoeManager.getGeneralAbilityNode(abilitiesNode, GumshoeData.getHealthAbility());
-		StabilityNode = GumshoeManager.getGeneralAbilityNode(abilitiesNode, GumshoeData.getStabilityAbility());
-	end
+	HealthNode = GumshoeManager.getAbilityByRole(getDatabaseNode(), "health");
+	StabilityNode = GumshoeManager.getAbilityByRole(getDatabaseNode(), "stability");
 	linkAbilityFields(HealthNode, healthName, healthRating, healthPool);
 	linkAbilityFields(StabilityNode, stabilityName, stabilityRating, stabilityPool);
 end

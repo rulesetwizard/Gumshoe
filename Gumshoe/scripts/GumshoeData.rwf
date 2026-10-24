@@ -84,33 +84,34 @@ local InvestigativeAbilities = {
 	},
 }
 
+-- The role tells the code which ability is Health, Stability or a combat ability, whatever its name
 local GeneralAbilities = {
-	"Athletics",
-	"Burglary",
-	"Business Affairs",
-	"Conceal",
-	"Disguise",
-	"Driving",
-	"Explosives",
-	"Filch",
-	"Fleeing",
-	"Gambling",
-	"Health",
-	"Hypnosis",
-	"Infiltration",
-	"Mechanics",
-	"Medic",
-	"Piloting",
-	"Preparedness",
-	"Public Relations",
-	"Riding",
-	"Scuffling",
-	"Sense Trouble",
-	"Shrink",
-	"Shooting",
-	"Stability",
-	"Surveillance",
-	"Unobtrusiveness",
+	{ name = "Athletics" },
+	{ name = "Burglary" },
+	{ name = "Business Affairs" },
+	{ name = "Conceal" },
+	{ name = "Disguise" },
+	{ name = "Driving" },
+	{ name = "Explosives" },
+	{ name = "Filch" },
+	{ name = "Fleeing" },
+	{ name = "Gambling" },
+	{ name = "Health", role = "health" },
+	{ name = "Hypnosis" },
+	{ name = "Infiltration" },
+	{ name = "Mechanics" },
+	{ name = "Medic" },
+	{ name = "Piloting" },
+	{ name = "Preparedness" },
+	{ name = "Public Relations" },
+	{ name = "Riding" },
+	{ name = "Scuffling", role = "combat" },
+	{ name = "Sense Trouble" },
+	{ name = "Shrink" },
+	{ name = "Shooting", role = "combat" },
+	{ name = "Stability", role = "stability" },
+	{ name = "Surveillance" },
+	{ name = "Unobtrusiveness" },
 }
 
 local CombatAbilities = {
@@ -157,6 +158,20 @@ function isCombatAbility(abilityName)
 		end
 	end
 	return false;
+end
+
+-- Role of an ability created before roles existed, from its default name
+function getLegacyRole(abilityName)
+	if abilityName == HealthAbility then
+		return "health";
+	end
+	if abilityName == StabilityAbility then
+		return "stability";
+	end
+	if isCombatAbility(abilityName) then
+		return "combat";
+	end
+	return "";
 end
 
 function ResetAbilityPools()
