@@ -762,6 +762,16 @@ function updateHealthState()
 	healthState.setValue(GumshoeManager.getActorStatesText(ActorManager.resolveActor(getDatabaseNode())));
 end
 
+-- Consciousness roll, when Health is below 0, without spending Health (a PC spends it from the character sheet)
+function rollConsciousness()
+	local rActor = ActorManager.resolveActor(getDatabaseNode());
+	local nPool = GumshoeManager.getActorHealth(rActor);
+	if not nPool or nPool &gt;= 0 or GumshoeManager.getHealthState(nPool, GumshoeManager.isPulpNPC(rActor)) == "dead" then
+		return;
+	end
+	GumshoeManager.rollConsciousness(ActorManager.getCreatureNode(rActor), math.abs(nPool), 0);
+end
+
 --
 --	HELPERS
 --
@@ -1187,13 +1197,18 @@ end
       {"Name":"StackVertWith"},
       {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
       {"Name":"TextUnderlined"},
-      {"Name":"Tooltip"},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Double click for a consciousness roll when Health is below 0"}},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"69"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"29"}}
 ]}}</Definition>
-    <LUACode />
+    <LUACode>
+function onDoubleClick(x, y)
+	window.rollConsciousness();
+	return true;
+end
+</LUACode>
     <GroupIndex>0</GroupIndex>
     <Template />
   </WindowControls>

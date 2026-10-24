@@ -357,6 +357,26 @@ function updateStates()
 	stabilityState.setValue(sStabilityState);
 end
 
+-- Consciousness roll, when Health is below 0. The Health test value is the Health spent to add to the die, and the
+-- difficulty is the pool before spending it
+function rollConsciousness()
+	if not HealthNode then
+		return;
+	end
+	local nPool = DB.getValue(HealthNode, "pool", 0);
+	if nPool &gt;= 0 or GumshoeManager.getHealthState(nPool, false) == "dead" then
+		return;
+	end
+	local nSpend = healthTest.getValue();
+	if nSpend &gt; 0 then
+		if not GumshoeManager.UseGeneralAbility(HealthNode, nSpend) then
+			return;
+		end
+		healthTest.setValue(0);
+	end
+	GumshoeManager.rollConsciousness(getDatabaseNode(), math.abs(nPool), nSpend);
+end
+
 function getHealthNode()
 	return HealthNode;
 end
@@ -733,13 +753,18 @@ end
       {"Name":"StackVertWith"},
       {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
       {"Name":"TextUnderlined"},
-      {"Name":"Tooltip"},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Double click for a consciousness roll when Health is below 0. The Test value is the Health spent to add to the die"}},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"27"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"289"}}
 ]}}</Definition>
-    <LUACode />
+    <LUACode>
+function onDoubleClick(x, y)
+	window.rollConsciousness();
+	return true;
+end
+</LUACode>
     <GroupIndex>0</GroupIndex>
     <Template />
   </WindowControls>

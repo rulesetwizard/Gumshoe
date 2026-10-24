@@ -7950,6 +7950,26 @@ function updateStates()
 	stabilityState.setValue(sStabilityState);
 end
 
+-- Consciousness roll, when Health is below 0. The Health test value is the Health spent to add to the die, and the
+-- difficulty is the pool before spending it
+function rollConsciousness()
+	if not HealthNode then
+		return;
+	end
+	local nPool = DB.getValue(HealthNode, "pool", 0);
+	if nPool &gt;= 0 or GumshoeManager.getHealthState(nPool, false) == "dead" then
+		return;
+	end
+	local nSpend = healthTest.getValue();
+	if nSpend &gt; 0 then
+		if not GumshoeManager.UseGeneralAbility(HealthNode, nSpend) then
+			return;
+		end
+		healthTest.setValue(0);
+	end
+	GumshoeManager.rollConsciousness(getDatabaseNode(), math.abs(nPool), nSpend);
+end
+
 function getHealthNode()
 	return HealthNode;
 end
@@ -8326,13 +8346,18 @@ end
       {"Name":"StackVertWith"},
       {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
       {"Name":"TextUnderlined"},
-      {"Name":"Tooltip"},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Double click for a consciousness roll when Health is below 0. The Test value is the Health spent to add to the die"}},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"27"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"289"}}
 ]}}</Definition>
-    <LUACode />
+    <LUACode>
+function onDoubleClick(x, y)
+	window.rollConsciousness();
+	return true;
+end
+</LUACode>
     <GroupIndex>0</GroupIndex>
     <Template />
   </WindowControls>
@@ -15470,6 +15495,16 @@ function updateHealthState()
 	healthState.setValue(GumshoeManager.getActorStatesText(ActorManager.resolveActor(getDatabaseNode())));
 end
 
+-- Consciousness roll, when Health is below 0, without spending Health (a PC spends it from the character sheet)
+function rollConsciousness()
+	local rActor = ActorManager.resolveActor(getDatabaseNode());
+	local nPool = GumshoeManager.getActorHealth(rActor);
+	if not nPool or nPool &gt;= 0 or GumshoeManager.getHealthState(nPool, GumshoeManager.isPulpNPC(rActor)) == "dead" then
+		return;
+	end
+	GumshoeManager.rollConsciousness(ActorManager.getCreatureNode(rActor), math.abs(nPool), 0);
+end
+
 --
 --	HELPERS
 --
@@ -15895,13 +15930,18 @@ end
       {"Name":"StackVertWith"},
       {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
       {"Name":"TextUnderlined"},
-      {"Name":"Tooltip"},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Double click for a consciousness roll when Health is below 0"}},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"69"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"29"}}
 ]}}</Definition>
-    <LUACode />
+    <LUACode>
+function onDoubleClick(x, y)
+	window.rollConsciousness();
+	return true;
+end
+</LUACode>
     <GroupIndex>0</GroupIndex>
     <Template />
   </WindowControls>
@@ -21677,6 +21717,7 @@ local MinVoluntaryPool = -11;
 
 function onInit()
 	OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_APPLYDMG, handleApplyDamage);
+	ActionsManager.registerResultHandler("consciousness", onConsciousnessResult);
 
 	-- Health status of the actors for CoreRPG: token health bars and dots, their colors and the death markers
 	GameManager.setFunction("onActorGetHealthStatus", onActorGetHealthStatus);
@@ -21702,6 +21743,15 @@ function UseAbilityPool(rAbility, PCnode, bRecover)
 		end
 		return true;
 	else
+		-- Hurt, Shaken and worse characters cannot spend investigative points
+		if isInvestigativeAbility(rAbility) then
+			local sState = getImpairingState(ActorManager.resolveActor(PCnode));
+			if sState ~= "" then
+				message = string.format(Interface.getString("CantSpendInvestigative"), DB.getValue(PCnode, "name", ""), sState);
+				ChatManager.Message(message, true, PCnode);
+				return false;
+			end
+		end
 		if  abilityPoolValue &gt; 0 then
 			message = Interface.getString("SpendAbilityPool") ..  abilityName.getValue();
 			abilityPool.setValue(abilityPoolValue - 1);
@@ -21714,6 +21764,10 @@ function UseAbilityPool(rAbility, PCnode, bRecover)
 			return false;
 		end
 	end
+end
+
+function isInvestigativeAbility(nodeAbility)
+	return (DB.getPath(nodeAbility):find(".investigativesections.", 1, true) ~= nil);
 end
 
 function UseGeneralAbility(rAbility, testValue)
@@ -21984,6 +22038,29 @@ function getActorStatesText(rActor)
 	return table.concat(aStates, ", ");
 end
 
+-- The first state of an actor that stops it spending investigative points and adds 1 to its difficulties (Hurt or
+-- Shaken, and worse), as text; "" if it has none. The penalty does not add up with both states
+function getImpairingState(rActor)
+	if not rActor then
+		return "";
+	end
+	local nHealth = getActorHealth(rActor);
+	if nHealth then
+		local sState = getHealthState(nHealth, isPulpNPC(rActor));
+		if sState ~= "" then
+			return getStateText(sState);
+		end
+	end
+	local nStability = getActorStability(rActor);
+	if nStability then
+		local sState = getStabilityState(nStability);
+		if sState ~= "" then
+			return getStateText(sState);
+		end
+	end
+	return "";
+end
+
 -- For CoreRPG (GameManager onActorGetHealthStatus): wounded from the full pool (0) to -12 (1)
 function onActorGetHealthStatus(rActor)
 	local nPool, nRating = getActorHealth(rActor);
@@ -22021,6 +22098,30 @@ function announceStateChange(sName, sRole, nOldPool, nNewPool, bPulpNPC, bCheckC
 	end
 end
 
+--
+-- CONSCIOUSNESS ROLL
+-- A die against the absolute value of the Health pool. The character can reduce Health to add to the die; the
+-- difficulty is the pool before that reduction
+--
+
+function rollConsciousness(nodeActor, nDifficulty, nBonus)
+	local sDice = "d6";
+	if (nBonus or 0) &gt; 0 then
+		sDice = "d6+" .. nBonus;
+	end
+	RulesetWizardDiceRoller.Roll(nil, nodeActor, "consciousness", string.format(Interface.getString("ConsciousnessRollDesc"), nDifficulty), sDice, 0, { nDifficulty = nDifficulty });
+end
+
+function onConsciousnessResult(rSource, rTarget, rRoll)
+	local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
+	if rRoll.nTotal &gt;= (tonumber(rRoll.nDifficulty) or 0) then
+		rMessage.text = rMessage.text .. " " .. Interface.getString("ConsciousnessSuccess");
+	else
+		rMessage.text = rMessage.text .. " " .. Interface.getString("ConsciousnessFailure");
+	end
+	Comm.deliverChatMessage(rMessage);
+end
+
 -- Health pool of an actor: the Health ability of a PC's sheet, or the healthPool of an NPC's CT entry
 function getHealthPoolNode(rActor)
 	local nodeActor = ActorManager.getCreatureNode(rActor);
@@ -22045,6 +22146,12 @@ function onAttackResult(rSource, rTarget, rRoll)
     if rTarget ~= nil then
         rMessage.text = rMessage.text .. " " .. string.format(Interface.getString("AttackTarget"), ActorManager.getDisplayName(rTarget));
 		local hitthreshold = DB.getChild(rTarget.sCreatureNode, "hitthreshold").getValue();
+		-- A Hurt or Shaken attacker (and worse) adds 1 to the hit threshold
+		local sState = getImpairingState(rSource);
+		if sState ~= "" then
+			hitthreshold = hitthreshold + 1;
+			rMessage.text = rMessage.text .. " " .. string.format(Interface.getString("StatePenalty"), sState);
+		end
 		if rRoll.nTotal &gt;= hitthreshold then
 			rMessage.text = rMessage.text .. " " .. Interface.getString("AttackHit");
 			rMessage.icon = "roll_attack_hit";
@@ -22332,6 +22439,7 @@ end
 	&lt;string name="CantSpendAbilityPool"&gt;Cannot spend more points of &lt;/string&gt;
 	&lt;string name="CantUseGeneralAbility"&gt;Not enough pool points to spend of &lt;/string&gt;
 	&lt;string name="CantSpendBelowLimit"&gt;Cannot voluntarily reduce below -11 the pool of &lt;/string&gt;
+	&lt;string name="CantSpendInvestigative"&gt;%s cannot spend investigative points while %s&lt;/string&gt;
 	&lt;string name="UntrainedGeneralAbility"&gt;Cannot use untrained ability &lt;/string&gt;
 	&lt;string name="IncorrectAbility"&gt;Ability type does not match&lt;/string&gt;
 	&lt;string name="LockedList"&gt;The list is not in edit mode&lt;/string&gt;
@@ -22369,7 +22477,11 @@ end
 	&lt;string name="StateEffect_shaken"&gt;cannot spend investigative points, +1 to the difficulty of general abilities&lt;/string&gt;
 	&lt;string name="StateEffect_shattered"&gt;can only flee or attack wildly, may develop a mental illness and loses 1 Stability rating point&lt;/string&gt;
 	&lt;string name="StateChanged"&gt;%s is now %s&lt;/string&gt;
+	&lt;string name="StatePenalty"&gt;[+1 %s]&lt;/string&gt;
 	&lt;string name="ConsciousnessRoll"&gt;%s must make a consciousness roll (difficulty %d)&lt;/string&gt;
+	&lt;string name="ConsciousnessRollDesc"&gt;Consciousness roll (difficulty %d)&lt;/string&gt;
+	&lt;string name="ConsciousnessSuccess"&gt;[CONSCIOUS]&lt;/string&gt;
+	&lt;string name="ConsciousnessFailure"&gt;[UNCONSCIOUS]&lt;/string&gt;
   
 &lt;/root&gt;      
     </XML>

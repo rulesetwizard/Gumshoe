@@ -11,6 +11,7 @@
 	&lt;string name="CantSpendAbilityPool"&gt;Cannot spend more points of &lt;/string&gt;
 	&lt;string name="CantUseGeneralAbility"&gt;Not enough pool points to spend of &lt;/string&gt;
 	&lt;string name="CantSpendBelowLimit"&gt;Cannot voluntarily reduce below -11 the pool of &lt;/string&gt;
+	&lt;string name="CantSpendInvestigative"&gt;%s cannot spend investigative points while %s&lt;/string&gt;
 	&lt;string name="UntrainedGeneralAbility"&gt;Cannot use untrained ability &lt;/string&gt;
 	&lt;string name="IncorrectAbility"&gt;Ability type does not match&lt;/string&gt;
 	&lt;string name="LockedList"&gt;The list is not in edit mode&lt;/string&gt;
@@ -48,7 +49,11 @@
 	&lt;string name="StateEffect_shaken"&gt;cannot spend investigative points, +1 to the difficulty of general abilities&lt;/string&gt;
 	&lt;string name="StateEffect_shattered"&gt;can only flee or attack wildly, may develop a mental illness and loses 1 Stability rating point&lt;/string&gt;
 	&lt;string name="StateChanged"&gt;%s is now %s&lt;/string&gt;
+	&lt;string name="StatePenalty"&gt;[+1 %s]&lt;/string&gt;
 	&lt;string name="ConsciousnessRoll"&gt;%s must make a consciousness roll (difficulty %d)&lt;/string&gt;
+	&lt;string name="ConsciousnessRollDesc"&gt;Consciousness roll (difficulty %d)&lt;/string&gt;
+	&lt;string name="ConsciousnessSuccess"&gt;[CONSCIOUS]&lt;/string&gt;
+	&lt;string name="ConsciousnessFailure"&gt;[UNCONSCIOUS]&lt;/string&gt;
   
 &lt;/root&gt;      
     </XML>
