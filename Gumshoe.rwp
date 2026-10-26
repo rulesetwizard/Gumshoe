@@ -819,8 +819,8 @@ end</LUACode>
       {"Name":"StackVertWith"},
       {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
       {"Name":"StringCyclerAlign","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"StringCyclerItems","Value":{"@xsi:type":"ArrayOfLabelValue","LabelValue":[{"Label":"Health","Value":"health"},{"Label":"Stability","Value":"stability"},{"Label":"Sanity","Value":"sanity"},{"Label":"Combat","Value":"combat"}]}},
-      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"What the ability is used for: Health, Stability, Sanity or a combat ability"}},
+      {"Name":"StringCyclerItems","Value":{"@xsi:type":"ArrayOfLabelValue","LabelValue":[{"Label":"Health","Value":"health"},{"Label":"Stability","Value":"stability"},{"Label":"Sanity","Value":"sanity"},{"Label":"Combat","Value":"combat"},{"Label":"Athletics","Value":"athletics"},{"Label":"Sense Trouble","Value":"sensetrouble"},{"Label":"Stealth","Value":"stealth"}]}},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"What the ability is used for: Health, Stability, Sanity, a combat ability, Athletics (hit threshold), Sense Trouble (against the creatures' Stealth) or a stealth ability (against their Alertness)"}},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"143"}},
@@ -3155,7 +3155,7 @@ end</LUACode>
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"40"}},
       {"Name":"DevelopmentComments"},
-      {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","DiceRollString":"d6 + {self}","DiceRollDescription":"{name} Test","DiceRollType":"generalability","UseModStack":"true","ResetModStack":"true","SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":"true","Targeting":"each","AdditionalInfo":null}},
+      {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","DiceRollString":"d6 + {self}","DiceRollDescription":"{name} Test","DiceRollType":"generalability","UseModStack":"true","ResetModStack":"true","SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":"true","Targeting":"all","ResultHandlerFunction":"GumshoeManager.onGeneralTestResult","AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"DropTypes"},
@@ -3200,7 +3200,10 @@ end</LUACode>
 ]}}</Definition>
     <LUACode>
 function onBeforeDiceRoll(dragInfo)
-	return GumshoeManager.UseGeneralAbility(window.getDatabaseNode(), getValue());
+	local nodeAbility = window.getDatabaseNode();
+	-- The data of the roll for GumshoeManager.onGeneralTestResult, taken before the spend
+	DiceRollAdditionalInfo = GumshoeManager.getGeneralTestInfo(DB.getChild(nodeAbility, "...."), GumshoeManager.getAbilityRole(nodeAbility));
+	return GumshoeManager.UseGeneralAbility(nodeAbility, getValue());
 end
 
 function onAfterDiceRoll()
@@ -3722,7 +3725,7 @@ end
       {"Name":"DefaultLabel","Value":{"@xsi:type":"xsd:string","#text":"None"}},
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"26"}},
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
-      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"88"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"110"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
       {"Name":"DropTypes"},
@@ -3754,16 +3757,16 @@ end
       {"Name":"StackVertWith"},
       {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
       {"Name":"StringCyclerAlign","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"StringCyclerItems","Value":{"@xsi:type":"ArrayOfLabelValue","LabelValue":[{"Label":"Health","Value":"health"},{"Label":"Stability","Value":"stability"},{"Label":"Sanity","Value":"sanity"},{"Label":"Combat","Value":"combat"}]}},
-      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"What the ability is used for: Health, Stability, Sanity or a combat ability"}},
+      {"Name":"StringCyclerItems","Value":{"@xsi:type":"ArrayOfLabelValue","LabelValue":[{"Label":"Health","Value":"health"},{"Label":"Stability","Value":"stability"},{"Label":"Sanity","Value":"sanity"},{"Label":"Combat","Value":"combat"},{"Label":"Athletics","Value":"athletics"},{"Label":"Sense Trouble","Value":"sensetrouble"},{"Label":"Stealth","Value":"stealth"}]}},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"What the ability is used for: Health, Stability, Sanity, a combat ability, Athletics (hit threshold), Sense Trouble (against the creatures' Stealth) or a stealth ability (against their Alertness)"}},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"50"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"35"}}
 ]}}</Definition>
     <LUACode>
--- Health, Stability and Sanity are unique in the character: choosing them here removes them from the other ability.
--- The selector has already stored its own value, so only the other abilities are written
+-- Health, Stability, Sanity, Athletics and Sense Trouble are unique in the character: choosing them here removes them
+-- from the other ability. The selector has already stored its own value, so only the other abilities are written
 function onValueChanged()
 	local nodeAbility = window.getDatabaseNode();
 	if Session.IsHost or DB.isOwner(nodeAbility) then
@@ -8598,7 +8601,7 @@ end
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"45"}},
       {"Name":"DevelopmentComments"},
-      {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","DiceRollString":"d6 + {self}","DiceRollDescription":"Health Test","DiceRollType":"generalability","UseModStack":"true","ResetModStack":"true","SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":"true","Targeting":"each","AdditionalInfo":null}},
+      {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","DiceRollString":"d6 + {self}","DiceRollDescription":"Health Test","DiceRollType":"generalability","UseModStack":"true","ResetModStack":"true","SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":"true","Targeting":"all","ResultHandlerFunction":"GumshoeManager.onGeneralTestResult","AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"DropTypes"},
@@ -8647,6 +8650,8 @@ function onBeforeDiceRoll(dragInfo)
 	if not nodeHealth then
 		return false;
 	end
+	-- The data of the roll for GumshoeManager.onGeneralTestResult, taken before the spend
+	DiceRollAdditionalInfo = GumshoeManager.getGeneralTestInfo(window.getDatabaseNode(), "health");
 	return GumshoeManager.UseGeneralAbility(nodeHealth, getValue());
 end
 
@@ -8707,14 +8712,14 @@ end
       {"Name":"NoDrop"},
       {"Name":"NoKeyEdit"},
       {"Name":"PrevTabTarget"},
-      {"Name":"ReadOnly"},
+      {"Name":"ReadOnly","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
       {"Name":"ScriptFile"},
       {"Name":"Source"},
       {"Name":"StackVertWith"},
       {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
-      {"Name":"Tooltip"},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"3, or 4 with an Athletics rating of 8 or more"}},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"49"}},
@@ -18295,6 +18300,80 @@ end
   </WindowControls>
   <WindowControls>
     <WindowName>GMPanel</WindowName>
+    <ControlName>btnHiddenDifficulty</ControlName>
+    <ZIndex>3</ZIndex>
+    <ControlClass>FGButton</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"AllowDoubleClick"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"ButtonCaption","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"ButtonField"},
+      {"Name":"ButtonStateList","Value":{"@xsi:type":"ArrayOfButtonStateDefinition","ButtonStateDefinition":[{"Text":"SHOWN","Tooltip":"Difficulty shown to the players. Click to hide it","FrameOffset":null},{"Text":"HIDDEN","Tooltip":"Difficulty hidden: the players only see the success or failure. Click to show it","FrameOffset":null}]}},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"btnHiddenDifficulty"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DefaultValue"},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"19"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"68"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
+      {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"button-white"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName","Value":{"@xsi:type":"xsd:string","#text":"buttonup"}},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string","#text":"2,2,2,2"}},
+      {"Name":"GMEditOnly"},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor","Value":{"@xsi:type":"xsd:string","#text":"hand"}},
+      {"Name":"HoverIconName"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"NextTabTarget"},
+      {"Name":"NormalIconName","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"PressedIconName"},
+      {"Name":"PressedOffset"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"ReadOnly"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"Source"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"Tooltip"},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"70"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"31"}}
+]}}</Definition>
+    <LUACode>
+function onInit()
+	if GumshoeManager.isTestDifficultyHidden() then
+		setValue(1);
+	end
+end
+
+function onValueChanged()
+	GumshoeManager.setTestDifficultyHidden(getValue() == 1);
+end
+</LUACode>
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>GMPanel</WindowName>
     <ControlName>btnRest</ControlName>
     <ZIndex>1</ZIndex>
     <ControlClass>FGButton</ControlClass>
@@ -18369,6 +18448,77 @@ end
   </WindowControls>
   <WindowControls>
     <WindowName>GMPanel</WindowName>
+    <ControlName>difficulty</ControlName>
+    <ZIndex>2</ZIndex>
+    <ControlClass>FGLabel</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"Center","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"difficulty"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"30"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"68"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"DynamicSize"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"sheetnumber"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName","Value":{"@xsi:type":"xsd:string","#text":"fielddark"}},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string","#text":"7,5,7,5"}},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor","Value":{"@xsi:type":"xsd:string","#text":"hand"}},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"LabelCaption","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"MultilineSpacing"},
+      {"Name":"NextTabTarget"},
+      {"Name":"NoDrag","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
+      {"Name":"PrevTabTarget"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"TextUnderlined"},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Difficulty of the general tests. Mouse wheel to change it"}},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"70"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"0"}}
+]}}</Definition>
+    <LUACode>
+function onInit()
+	update();
+end
+
+function update()
+	setValue(tostring(GumshoeManager.getTestDifficulty()));
+end
+
+function onWheel(notches)
+	GumshoeManager.setTestDifficulty(GumshoeManager.getTestDifficulty() + notches);
+	update();
+	return true;
+end
+</LUACode>
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>GMPanel</WindowName>
     <ControlName>GMPanel</ControlName>
     <ZIndex>0</ZIndex>
     <ControlClass>FGWindow</ControlClass>
@@ -18381,7 +18531,7 @@ end
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
       {"Name":"DataSource"},
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"50"}},
-      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"65"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"140"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
       {"Name":"Dynamic","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
@@ -19060,7 +19210,7 @@ end</LUACode>
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"40"}},
       {"Name":"DevelopmentComments"},
-      {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","DiceRollString":"d6 + {self}","DiceRollDescription":"{name} Test","DiceRollType":"generalability","UseModStack":"true","ResetModStack":"true","SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":"true","Targeting":"each","AdditionalInfo":null}},
+      {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","DiceRollString":"d6 + {self}","DiceRollDescription":"{name} Test","DiceRollType":"generalability","UseModStack":"true","ResetModStack":"true","SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":"true","Targeting":"all","ResultHandlerFunction":"GumshoeManager.onGeneralTestResult","AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"DropTypes"},
@@ -19105,6 +19255,9 @@ end</LUACode>
 ]}}</Definition>
     <LUACode>
 function onBeforeDiceRoll(dragInfo)
+	local nodeAbility = window.getDatabaseNode();
+	-- The data of the roll for GumshoeManager.onGeneralTestResult, taken before the spend
+	DiceRollAdditionalInfo = GumshoeManager.getGeneralTestInfo(DB.getChild(nodeAbility, "..."), GumshoeManager.getAbilityRole(nodeAbility));
 	return GumshoeManager.UseNPCAbility(window.name.getValue(), window.pool.getDatabaseNode(), getValue());
 end
 
@@ -19192,6 +19345,72 @@ end
   </WindowControls>
   <WindowControls>
     <WindowName>npc_main</WindowName>
+    <ControlName>alertness</ControlName>
+    <ZIndex>40</ZIndex>
+    <ControlClass>FGNumberField</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"alertness"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DefaultValue"},
+      {"Name":"DelayKeyUpdate"},
+      {"Name":"DescriptionText"},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"30"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"60"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
+      {"Name":"Disabled"},
+      {"Name":"DisplaySign","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
+      {"Name":"DropTypes"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName","Value":{"@xsi:type":"xsd:string","#text":"fielddark"}},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMEditOnly"},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HideOnValue"},
+      {"Name":"HideRollWidget"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"MaxValue"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"MinValue"},
+      {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
+      {"Name":"NoDrop"},
+      {"Name":"NoKeyEdit"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"ReadOnly"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"Source"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Added to the difficulty of the stealth tests of the PCs that target this creature"}},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"96"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"101"}}
+]}}</Definition>
+    <LUACode />
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>npc_main</WindowName>
     <ControlName>armor</ControlName>
     <ZIndex>13</ZIndex>
     <ControlClass>FGNumberField</ControlClass>
@@ -19250,7 +19469,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"96"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"101"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"136"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -19315,7 +19534,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"152"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"101"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"136"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -19379,7 +19598,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"315"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"136"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"171"}}
 ]}}</Definition>
     <LUACode>
 function onButtonPress()
@@ -19448,7 +19667,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"4"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"185"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"220"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -19514,7 +19733,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"142"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"180"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"215"}}
 ]}}</Definition>
     <LUACode xml:space="preserve">
 </LUACode>
@@ -19581,7 +19800,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"100"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"180"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"215"}}
 ]}}</Definition>
     <LUACode>function onValueChanged()
 	window.healthPool.setValue(getValue());
@@ -19608,7 +19827,7 @@ end</LUACode>
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"45"}},
       {"Name":"DevelopmentComments"},
-      {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","DiceRollString":"d6 + {self}","DiceRollDescription":"Health Test","DiceRollType":"generalability","UseModStack":"true","ResetModStack":"true","SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":"true","Targeting":"each","AdditionalInfo":null}},
+      {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","DiceRollString":"d6 + {self}","DiceRollDescription":"Health Test","DiceRollType":"generalability","UseModStack":"true","ResetModStack":"true","SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":"true","Targeting":"all","ResultHandlerFunction":"GumshoeManager.onGeneralTestResult","AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"DropTypes"},
@@ -19649,10 +19868,12 @@ end</LUACode>
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"192"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"180"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"215"}}
 ]}}</Definition>
     <LUACode>
 function onBeforeDiceRoll(dragInfo)
+	-- The data of the roll for GumshoeManager.onGeneralTestResult, taken before the spend
+	DiceRollAdditionalInfo = GumshoeManager.getGeneralTestInfo(window.getDatabaseNode(), "health");
 	return GumshoeManager.UseNPCAbility(window.healthName.getValue(), window.healthPool.getDatabaseNode(), getValue());
 end
 
@@ -19778,7 +19999,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"189"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"193"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"228"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -19833,7 +20054,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"96"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"136"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"171"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -19890,7 +20111,64 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"62"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"217"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"252"}}
+]}}</Definition>
+    <LUACode />
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>npc_main</WindowName>
+    <ControlName>lblAlertness</ControlName>
+    <ZIndex>39</ZIndex>
+    <ControlClass>FGLabel</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"Center"},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"lblAlertness"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"95"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"DynamicSize"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"sheetlabel"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName"},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"LabelCaption","Value":{"@xsi:type":"xsd:string","#text":"Alertness Mod."}},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"MultilineSpacing"},
+      {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"TextUnderlined"},
+      {"Name":"Tooltip"},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"2"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"106"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -19947,7 +20225,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"2"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"106"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"141"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -20061,7 +20339,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"117"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"137"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"172"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -20175,7 +20453,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"220"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"217"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"252"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -20232,7 +20510,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"151"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"162"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"197"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -20289,7 +20567,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"177"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"217"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"252"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -20346,7 +20624,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"101"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"162"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"197"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -20574,7 +20852,64 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"2"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"137"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"172"}}
+]}}</Definition>
+    <LUACode />
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>npc_main</WindowName>
+    <ControlName>lblStealth</ControlName>
+    <ZIndex>41</ZIndex>
+    <ControlClass>FGLabel</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"Center"},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"lblStealth"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"20"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"100"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"Disabled"},
+      {"Name":"DropTypes"},
+      {"Name":"DynamicSize"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string","#text":"sheetlabel"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName"},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"LabelCaption","Value":{"@xsi:type":"xsd:string","#text":"Stealth Mod."}},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"MultilineSpacing"},
+      {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"TextUnderlined"},
+      {"Name":"Tooltip"},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"171"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"106"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -20631,7 +20966,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"264"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"217"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"252"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -20688,7 +21023,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"201"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"162"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"197"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -20745,7 +21080,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"1"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"2"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"341"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"376"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -20815,7 +21150,7 @@ end
       {"Name":"WindowListFilterBy","Value":{"@xsi:type":"FilterByDefinition","CaseSensitive":{"@xsi:nil":"true"},"FilterSourceType":"Control","FilterOnSourceType":"Control"}},
       {"Name":"WindowListSortBy","Value":{"@xsi:type":"ArrayOfSortByDefinition"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"4"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"213"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"248"}}
 ]}}</Definition>
     <LUACode>function onDrop(x, y, draginfo)
 	return handleDrop(draginfo, nil);
@@ -20929,7 +21264,7 @@ end</LUACode>
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"294"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"191"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"226"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -20993,7 +21328,7 @@ end</LUACode>
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"315"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"191"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"226"}}
 ]}}</Definition>
     <LUACode>
 function onButtonPress()
@@ -21081,7 +21416,7 @@ end
       {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"npc_main"}},
       {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
       {"Name":"DataSource"},
-      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"371"}},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"406"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"347"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
@@ -21243,7 +21578,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"2"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"316"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"236"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"271"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -21421,7 +21756,7 @@ end
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XMLCode"},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"311"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"217"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"252"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -21479,7 +21814,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"170"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"134"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"169"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -21553,6 +21888,72 @@ end
   </WindowControls>
   <WindowControls>
     <WindowName>npc_main</WindowName>
+    <ControlName>stealth</ControlName>
+    <ZIndex>42</ZIndex>
+    <ControlClass>FGNumberField</ControlClass>
+    <Definition>{"ArrayOfFGControlPropertyInfo":{"@xmlns:xsd":"http://www.w3.org/2001/XMLSchema","@xmlns:xsi":"http://www.w3.org/2001/XMLSchema-instance","FGControlPropertyInfo":[
+      {"Name":"AdvancedAnchoring","Value":{"@xsi:type":"ArrayOfAdvancedAnchor"}},
+      {"Name":"AdvancedTemplate"},
+      {"Name":"BackgroundColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"ControlName","Value":{"@xsi:type":"xsd:string","#text":"stealth"}},
+      {"Name":"CustomAnchoring","Value":{"@xsi:type":"ArrayOfAnchorDefinition"}},
+      {"Name":"CustomProperties","Value":{"@xsi:type":"ArrayOfCustomProperty"}},
+      {"Name":"DefaultValue"},
+      {"Name":"DelayKeyUpdate"},
+      {"Name":"DescriptionText"},
+      {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"30"}},
+      {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"60"}},
+      {"Name":"DevelopmentComments"},
+      {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","UseModStack":{"@xsi:nil":"true"},"ResetModStack":{"@xsi:nil":"true"},"SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":{"@xsi:nil":"true"},"AdditionalInfo":null}},
+      {"Name":"Disabled"},
+      {"Name":"DisplaySign","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
+      {"Name":"DropTypes"},
+      {"Name":"FontColor","Value":{"@xsi:type":"xsd:string","#text":"0;0;0;0"}},
+      {"Name":"FontName","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"FrameHideReadonly"},
+      {"Name":"FrameName","Value":{"@xsi:type":"xsd:string","#text":"fielddark"}},
+      {"Name":"FrameOffset","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"GMEditOnly"},
+      {"Name":"GMVisibleOnly"},
+      {"Name":"HideOnValue"},
+      {"Name":"HideRollWidget"},
+      {"Name":"HorizontalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"HoverCursor"},
+      {"Name":"InheritSizePosition"},
+      {"Name":"InsertBefore"},
+      {"Name":"Invisible"},
+      {"Name":"MaximumHeight"},
+      {"Name":"MaximumWidth"},
+      {"Name":"MaxValue"},
+      {"Name":"Merge"},
+      {"Name":"MinimumHeight"},
+      {"Name":"MinimumWidth"},
+      {"Name":"MinValue"},
+      {"Name":"NextTabTarget"},
+      {"Name":"NoDrag"},
+      {"Name":"NoDrop"},
+      {"Name":"NoKeyEdit"},
+      {"Name":"PrevTabTarget"},
+      {"Name":"ReadOnly"},
+      {"Name":"RelativeMargin"},
+      {"Name":"RelativeStacking"},
+      {"Name":"ScriptFile"},
+      {"Name":"Source"},
+      {"Name":"StackVertWith"},
+      {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"Added to the difficulty of the Sense Trouble tests of the PCs that target this creature"}},
+      {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
+      {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
+      {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"275"}},
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"101"}}
+]}}</Definition>
+    <LUACode />
+    <GroupIndex>0</GroupIndex>
+    <Template />
+  </WindowControls>
+  <WindowControls>
+    <WindowName>npc_main</WindowName>
     <ControlName>weapons</ControlName>
     <ZIndex>33</ZIndex>
     <ControlClass>FGStringField</ControlClass>
@@ -21610,7 +22011,7 @@ end
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"1"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"96"}},
-      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"336"}}
+      {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"371"}}
 ]}}</Definition>
     <LUACode />
     <GroupIndex>0</GroupIndex>
@@ -22496,9 +22897,10 @@ local InvestigativeAbilities = {
 	},
 }
 
--- The role tells the code which ability is Health, Stability or a combat ability, whatever its name
+-- The role tells the code which ability is Health, Stability, a combat ability, Athletics (hit threshold), Sense
+-- Trouble or a stealth ability (difficulty against the creatures' Stealth and Alertness), whatever its name
 local GeneralAbilities = {
-	{ name = "Athletics" },
+	{ name = "Athletics", role = "athletics" },
 	{ name = "Burglary" },
 	{ name = "Business Affairs" },
 	{ name = "Conceal" },
@@ -22510,7 +22912,7 @@ local GeneralAbilities = {
 	{ name = "Gambling" },
 	{ name = "Health", role = "health" },
 	{ name = "Hypnosis" },
-	{ name = "Infiltration" },
+	{ name = "Infiltration", role = "stealth" },
 	{ name = "Mechanics" },
 	{ name = "Medic" },
 	{ name = "Piloting" },
@@ -22518,18 +22920,21 @@ local GeneralAbilities = {
 	{ name = "Public Relations" },
 	{ name = "Riding" },
 	{ name = "Scuffling", role = "combat" },
-	{ name = "Sense Trouble" },
+	{ name = "Sense Trouble", role = "sensetrouble" },
 	{ name = "Shrink" },
 	{ name = "Shooting", role = "combat" },
 	{ name = "Stability", role = "stability" },
 	{ name = "Surveillance" },
-	{ name = "Unobtrusiveness" },
+	{ name = "Unobtrusiveness", role = "stealth" },
 }
 
 -- Trail of Cthulhu abilities, created with the Sanity option: Sanity (general, 4 free points) and Cthulhu Mythos
 -- (academic investigative ability)
 local SanityAbility = { name = "Sanity", role = "sanity", rating = 4 };
 local MythosAbility = { section = "ACADEMIC", name = "Cthulhu Mythos", role = "mythos" };
+
+-- Roles of abilities of other games that are not in the default lists (Trail of Cthulhu's Stealth)
+local OtherLegacyRoles = { ["Stealth"] = "stealth" };
 
 local CombatAbilities = {
 	"Scuffling",
@@ -22599,11 +23004,10 @@ end
 
 -- Role of an ability created before roles existed, from its default name
 function getLegacyRole(abilityName)
-	if abilityName == HealthAbility then
-		return "health";
-	end
-	if abilityName == StabilityAbility then
-		return "stability";
+	for _,rAbility in ipairs(GeneralAbilities) do
+		if rAbility.name == abilityName then
+			return rAbility.role or "";
+		end
 	end
 	if abilityName == SanityAbility.name then
 		return "sanity";
@@ -22611,10 +23015,7 @@ function getLegacyRole(abilityName)
 	if abilityName == MythosAbility.name then
 		return "mythos";
 	end
-	if isCombatAbility(abilityName) then
-		return "combat";
-	end
-	return "";
+	return OtherLegacyRoles[abilityName] or "";
 end
 
 -- End of an investigation. Sanity does not come back with the other pools (in a purist game it never does), and the
@@ -22670,6 +23071,12 @@ function onInit()
 	ActorHealthManager.registerStatusHealthColor(Interface.getString("State_hurt"), ColorManager.getUIColor("health_simple_bloodied"));
 	ActorHealthManager.registerStatusHealthColor(Interface.getString("State_seriouslywounded"), ColorManager.getUIColor("health_unconscious"));
 	TokenManager.addDefaultHealthFeatures(nil, { "healthPool", "healthRating" });
+
+	-- The GM sets the difficulty of the general tests, which every roller reads, and keeps the PCs' hit thresholds
+	if Session.IsHost then
+		initTestDifficulty();
+		initHitThresholds();
+	end
 end
 
 function UseAbilityPool(rAbility, PCnode, bRecover)
@@ -22832,9 +23239,17 @@ end
 
 --
 -- ABILITY ROLES
--- The code finds Health, Stability, Sanity, the combat abilities and Cthulhu Mythos by their role ("health",
--- "stability", "sanity", "combat", "mythos" or ""), so that they can have any name
+-- The code finds Health, Stability, Sanity, the combat abilities, Athletics, Sense Trouble, the stealth abilities and
+-- Cthulhu Mythos by their role ("health", "stability", "sanity", "combat", "athletics", "sensetrouble", "stealth",
+-- "mythos" or ""), so that they can have any name
 --
+
+-- Roles that only one general ability of a character can have
+local UniqueRoles = { health = true, stability = true, sanity = true, athletics = true, sensetrouble = true };
+
+-- Roles added after the first ones. Abilities that had no role then get them from their default name, once
+local RolesVersion = 2;
+local RolesAddedInVersion2 = { athletics = true, sensetrouble = true, stealth = true };
 
 function getAbilityRole(nodeAbility)
 	local sRole = DB.getValue(nodeAbility, "role");
@@ -22845,10 +23260,10 @@ function getAbilityRole(nodeAbility)
 	return GumshoeData.getLegacyRole(DB.getValue(nodeAbility, "name", ""));
 end
 
--- Health, Stability and Sanity are unique: when an ability gets one of them, the other abilities of the list that
--- have it lose it. The role selector calls it after storing its own value
+-- The unique roles: when an ability gets one of them, the other abilities of the list that have it lose it. The role
+-- selector calls it after storing its own value
 function clearRoleElsewhere(nodeAbility, sRole)
-	if sRole ~= "health" and sRole ~= "stability" and sRole ~= "sanity" then
+	if not UniqueRoles[sRole] then
 		return;
 	end
 	local sPath = DB.getPath(nodeAbility);
@@ -22859,18 +23274,34 @@ function clearRoleElsewhere(nodeAbility, sRole)
 	end
 end
 
--- Sets the role of a general ability, keeping Health, Stability and Sanity unique
+-- Sets the role of a general ability, keeping the unique roles unique
 function setAbilityRole(nodeAbility, sRole)
 	clearRoleElsewhere(nodeAbility, sRole);
 	DB.setValue(nodeAbility, "role", "string", sRole);
 end
 
--- Stores the role of the abilities created before roles existed, when this user can write them
+-- Stores the role of the abilities created before roles existed, and gives the roles added later to the abilities
+-- without role that have their default name, when this user can write them
 function migrateAbilityRoles(nodeAbilities)
+	if not nodeAbilities then
+		return;
+	end
+	local nodeChar = DB.getChild(nodeAbilities, "...");
+	local bUpgrade = nodeChar and DB.getValue(nodeChar, "rolesversion", 1) &lt; RolesVersion and (Session.IsHost or DB.isOwner(nodeChar));
 	for _,nodeAbility in pairs(DB.getChildren(nodeAbilities)) do
-		if not DB.getChild(nodeAbility, "role") and (Session.IsHost or DB.isOwner(nodeAbility)) then
-			DB.setValue(nodeAbility, "role", "string", getAbilityRole(nodeAbility));
+		if Session.IsHost or DB.isOwner(nodeAbility) then
+			if not DB.getChild(nodeAbility, "role") then
+				DB.setValue(nodeAbility, "role", "string", getAbilityRole(nodeAbility));
+			elseif bUpgrade and DB.getValue(nodeAbility, "role", "") == "" then
+				local sRole = GumshoeData.getLegacyRole(DB.getValue(nodeAbility, "name", ""));
+				if RolesAddedInVersion2[sRole] then
+					setAbilityRole(nodeAbility, sRole);
+				end
+			end
 		end
+	end
+	if bUpgrade then
+		DB.setValue(nodeChar, "rolesversion", "number", RolesVersion);
 	end
 end
 
@@ -23103,6 +23534,176 @@ function announceStateChange(sName, sRole, nOldPool, nNewPool, bPulpNPC, bCheckC
 	if bCheckConsciousness and sRole == "health" and nNewPool &lt; 0 and nNewPool &lt; nOldPool and sNewState ~= "dead" then
 		Comm.deliverChatMessage({ font = "msgfont", text = string.format(Interface.getString("ConsciousnessRoll"), sName, math.abs(nNewPool)) });
 	end
+end
+
+--
+-- GENERAL ABILITY TESTS
+-- A die plus the points spent against the difficulty the GM sets in the GM panel, 4 by default. Hurt or Shaken (and
+-- worse) add 1 to it. Against a targeted creature, its Alertness modifier is added to the stealth tests and its
+-- Stealth modifier to the Sense Trouble tests. When the GM hides the difficulty, the players only see the result
+--
+
+local DifficultyPath = "gumshoe.difficulty";
+local DifficultyHiddenPath = "gumshoe.difficultyhidden";
+local DefaultDifficulty = 4;
+
+-- In the host: the difficulty starts at its default value, and the players' rolls can read it
+function initTestDifficulty()
+	if not DB.findNode(DifficultyPath) then
+		DB.setValue(DifficultyPath, "number", DefaultDifficulty);
+	end
+	DB.setPublic(DB.findNode("gumshoe"), true);
+end
+
+function getTestDifficulty()
+	return DB.getValue(DifficultyPath, DefaultDifficulty);
+end
+
+function setTestDifficulty(nDifficulty)
+	DB.setValue(DifficultyPath, "number", math.max(nDifficulty, 0));
+end
+
+function isTestDifficultyHidden()
+	return (DB.getValue(DifficultyHiddenPath, 0) == 1);
+end
+
+function setTestDifficultyHidden(bHidden)
+	local nHidden = 0;
+	if bHidden then
+		nHidden = 1;
+	end
+	DB.setValue(DifficultyHiddenPath, "number", nHidden);
+end
+
+-- Data that a general test carries to its result handler (the rRoll fields sRole and sPenalty), taken before the test
+-- spends its points, so that spending Health or Stability on it does not make it harder: the role of the ability and
+-- the state that adds 1 to the difficulty
+function getGeneralTestInfo(nodeActor, sRole)
+	return { sRole = sRole or "", sPenalty = getImpairingState(ActorManager.resolveActor(nodeActor)) };
+end
+
+-- Modifier of a targeted creature to the difficulty of a test, with the string of its text: its Alertness against the
+-- stealth abilities and its Stealth against Sense Trouble. PCs have neither
+function getTargetTestModifier(rTarget, sRole)
+	if ActorManager.isPC(rTarget) then
+		return 0, nil;
+	end
+	local nodeTarget = ActorManager.getCreatureNode(rTarget);
+	if not nodeTarget then
+		return 0, nil;
+	end
+	if sRole == "stealth" then
+		return DB.getValue(nodeTarget, "alertness", 0), "AlertnessModifier";
+	end
+	if sRole == "sensetrouble" then
+		return DB.getValue(nodeTarget, "stealth", 0), "StealthModifier";
+	end
+	return 0, nil;
+end
+
+function onGeneralTestResult(rSource, rTarget, rRoll)
+	local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
+	local nTotal = ActionsManager.total(rRoll);
+	local nDifficulty = getTestDifficulty();
+	local aModifiers = {};
+
+	local sPenalty = rRoll.sPenalty or "";
+	if sPenalty ~= "" then
+		nDifficulty = nDifficulty + 1;
+		table.insert(aModifiers, string.format(Interface.getString("StatePenalty"), sPenalty));
+	end
+
+	if rTarget then
+		rMessage.text = rMessage.text .. " " .. string.format(Interface.getString("TestTarget"), ActorManager.getDisplayName(rTarget));
+		local nModifier, sModifier = getTargetTestModifier(rTarget, rRoll.sRole or "");
+		if nModifier ~= 0 then
+			nDifficulty = nDifficulty + nModifier;
+			table.insert(aModifiers, string.format(Interface.getString(sModifier), nModifier));
+		end
+	end
+	table.insert(aModifiers, string.format(Interface.getString("TestDifficulty"), nDifficulty));
+	local sDetails = table.concat(aModifiers, " ");
+
+	local sResult = Interface.getString("TestFailure");
+	if nTotal &gt;= nDifficulty then
+		sResult = Interface.getString("TestSuccess");
+	end
+
+	if isTestDifficultyHidden() then
+		local rMessageGM = UtilityManager.copyDeep(rMessage);
+		rMessageGM.text = rMessageGM.text .. " " .. sDetails .. " " .. sResult;
+		rMessageGM.secret = true;
+		Comm.deliverChatMessage(rMessageGM, "");
+		rMessage.text = rMessage.text .. " " .. sResult;
+	else
+		rMessage.text = rMessage.text .. " " .. sDetails .. " " .. sResult;
+	end
+	Comm.deliverChatMessage(rMessage);
+end
+
+--
+-- HIT THRESHOLD
+-- 3 for the PCs, 4 with an Athletics rating of 8 or more. The host keeps it in the sheet, where the combat tracker
+-- shows it. NPCs have their own
+--
+
+local BaseHitThreshold = 3;
+local AthleticsHitThreshold = 4;
+local AthleticsHitThresholdRating = 8;
+
+function getPCHitThreshold(nodeChar)
+	local nodeAthletics = getAbilityByRole(nodeChar, "athletics");
+	if nodeAthletics and DB.getValue(nodeAthletics, "rating", 0) &gt;= AthleticsHitThresholdRating then
+		return AthleticsHitThreshold;
+	end
+	return BaseHitThreshold;
+end
+
+function getHitThreshold(rActor)
+	local nodeActor = ActorManager.getCreatureNode(rActor);
+	if not nodeActor then
+		return BaseHitThreshold;
+	end
+	if ActorManager.isPC(rActor) then
+		return getPCHitThreshold(nodeActor);
+	end
+	return DB.getValue(nodeActor, "hitthreshold", BaseHitThreshold);
+end
+
+function updateHitThreshold(nodeChar)
+	if not nodeChar then
+		return;
+	end
+	local nHitThreshold = getPCHitThreshold(nodeChar);
+	if DB.getValue(nodeChar, "hitthreshold", 0) ~= nHitThreshold then
+		DB.setValue(nodeChar, "hitthreshold", "number", nHitThreshold);
+	end
+end
+
+-- The character a node of its sheet belongs to
+local function getCharOfNode(node)
+	local sChar = DB.getPath(node):match("^(charsheet%.[^%.]+)");
+	if not sChar then
+		return nil;
+	end
+	return DB.findNode(sChar);
+end
+
+function onGeneralAbilityChanged(nodeField)
+	updateHitThreshold(getCharOfNode(nodeField));
+end
+
+-- In the host: the sheets get the roles added later before their hit threshold is updated, and it follows the
+-- rating and role changes of their general abilities, even with the sheet closed
+function initHitThresholds()
+	for _,nodeChar in pairs(DB.getChildren("charsheet")) do
+		migrateAbilityRoles(DB.getChild(nodeChar, "abilities.generalsections"));
+		updateHitThreshold(nodeChar);
+	end
+	DB.addHandler("charsheet.*.abilities.generalsections.*.rating", "onUpdate", onGeneralAbilityChanged);
+	DB.addHandler("charsheet.*.abilities.generalsections.*.role", "onAdd", onGeneralAbilityChanged);
+	DB.addHandler("charsheet.*.abilities.generalsections.*.role", "onUpdate", onGeneralAbilityChanged);
+	DB.addHandler("charsheet.*.abilities.generalsections", "onChildDeleted", onGeneralAbilityChanged);
 end
 
 --
@@ -23375,7 +23976,7 @@ function onAttackResult(rSource, rTarget, rRoll)
     local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
     if rTarget ~= nil then
         rMessage.text = rMessage.text .. " " .. string.format(Interface.getString("AttackTarget"), ActorManager.getDisplayName(rTarget));
-		local hitthreshold = DB.getChild(rTarget.sCreatureNode, "hitthreshold").getValue();
+		local hitthreshold = getHitThreshold(rTarget);
 		-- A Hurt or Shaken attacker (and worse) adds 1 to the hit threshold
 		local sState = getImpairingState(rSource);
 		if sState ~= "" then
@@ -23690,6 +24291,14 @@ end
 	&lt;string name="OptionPurist"&gt;Purist (as investigators)&lt;/string&gt;
 	&lt;string name="OptionPulp"&gt;Pulp (die below 0)&lt;/string&gt;
 	&lt;string name="SanityOptionLabel"&gt;Sanity (Trail of Cthulhu)&lt;/string&gt;
+
+	&lt;!-- General ability tests --&gt;
+	&lt;string name="TestTarget"&gt;vs %s&lt;/string&gt;
+	&lt;string name="TestDifficulty"&gt;(difficulty %d)&lt;/string&gt;
+	&lt;string name="TestSuccess"&gt;[SUCCESS]&lt;/string&gt;
+	&lt;string name="TestFailure"&gt;[FAILURE]&lt;/string&gt;
+	&lt;string name="AlertnessModifier"&gt;[%+d Alertness]&lt;/string&gt;
+	&lt;string name="StealthModifier"&gt;[%+d Stealth]&lt;/string&gt;
   
   	&lt;!-- Combat --&gt;
 	&lt;string name="AttackTarget"&gt;vs %s&lt;/string&gt;

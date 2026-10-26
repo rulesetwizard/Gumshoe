@@ -30,6 +30,14 @@
 	&lt;string name="OptionPurist"&gt;Purist (as investigators)&lt;/string&gt;
 	&lt;string name="OptionPulp"&gt;Pulp (die below 0)&lt;/string&gt;
 	&lt;string name="SanityOptionLabel"&gt;Sanity (Trail of Cthulhu)&lt;/string&gt;
+
+	&lt;!-- General ability tests --&gt;
+	&lt;string name="TestTarget"&gt;vs %s&lt;/string&gt;
+	&lt;string name="TestDifficulty"&gt;(difficulty %d)&lt;/string&gt;
+	&lt;string name="TestSuccess"&gt;[SUCCESS]&lt;/string&gt;
+	&lt;string name="TestFailure"&gt;[FAILURE]&lt;/string&gt;
+	&lt;string name="AlertnessModifier"&gt;[%+d Alertness]&lt;/string&gt;
+	&lt;string name="StealthModifier"&gt;[%+d Stealth]&lt;/string&gt;
   
   	&lt;!-- Combat --&gt;
 	&lt;string name="AttackTarget"&gt;vs %s&lt;/string&gt;

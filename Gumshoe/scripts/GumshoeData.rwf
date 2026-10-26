@@ -84,9 +84,10 @@ local InvestigativeAbilities = {
 	},
 }
 
--- The role tells the code which ability is Health, Stability or a combat ability, whatever its name
+-- The role tells the code which ability is Health, Stability, a combat ability, Athletics (hit threshold), Sense
+-- Trouble or a stealth ability (difficulty against the creatures' Stealth and Alertness), whatever its name
 local GeneralAbilities = {
-	{ name = "Athletics" },
+	{ name = "Athletics", role = "athletics" },
 	{ name = "Burglary" },
 	{ name = "Business Affairs" },
 	{ name = "Conceal" },
@@ -98,7 +99,7 @@ local GeneralAbilities = {
 	{ name = "Gambling" },
 	{ name = "Health", role = "health" },
 	{ name = "Hypnosis" },
-	{ name = "Infiltration" },
+	{ name = "Infiltration", role = "stealth" },
 	{ name = "Mechanics" },
 	{ name = "Medic" },
 	{ name = "Piloting" },
@@ -106,18 +107,21 @@ local GeneralAbilities = {
 	{ name = "Public Relations" },
 	{ name = "Riding" },
 	{ name = "Scuffling", role = "combat" },
-	{ name = "Sense Trouble" },
+	{ name = "Sense Trouble", role = "sensetrouble" },
 	{ name = "Shrink" },
 	{ name = "Shooting", role = "combat" },
 	{ name = "Stability", role = "stability" },
 	{ name = "Surveillance" },
-	{ name = "Unobtrusiveness" },
+	{ name = "Unobtrusiveness", role = "stealth" },
 }
 
 -- Trail of Cthulhu abilities, created with the Sanity option: Sanity (general, 4 free points) and Cthulhu Mythos
 -- (academic investigative ability)
 local SanityAbility = { name = "Sanity", role = "sanity", rating = 4 };
 local MythosAbility = { section = "ACADEMIC", name = "Cthulhu Mythos", role = "mythos" };
+
+-- Roles of abilities of other games that are not in the default lists (Trail of Cthulhu's Stealth)
+local OtherLegacyRoles = { ["Stealth"] = "stealth" };
 
 local CombatAbilities = {
 	"Scuffling",
@@ -187,11 +191,10 @@ end
 
 -- Role of an ability created before roles existed, from its default name
 function getLegacyRole(abilityName)
-	if abilityName == HealthAbility then
-		return "health";
-	end
-	if abilityName == StabilityAbility then
-		return "stability";
+	for _,rAbility in ipairs(GeneralAbilities) do
+		if rAbility.name == abilityName then
+			return rAbility.role or "";
+		end
 	end
 	if abilityName == SanityAbility.name then
 		return "sanity";
@@ -199,10 +202,7 @@ function getLegacyRole(abilityName)
 	if abilityName == MythosAbility.name then
 		return "mythos";
 	end
-	if isCombatAbility(abilityName) then
-		return "combat";
-	end
-	return "";
+	return OtherLegacyRoles[abilityName] or "";
 end
 
 -- End of an investigation. Sanity does not come back with the other pools (in a purist game it never does), and the

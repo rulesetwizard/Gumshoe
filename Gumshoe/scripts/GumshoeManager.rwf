@@ -17,6 +17,12 @@ function onInit()
 	ActorHealthManager.registerStatusHealthColor(Interface.getString("State_hurt"), ColorManager.getUIColor("health_simple_bloodied"));
 	ActorHealthManager.registerStatusHealthColor(Interface.getString("State_seriouslywounded"), ColorManager.getUIColor("health_unconscious"));
 	TokenManager.addDefaultHealthFeatures(nil, { "healthPool", "healthRating" });
+
+	-- The GM sets the difficulty of the general tests, which every roller reads, and keeps the PCs' hit thresholds
+	if Session.IsHost then
+		initTestDifficulty();
+		initHitThresholds();
+	end
 end
 
 function UseAbilityPool(rAbility, PCnode, bRecover)
@@ -179,9 +185,17 @@ end
 
 --
 -- ABILITY ROLES
--- The code finds Health, Stability, Sanity, the combat abilities and Cthulhu Mythos by their role ("health",
--- "stability", "sanity", "combat", "mythos" or ""), so that they can have any name
+-- The code finds Health, Stability, Sanity, the combat abilities, Athletics, Sense Trouble, the stealth abilities and
+-- Cthulhu Mythos by their role ("health", "stability", "sanity", "combat", "athletics", "sensetrouble", "stealth",
+-- "mythos" or ""), so that they can have any name
 --
+
+-- Roles that only one general ability of a character can have
+local UniqueRoles = { health = true, stability = true, sanity = true, athletics = true, sensetrouble = true };
+
+-- Roles added after the first ones. Abilities that had no role then get them from their default name, once
+local RolesVersion = 2;
+local RolesAddedInVersion2 = { athletics = true, sensetrouble = true, stealth = true };
 
 function getAbilityRole(nodeAbility)
 	local sRole = DB.getValue(nodeAbility, "role");
@@ -192,10 +206,10 @@ function getAbilityRole(nodeAbility)
 	return GumshoeData.getLegacyRole(DB.getValue(nodeAbility, "name", ""));
 end
 
--- Health, Stability and Sanity are unique: when an ability gets one of them, the other abilities of the list that
--- have it lose it. The role selector calls it after storing its own value
+-- The unique roles: when an ability gets one of them, the other abilities of the list that have it lose it. The role
+-- selector calls it after storing its own value
 function clearRoleElsewhere(nodeAbility, sRole)
-	if sRole ~= "health" and sRole ~= "stability" and sRole ~= "sanity" then
+	if not UniqueRoles[sRole] then
 		return;
 	end
 	local sPath = DB.getPath(nodeAbility);
@@ -206,18 +220,34 @@ function clearRoleElsewhere(nodeAbility, sRole)
 	end
 end
 
--- Sets the role of a general ability, keeping Health, Stability and Sanity unique
+-- Sets the role of a general ability, keeping the unique roles unique
 function setAbilityRole(nodeAbility, sRole)
 	clearRoleElsewhere(nodeAbility, sRole);
 	DB.setValue(nodeAbility, "role", "string", sRole);
 end
 
--- Stores the role of the abilities created before roles existed, when this user can write them
+-- Stores the role of the abilities created before roles existed, and gives the roles added later to the abilities
+-- without role that have their default name, when this user can write them
 function migrateAbilityRoles(nodeAbilities)
+	if not nodeAbilities then
+		return;
+	end
+	local nodeChar = DB.getChild(nodeAbilities, "...");
+	local bUpgrade = nodeChar and DB.getValue(nodeChar, "rolesversion", 1) &lt; RolesVersion and (Session.IsHost or DB.isOwner(nodeChar));
 	for _,nodeAbility in pairs(DB.getChildren(nodeAbilities)) do
-		if not DB.getChild(nodeAbility, "role") and (Session.IsHost or DB.isOwner(nodeAbility)) then
-			DB.setValue(nodeAbility, "role", "string", getAbilityRole(nodeAbility));
+		if Session.IsHost or DB.isOwner(nodeAbility) then
+			if not DB.getChild(nodeAbility, "role") then
+				DB.setValue(nodeAbility, "role", "string", getAbilityRole(nodeAbility));
+			elseif bUpgrade and DB.getValue(nodeAbility, "role", "") == "" then
+				local sRole = GumshoeData.getLegacyRole(DB.getValue(nodeAbility, "name", ""));
+				if RolesAddedInVersion2[sRole] then
+					setAbilityRole(nodeAbility, sRole);
+				end
+			end
 		end
+	end
+	if bUpgrade then
+		DB.setValue(nodeChar, "rolesversion", "number", RolesVersion);
 	end
 end
 
@@ -450,6 +480,176 @@ function announceStateChange(sName, sRole, nOldPool, nNewPool, bPulpNPC, bCheckC
 	if bCheckConsciousness and sRole == "health" and nNewPool &lt; 0 and nNewPool &lt; nOldPool and sNewState ~= "dead" then
 		Comm.deliverChatMessage({ font = "msgfont", text = string.format(Interface.getString("ConsciousnessRoll"), sName, math.abs(nNewPool)) });
 	end
+end
+
+--
+-- GENERAL ABILITY TESTS
+-- A die plus the points spent against the difficulty the GM sets in the GM panel, 4 by default. Hurt or Shaken (and
+-- worse) add 1 to it. Against a targeted creature, its Alertness modifier is added to the stealth tests and its
+-- Stealth modifier to the Sense Trouble tests. When the GM hides the difficulty, the players only see the result
+--
+
+local DifficultyPath = "gumshoe.difficulty";
+local DifficultyHiddenPath = "gumshoe.difficultyhidden";
+local DefaultDifficulty = 4;
+
+-- In the host: the difficulty starts at its default value, and the players' rolls can read it
+function initTestDifficulty()
+	if not DB.findNode(DifficultyPath) then
+		DB.setValue(DifficultyPath, "number", DefaultDifficulty);
+	end
+	DB.setPublic(DB.findNode("gumshoe"), true);
+end
+
+function getTestDifficulty()
+	return DB.getValue(DifficultyPath, DefaultDifficulty);
+end
+
+function setTestDifficulty(nDifficulty)
+	DB.setValue(DifficultyPath, "number", math.max(nDifficulty, 0));
+end
+
+function isTestDifficultyHidden()
+	return (DB.getValue(DifficultyHiddenPath, 0) == 1);
+end
+
+function setTestDifficultyHidden(bHidden)
+	local nHidden = 0;
+	if bHidden then
+		nHidden = 1;
+	end
+	DB.setValue(DifficultyHiddenPath, "number", nHidden);
+end
+
+-- Data that a general test carries to its result handler (the rRoll fields sRole and sPenalty), taken before the test
+-- spends its points, so that spending Health or Stability on it does not make it harder: the role of the ability and
+-- the state that adds 1 to the difficulty
+function getGeneralTestInfo(nodeActor, sRole)
+	return { sRole = sRole or "", sPenalty = getImpairingState(ActorManager.resolveActor(nodeActor)) };
+end
+
+-- Modifier of a targeted creature to the difficulty of a test, with the string of its text: its Alertness against the
+-- stealth abilities and its Stealth against Sense Trouble. PCs have neither
+function getTargetTestModifier(rTarget, sRole)
+	if ActorManager.isPC(rTarget) then
+		return 0, nil;
+	end
+	local nodeTarget = ActorManager.getCreatureNode(rTarget);
+	if not nodeTarget then
+		return 0, nil;
+	end
+	if sRole == "stealth" then
+		return DB.getValue(nodeTarget, "alertness", 0), "AlertnessModifier";
+	end
+	if sRole == "sensetrouble" then
+		return DB.getValue(nodeTarget, "stealth", 0), "StealthModifier";
+	end
+	return 0, nil;
+end
+
+function onGeneralTestResult(rSource, rTarget, rRoll)
+	local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
+	local nTotal = ActionsManager.total(rRoll);
+	local nDifficulty = getTestDifficulty();
+	local aModifiers = {};
+
+	local sPenalty = rRoll.sPenalty or "";
+	if sPenalty ~= "" then
+		nDifficulty = nDifficulty + 1;
+		table.insert(aModifiers, string.format(Interface.getString("StatePenalty"), sPenalty));
+	end
+
+	if rTarget then
+		rMessage.text = rMessage.text .. " " .. string.format(Interface.getString("TestTarget"), ActorManager.getDisplayName(rTarget));
+		local nModifier, sModifier = getTargetTestModifier(rTarget, rRoll.sRole or "");
+		if nModifier ~= 0 then
+			nDifficulty = nDifficulty + nModifier;
+			table.insert(aModifiers, string.format(Interface.getString(sModifier), nModifier));
+		end
+	end
+	table.insert(aModifiers, string.format(Interface.getString("TestDifficulty"), nDifficulty));
+	local sDetails = table.concat(aModifiers, " ");
+
+	local sResult = Interface.getString("TestFailure");
+	if nTotal &gt;= nDifficulty then
+		sResult = Interface.getString("TestSuccess");
+	end
+
+	if isTestDifficultyHidden() then
+		local rMessageGM = UtilityManager.copyDeep(rMessage);
+		rMessageGM.text = rMessageGM.text .. " " .. sDetails .. " " .. sResult;
+		rMessageGM.secret = true;
+		Comm.deliverChatMessage(rMessageGM, "");
+		rMessage.text = rMessage.text .. " " .. sResult;
+	else
+		rMessage.text = rMessage.text .. " " .. sDetails .. " " .. sResult;
+	end
+	Comm.deliverChatMessage(rMessage);
+end
+
+--
+-- HIT THRESHOLD
+-- 3 for the PCs, 4 with an Athletics rating of 8 or more. The host keeps it in the sheet, where the combat tracker
+-- shows it. NPCs have their own
+--
+
+local BaseHitThreshold = 3;
+local AthleticsHitThreshold = 4;
+local AthleticsHitThresholdRating = 8;
+
+function getPCHitThreshold(nodeChar)
+	local nodeAthletics = getAbilityByRole(nodeChar, "athletics");
+	if nodeAthletics and DB.getValue(nodeAthletics, "rating", 0) &gt;= AthleticsHitThresholdRating then
+		return AthleticsHitThreshold;
+	end
+	return BaseHitThreshold;
+end
+
+function getHitThreshold(rActor)
+	local nodeActor = ActorManager.getCreatureNode(rActor);
+	if not nodeActor then
+		return BaseHitThreshold;
+	end
+	if ActorManager.isPC(rActor) then
+		return getPCHitThreshold(nodeActor);
+	end
+	return DB.getValue(nodeActor, "hitthreshold", BaseHitThreshold);
+end
+
+function updateHitThreshold(nodeChar)
+	if not nodeChar then
+		return;
+	end
+	local nHitThreshold = getPCHitThreshold(nodeChar);
+	if DB.getValue(nodeChar, "hitthreshold", 0) ~= nHitThreshold then
+		DB.setValue(nodeChar, "hitthreshold", "number", nHitThreshold);
+	end
+end
+
+-- The character a node of its sheet belongs to
+local function getCharOfNode(node)
+	local sChar = DB.getPath(node):match("^(charsheet%.[^%.]+)");
+	if not sChar then
+		return nil;
+	end
+	return DB.findNode(sChar);
+end
+
+function onGeneralAbilityChanged(nodeField)
+	updateHitThreshold(getCharOfNode(nodeField));
+end
+
+-- In the host: the sheets get the roles added later before their hit threshold is updated, and it follows the
+-- rating and role changes of their general abilities, even with the sheet closed
+function initHitThresholds()
+	for _,nodeChar in pairs(DB.getChildren("charsheet")) do
+		migrateAbilityRoles(DB.getChild(nodeChar, "abilities.generalsections"));
+		updateHitThreshold(nodeChar);
+	end
+	DB.addHandler("charsheet.*.abilities.generalsections.*.rating", "onUpdate", onGeneralAbilityChanged);
+	DB.addHandler("charsheet.*.abilities.generalsections.*.role", "onAdd", onGeneralAbilityChanged);
+	DB.addHandler("charsheet.*.abilities.generalsections.*.role", "onUpdate", onGeneralAbilityChanged);
+	DB.addHandler("charsheet.*.abilities.generalsections", "onChildDeleted", onGeneralAbilityChanged);
 end
 
 --
@@ -722,7 +922,7 @@ function onAttackResult(rSource, rTarget, rRoll)
     local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
     if rTarget ~= nil then
         rMessage.text = rMessage.text .. " " .. string.format(Interface.getString("AttackTarget"), ActorManager.getDisplayName(rTarget));
-		local hitthreshold = DB.getChild(rTarget.sCreatureNode, "hitthreshold").getValue();
+		local hitthreshold = getHitThreshold(rTarget);
 		-- A Hurt or Shaken attacker (and worse) adds 1 to the hit threshold
 		local sState = getImpairingState(rSource);
 		if sState ~= "" then

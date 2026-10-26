@@ -845,7 +845,7 @@ end
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
       {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"45"}},
       {"Name":"DevelopmentComments"},
-      {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","DiceRollString":"d6 + {self}","DiceRollDescription":"Health Test","DiceRollType":"generalability","UseModStack":"true","ResetModStack":"true","SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":"true","Targeting":"each","AdditionalInfo":null}},
+      {"Name":"DiceRoll","Value":{"@xsi:type":"PropertyDiceRoll","DiceRollString":"d6 + {self}","DiceRollDescription":"Health Test","DiceRollType":"generalability","UseModStack":"true","ResetModStack":"true","SecretRoll":{"@xsi:nil":"true"},"AllowDragDrop":"true","Targeting":"all","ResultHandlerFunction":"GumshoeManager.onGeneralTestResult","AdditionalInfo":null}},
       {"Name":"Disabled"},
       {"Name":"DisplaySign","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"DropTypes"},
@@ -894,6 +894,8 @@ function onBeforeDiceRoll(dragInfo)
 	if not nodeHealth then
 		return false;
 	end
+	-- The data of the roll for GumshoeManager.onGeneralTestResult, taken before the spend
+	DiceRollAdditionalInfo = GumshoeManager.getGeneralTestInfo(window.getDatabaseNode(), "health");
 	return GumshoeManager.UseGeneralAbility(nodeHealth, getValue());
 end
 
@@ -954,14 +956,14 @@ end
       {"Name":"NoDrop"},
       {"Name":"NoKeyEdit"},
       {"Name":"PrevTabTarget"},
-      {"Name":"ReadOnly"},
+      {"Name":"ReadOnly","Value":{"@xsi:type":"xsd:boolean","#text":"true"}},
       {"Name":"RelativeMargin"},
       {"Name":"RelativeStacking"},
       {"Name":"ScriptFile"},
       {"Name":"Source"},
       {"Name":"StackVertWith"},
       {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
-      {"Name":"Tooltip"},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"3, or 4 with an Athletics rating of 8 or more"}},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"49"}},

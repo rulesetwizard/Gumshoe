@@ -510,7 +510,7 @@ end
       {"Name":"DefaultLabel","Value":{"@xsi:type":"xsd:string","#text":"None"}},
       {"Name":"DesignerHeight","Value":{"@xsi:type":"xsd:int","#text":"26"}},
       {"Name":"DesignerLocked","Value":{"@xsi:type":"xsd:boolean","#text":"false"}},
-      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"88"}},
+      {"Name":"DesignerWidth","Value":{"@xsi:type":"xsd:int","#text":"110"}},
       {"Name":"DevelopmentComments"},
       {"Name":"Disabled"},
       {"Name":"DropTypes"},
@@ -542,16 +542,16 @@ end
       {"Name":"StackVertWith"},
       {"Name":"StateFrames","Value":{"@xsi:type":"ArrayOfStateFrame"}},
       {"Name":"StringCyclerAlign","Value":{"@xsi:type":"xsd:int","#text":"0"}},
-      {"Name":"StringCyclerItems","Value":{"@xsi:type":"ArrayOfLabelValue","LabelValue":[{"Label":"Health","Value":"health"},{"Label":"Stability","Value":"stability"},{"Label":"Sanity","Value":"sanity"},{"Label":"Combat","Value":"combat"}]}},
-      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"What the ability is used for: Health, Stability, Sanity or a combat ability"}},
+      {"Name":"StringCyclerItems","Value":{"@xsi:type":"ArrayOfLabelValue","LabelValue":[{"Label":"Health","Value":"health"},{"Label":"Stability","Value":"stability"},{"Label":"Sanity","Value":"sanity"},{"Label":"Combat","Value":"combat"},{"Label":"Athletics","Value":"athletics"},{"Label":"Sense Trouble","Value":"sensetrouble"},{"Label":"Stealth","Value":"stealth"}]}},
+      {"Name":"Tooltip","Value":{"@xsi:type":"xsd:string","#text":"What the ability is used for: Health, Stability, Sanity, a combat ability, Athletics (hit threshold), Sense Trouble (against the creatures' Stealth) or a stealth ability (against their Alertness)"}},
       {"Name":"UseAsTemplate","Value":{"@xsi:type":"xsd:string"}},
       {"Name":"VerticalAnchor","Value":{"@xsi:type":"xsd:int","#text":"0"}},
       {"Name":"XPos","Value":{"@xsi:type":"xsd:int","#text":"50"}},
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"35"}}
 ]}}</Definition>
     <LUACode>
--- Health, Stability and Sanity are unique in the character: choosing them here removes them from the other ability.
--- The selector has already stored its own value, so only the other abilities are written
+-- Health, Stability, Sanity, Athletics and Sense Trouble are unique in the character: choosing them here removes them
+-- from the other ability. The selector has already stored its own value, so only the other abilities are written
 function onValueChanged()
 	local nodeAbility = window.getDatabaseNode();
 	if Session.IsHost or DB.isOwner(nodeAbility) then
