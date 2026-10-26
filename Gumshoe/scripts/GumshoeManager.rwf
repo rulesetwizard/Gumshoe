@@ -113,16 +113,19 @@ function UseGeneralAbility(rAbility, testValue)
 	return true;
 end
 
+-- poolNode is the pool field itself: DB.getValue and DB.setValue take the default value and the type right after a
+-- path, not after a node, so they get its path
 function UseNPCAbility(abilityName, poolNode, testValue, bAllowNegativePool)
 
-	local abilityPoolValue = DB.getValue(poolNode, 0);
+	local sPoolPath = DB.getPath(poolNode);
+	local abilityPoolValue = DB.getValue(sPoolPath, 0);
 	
 	if testValue &gt; abilityPoolValue and not bAllowNegativePool then
 		ChatManager.SystemMessage(Interface.getString("CantUseGeneralAbility") .. abilityName);
 		return false;
 	end
 	
-	DB.setValue(poolNode, "number", abilityPoolValue - testValue);
+	DB.setValue(sPoolPath, "number", abilityPoolValue - testValue);
 	return true;
 end
 
@@ -189,17 +192,23 @@ function getAbilityRole(nodeAbility)
 	return GumshoeData.getLegacyRole(DB.getValue(nodeAbility, "name", ""));
 end
 
--- Sets the role of a general ability. Health, Stability and Sanity are unique: another ability of the list that has
--- that role loses it
-function setAbilityRole(nodeAbility, sRole)
-	if sRole == "health" or sRole == "stability" or sRole == "sanity" then
-		local sPath = DB.getPath(nodeAbility);
-		for _,nodeOther in pairs(DB.getChildren(DB.getParent(nodeAbility))) do
-			if DB.getPath(nodeOther) ~= sPath and getAbilityRole(nodeOther) == sRole then
-				DB.setValue(nodeOther, "role", "string", "");
-			end
+-- Health, Stability and Sanity are unique: when an ability gets one of them, the other abilities of the list that
+-- have it lose it. The role selector calls it after storing its own value
+function clearRoleElsewhere(nodeAbility, sRole)
+	if sRole ~= "health" and sRole ~= "stability" and sRole ~= "sanity" then
+		return;
+	end
+	local sPath = DB.getPath(nodeAbility);
+	for _,nodeOther in pairs(DB.getChildren(DB.getParent(nodeAbility))) do
+		if DB.getPath(nodeOther) ~= sPath and getAbilityRole(nodeOther) == sRole then
+			DB.setValue(nodeOther, "role", "string", "");
 		end
 	end
+end
+
+-- Sets the role of a general ability, keeping Health, Stability and Sanity unique
+function setAbilityRole(nodeAbility, sRole)
+	clearRoleElsewhere(nodeAbility, sRole);
 	DB.setValue(nodeAbility, "role", "string", sRole);
 end
 
@@ -775,11 +784,13 @@ function applyDamage(rTarget, nTotal)
 		return;
 	end
 
+	-- The pool node is the field itself: DB.getValue and DB.setValue get its path
+	local sHealthPoolPath = DB.getPath(nodeHealthPool);
 	local nArmor = DB.getValue(nodeTarget, "armor", 0);
 	local nDamage = math.max(nTotal - nArmor, 0);
-	local nOldPool = DB.getValue(nodeHealthPool, 0);
+	local nOldPool = DB.getValue(sHealthPoolPath, 0);
 	if nDamage &gt; 0 then
-		DB.setValue(nodeHealthPool, "number", nOldPool - nDamage);
+		DB.setValue(sHealthPoolPath, "number", nOldPool - nDamage);
 	end
 
 	local rMessage = { font = "msgfont", icon = "roll_damage" };

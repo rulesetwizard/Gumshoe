@@ -550,11 +550,12 @@ end
       {"Name":"YPos","Value":{"@xsi:type":"xsd:int","#text":"35"}}
 ]}}</Definition>
     <LUACode>
--- Health and Stability are unique in the character: choosing them here removes them from the other ability
+-- Health, Stability and Sanity are unique in the character: choosing them here removes them from the other ability.
+-- The selector has already stored its own value, so only the other abilities are written
 function onValueChanged()
 	local nodeAbility = window.getDatabaseNode();
 	if Session.IsHost or DB.isOwner(nodeAbility) then
-		GumshoeManager.setAbilityRole(nodeAbility, getStringValue());
+		GumshoeManager.clearRoleElsewhere(nodeAbility, getStringValue());
 	end
 end
 </LUACode>
